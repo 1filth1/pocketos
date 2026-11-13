@@ -73,3 +73,10 @@ When reporting a failure, include:
 3. Steps to reproduce.
 4. Expected and actual behavior.
 5. Serial logs or photos, with personal data removed.
+
+
+## Repository governance
+
+- License: MIT for original project materials; third-party components remain subject to their own licenses.
+- Release procedure: [docs/RELEASE_PROCESS.md](RELEASE_PROCESS.md) describes the verification gates required before publishing a firmware release.
+- Engineering references: [architecture](ARCHITECTURE.md), [hardware notes](HARDWARE.md), and [test plan](TESTING.md).
