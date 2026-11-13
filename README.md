@@ -11,7 +11,7 @@
 [![Display](https://img.shields.io/badge/display-E--Ink%20800%C3%97480-20252b?style=for-the-badge)](#hardware-platform)
 [![Status](https://img.shields.io/badge/status-experimental-orange?style=for-the-badge)](#project-status)
 
-**[English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.md) · [Project status](docs/PROJECT_STATUS.md)**
+**[English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md)**
 
 </div>
 
@@ -100,7 +100,7 @@ The project is currently developed in **Schematic.io** for the Waveshare ESP32-S
 
 Before a reproducible build can be published, the project export must be checked and the exact toolchain, board definition, libraries, memory configuration and partition table must be established. Build instructions will be added after those settings are verified—not guessed.
 
-For contribution workflow and coding expectations, see [CONTRIBUTING.md](CONTRIBUTING.md).
+For contribution workflow and coding expectations, see [CONTRIBUTING.md](CONTRIBUTING.md). The development priorities are listed in the [roadmap](docs/ROADMAP.md). Security reports are covered by [SECURITY.md](SECURITY.md).
 
 ## ◈ Known limitations
 
@@ -189,7 +189,7 @@ SD-карта предназначена для пользовательских
 
 Перед публикацией воспроизводимой сборки необходимо проверить экспорт проекта, точную конфигурацию платы, версии библиотек, параметры памяти и таблицу разделов. Инструкции по сборке появятся после подтверждения этих настроек.
 
-Правила работы с проектом описаны в [CONTRIBUTING.md](CONTRIBUTING.md).
+Правила работы с проектом описаны в [CONTRIBUTING.md](CONTRIBUTING.md). Приоритеты дальнейшей разработки собраны в [дорожной карте](docs/ROADMAP.md). Порядок сообщения об уязвимостях — в [SECURITY.md](SECURITY.md).
 
 ## ◈ Ограничения и безопасность
 
