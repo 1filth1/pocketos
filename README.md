@@ -10,8 +10,9 @@
 [![Platform](https://img.shields.io/badge/platform-ESP32--S3-20252b?style=for-the-badge&logo=espressif)](https://www.espressif.com/)
 [![Display](https://img.shields.io/badge/display-E--Ink%20800%C3%97480-20252b?style=for-the-badge)](#hardware-platform)
 [![Status](https://img.shields.io/badge/status-experimental-orange?style=for-the-badge)](#project-status)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-**[English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md)**
+**[English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md) · [Release process](docs/RELEASE_PROCESS.md) · [License](LICENSE)**
 
 </div>
 
@@ -75,7 +76,7 @@ The SD card is intended for user files, application data, resources and saves.
 | `display2.h`, `epaper_ui.h` | Display and UI support |
 | `os_core.h` | Core application registry |
 | `RELEASE_NOTES_v0.1.md` | Version 0.1 release notes |
-| `docs/PROJECT_STATUS.md` | Current development and validation status |
+| `docs/PROJECT_STATUS.md` | Current development and validation status |\n| `docs/ARCHITECTURE.md` | Preliminary system architecture |\n| `docs/HARDWARE.md` | Source-derived hardware reference (not a verified wiring guide) |\n| `docs/TESTING.md` | Hardware and software test plan |\n| `docs/RELEASE_PROCESS.md` | Release and verification process |\n| `LICENSE` | MIT License |
 
 The source tree is evolving; this map highlights the main entry points rather than every header.
 
@@ -100,7 +101,7 @@ The project is currently developed in **Schematic.io** for the Waveshare ESP32-S
 
 Before a reproducible build can be published, the project export must be checked and the exact toolchain, board definition, libraries, memory configuration and partition table must be established. Build instructions will be added after those settings are verified—not guessed.
 
-For contribution workflow and coding expectations, see [CONTRIBUTING.md](CONTRIBUTING.md). The development priorities are listed in the [roadmap](docs/ROADMAP.md). See the preliminary [architecture overview](docs/ARCHITECTURE.md), [source-derived hardware reference](docs/HARDWARE.md), and [test plan](docs/TESTING.md). Security reports are covered by [SECURITY.md](SECURITY.md).
+For contribution workflow and coding expectations, see [CONTRIBUTING.md](CONTRIBUTING.md). The development priorities are listed in the [roadmap](docs/ROADMAP.md). See the preliminary [architecture overview](docs/ARCHITECTURE.md), [source-derived hardware reference](docs/HARDWARE.md), and [test plan](docs/TESTING.md). Security reports are covered by [SECURITY.md](SECURITY.md). The project is distributed under the [MIT License](LICENSE), subject to the notices and licenses of third-party components.
 
 ## ◈ Known limitations
 
@@ -189,7 +190,7 @@ SD-карта предназначена для пользовательских
 
 Перед публикацией воспроизводимой сборки необходимо проверить экспорт проекта, точную конфигурацию платы, версии библиотек, параметры памяти и таблицу разделов. Инструкции по сборке появятся после подтверждения этих настроек.
 
-Правила работы с проектом описаны в [CONTRIBUTING.md](CONTRIBUTING.md). Приоритеты дальнейшей разработки собраны в [дорожной карте](docs/ROADMAP.md). Предварительное описание архитектуры — в [ARCHITECTURE.md](docs/ARCHITECTURE.md), аппаратные заметки — в [HARDWARE.md](docs/HARDWARE.md), план проверок — в [TESTING.md](docs/TESTING.md). Порядок сообщения об уязвимостях — в [SECURITY.md](SECURITY.md).
+Правила работы с проектом описаны в [CONTRIBUTING.md](CONTRIBUTING.md). Приоритеты дальнейшей разработки собраны в [дорожной карте](docs/ROADMAP.md). Предварительное описание архитектуры — в [ARCHITECTURE.md](docs/ARCHITECTURE.md), аппаратные заметки — в [HARDWARE.md](docs/HARDWARE.md), план проверок — в [TESTING.md](docs/TESTING.md). Порядок сообщения об уязвимостях — в [SECURITY.md](SECURITY.md). Проект распространяется по [лицензии MIT](LICENSE) с учётом лицензий и уведомлений сторонних компонентов.
 
 ## ◈ Ограничения и безопасность
 
