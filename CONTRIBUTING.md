@@ -48,3 +48,12 @@ Never describe code as verified unless the relevant test was actually performed.
 - **Not tested:** no relevant build or hardware test has been performed.
 
 Thanks for keeping PocketOS reliable, understandable and friendly to its users.
+
+
+## License
+
+Unless a file or component states otherwise, original PocketOS project contributions are provided under the [MIT License](LICENSE). By submitting a contribution, you agree that it may be distributed under that license. Do not remove existing third-party copyright or license notices. Before adding a library, asset, font or other external component, check its license and document any required notices. The repository's MIT license does not replace or override third-party licenses.
+
+## Лицензия
+
+Если для конкретного файла или компонента не указано иное, оригинальные материалы PocketOS распространяются по [лицензии MIT](LICENSE). Отправляя вклад, вы соглашаетесь с возможностью распространения этого вклада на этих условиях. Не удаляйте существующие уведомления об авторских правах и лицензиях сторонних компонентов. Перед добавлением библиотеки, ресурса, шрифта или другого внешнего компонента проверьте его лицензию и сохраните необходимые уведомления. Лицензия MIT репозитория не заменяет и не отменяет лицензии сторонних компонентов.
