@@ -1,0 +1,25 @@
+# Build output
+/build/
+/.pio/
+/.arduino/
+
+# Compiled firmware and debug artifacts
+*.elf
+*.hex
+*.map
+*.o
+*.a
+*.d
+
+# Local editor / operating-system files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Local-only credentials and configuration
+.env
+.env.*
+!.env.example
+secrets/
