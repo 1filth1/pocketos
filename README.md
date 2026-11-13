@@ -1,131 +1,212 @@
-# PocketOS v0.1
+<div align="center">
 
-**PocketOS** — экспериментальная встроенная операционная система для устройства на базе **Waveshare ESP32-S3 с E-Ink-дисплеем 800×480**. Проект объединяет интерфейс устройства, встроенные приложения, работу с файлами на SD-карте и системные функции в одной прошивке.
+# ◈ PocketOS
 
-> **Статус:** ранняя версия v0.1. Проект находится в активной разработке. Наличие функции в исходном коде не означает, что она уже прошла полный цикл испытаний на реальном устройстве.
+### A pocket-sized E-Ink computer powered by ESP32-S3
 
-## Что такое PocketOS
+**An experimental embedded OS for the Waveshare ESP32-S3 E-Ink platform.**
 
-PocketOS превращает ESP32-S3 в компактное автономное устройство с графическим интерфейсом и набором повседневных инструментов. Интерфейс рассчитан на E-Ink: информация выводится на экран 800×480, а навигация выполняется с помощью подключённой клавиатуры.
+[![Version](https://img.shields.io/badge/version-0.1-20252b?style=for-the-badge)](RELEASE_NOTES_v0.1.md)
+[![Platform](https://img.shields.io/badge/platform-ESP32--S3-20252b?style=for-the-badge&logo=espressif)](https://www.espressif.com/)
+[![Display](https://img.shields.io/badge/display-E--Ink%20800%C3%97480-20252b?style=for-the-badge)](#hardware-platform)
+[![Status](https://img.shields.io/badge/status-experimental-orange?style=for-the-badge)](#project-status)
 
-Система построена как единая прошивка: встроенные приложения работают внутри одного адресного пространства и запускаются через общий интерфейс. Это не полноценная многозадачная ОС с изоляцией процессов и не загрузчик произвольных исполняемых файлов с SD-карты.
+**[English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.md) · [Project status](docs/PROJECT_STATUS.md)**
 
-## Основные возможности
-
-- **Графический интерфейс:** главный экран, меню приложений, настройки и системные экраны.
-- **Файловый менеджер:** просмотр файлов и папок на SD-карте, работа с пользовательскими данными.
-- **Заметки и чтение:** создание и просмотр текстовых заметок, чтение книг и веб-страниц.
-- **Мультимедиа:** музыкальный плеер, диктофон, просмотр изображений и видео, аудио-инструменты.
-- **Организация времени:** календарь, таймер и часы с использованием RTC.
-- **Сетевые функции:** подключение к Wi-Fi, веб-просмотр и обмен файлами.
-- **Навигация:** GPS-функции при наличии и подключении соответствующего модуля.
-- **Развлечения:** встроенные игры и интерактивные приложения.
-- **Системная информация:** состояние батареи и зарядки, температура и влажность, часы, Wi-Fi и состояние SD-карты.
-- **Настройки интерфейса:** в том числе режим увеличенного текста.
-
-Набор приложений и доступность отдельных функций зависят от подключённой периферии и текущего состояния разработки.
-
-## Аппаратная платформа
-
-Основная целевая платформа проекта:
-
-- Waveshare ESP32-S3 E-Ink;
-- E-Ink-дисплей 800×480 на контроллере GDEM0397T81;
-- SD-карта через интерфейс SD_MMC;
-- клавиатурный модуль CardKB2 по I²C;
-- RTC по I²C;
-- датчик температуры и влажности SHTC3;
-- система управления питанием и мониторинга батареи AXP2101;
-- Wi-Fi, встроенный в ESP32-S3;
-- дополнительные модули, например GPS, при соответствующем подключении.
-
-Конкретная конфигурация платы, распиновка и список библиотек должны соответствовать используемой аппаратной ревизии и настройкам проекта в Schematic.io.
-
-## Принципы проекта
-
-1. **Автономность.** Основные функции устройства должны быть доступны без постоянного подключения к компьютеру или интернету.
-2. **Расширяемость.** Новые возможности добавляются как приложения и системные модули.
-3. **Работа с SD-картой.** Карта используется для пользовательских файлов, данных и ресурсов приложений.
-4. **Бережное использование ресурсов.** Учитываются ограничения памяти ESP32-S3 и особенности E-Ink-дисплея.
-5. **Безопасность данных.** Обновления и новые функции не должны без необходимости форматировать карту или повреждать пользовательские файлы.
-
-## Важные ограничения v0.1
-
-- Встроенные приложения являются частью прошивки и используют общее адресное пространство.
-- Установка произвольных исполняемых приложений непосредственно с SD-карты пока не реализована.
-- Работа некоторых приложений зависит от наличия SD-карты, Wi-Fi и внешних модулей.
-- Производительность, энергопотребление и стабильность должны проверяться на реальном устройстве.
-- Проект пока не следует считать стабильным релизом для повседневного использования.
-
-## Разработка
-
-Исходный код PocketOS развивается в Arduino/ESP32-экосистеме. Проект ведётся с использованием **Schematic.io** и ориентирован на указанную выше плату Waveshare ESP32-S3.
-
-Перед выпуском стабильной версии необходимо зафиксировать конфигурацию сборки, версии библиотек, параметры Flash/PSRAM и разметку разделов, а затем проверить прошивку на целевом устройстве.
+</div>
 
 ---
 
-# PocketOS v0.1 — English
+> [!IMPORTANT]
+> PocketOS is an early-stage project. Features and hardware integrations are still being validated. Do not treat this development build as a stable release or flash it without understanding the risks.
 
-**PocketOS** is an experimental embedded operating system for a device based on the **Waveshare ESP32-S3 with an 800×480 E-Ink display**. It brings together the device interface, built-in applications, SD-card file handling and system features in a single firmware image.
+## ✦ What is PocketOS?
 
-> **Status:** early v0.1 development. The project is actively evolving. A feature present in the source code should not be considered fully validated until it has been tested on the actual hardware.
+PocketOS turns an ESP32-S3 E-Ink device into a compact standalone computer. It combines a graphical interface, built-in tools, SD-card storage, connectivity and multimedia features in one firmware project.
 
-## What is PocketOS?
+The interface targets an **800 × 480 E-Ink display** and is navigated with a connected keyboard.
 
-PocketOS turns the ESP32-S3 into a compact standalone device with a graphical interface and a collection of everyday tools. The interface is designed for an 800×480 E-Ink screen, with navigation provided by a connected keyboard.
+## ◈ At a glance
 
-The system is implemented as a single firmware image. Built-in applications run within the same address space and are launched through a shared interface. PocketOS is not yet a fully multitasking operating system with process isolation, nor does it load arbitrary executable applications from the SD card.
+| Area | What is included |
+|---|---|
+| **System UI** | Home screen, application launcher, settings and system screens |
+| **Files & notes** | SD-card file manager, text notes and document reading |
+| **Productivity** | Calendar, timer, RTC clock and quick settings |
+| **Media** | Audio player/tools, voice recorder, image and video viewers |
+| **Connectivity** | Wi-Fi, web reader and file exchange |
+| **Navigation** | GPS features when a compatible module is connected |
+| **Entertainment** | Built-in games and interactive applications |
+| **Device status** | Battery, charging, temperature, humidity, Wi-Fi and SD-card status |
 
-## Key features
+Availability depends on the connected hardware and the current state of development. A feature in the source tree is not automatically a verified hardware feature.
 
-- **Graphical interface:** home screen, application launcher, settings and system screens.
-- **File manager:** browse files and folders on the SD card and manage user data.
-- **Notes and reading:** create and view text notes, read books and web pages.
-- **Multimedia:** music player, voice recorder, image and video viewers, and audio tools.
-- **Time utilities:** calendar, timer and RTC-based clock.
-- **Networking:** Wi-Fi connectivity, web browsing and file exchange.
-- **Navigation:** GPS-related features when a compatible module is connected.
-- **Entertainment:** built-in games and interactive applications.
-- **System information:** battery and charging status, temperature and humidity, clock, Wi-Fi and SD-card status.
-- **Interface settings:** including an enlarged-text mode.
+## ▣ Hardware platform
 
-The available applications and individual features depend on connected peripherals and the current development state.
+| Component | Target |
+|---|---|
+| Main controller | Waveshare ESP32-S3 |
+| Main display | 800 × 480 E-Ink |
+| E-Ink controller | GDEM0397T81 |
+| Storage | SD card via SD_MMC |
+| Input | CardKB2 keyboard over I²C |
+| Clock | I²C RTC |
+| Environment sensor | SHTC3 |
+| Power management | AXP2101 |
+| Wireless | ESP32-S3 Wi-Fi |
+| Optional expansion | GPS and other compatible peripherals |
 
-## Hardware platform
+> Pin mapping, board revision, Flash/PSRAM configuration, partition layout and library versions must be confirmed against the actual Schematic.io project and hardware revision before producing release firmware.
 
-The primary target platform is:
+## ◈ Project architecture
 
-- Waveshare ESP32-S3 E-Ink;
-- 800×480 E-Ink display with the GDEM0397T81 controller;
-- SD card connected through SD_MMC;
-- CardKB2 keyboard module over I²C;
-- I²C real-time clock (RTC);
-- SHTC3 temperature and humidity sensor;
-- AXP2101 power-management and battery-monitoring system;
-- ESP32-S3 built-in Wi-Fi;
-- optional peripherals, such as a GPS module, when properly connected.
+PocketOS v0.1 is implemented as a **single firmware image**. Built-in applications are compiled into the project and run in the same address space.
 
-The board configuration, pin mapping and library versions must match the actual hardware revision and the project settings in Schematic.io.
+This means PocketOS is not yet a conventional desktop/mobile OS with isolated processes, and it does not currently execute arbitrary application binaries installed from the SD card.
 
-## Project principles
+The SD card is intended for user files, application data, resources and saves.
 
-1. **Standalone operation.** Core device functions should be available without a permanent computer or internet connection.
-2. **Extensibility.** New capabilities are added as applications and system modules.
-3. **SD-card support.** The card stores user files, application data and resources.
-4. **Careful resource management.** The firmware accounts for ESP32-S3 memory constraints and E-Ink display characteristics.
-5. **Data integrity.** Updates and new features should not unnecessarily format the card or damage user files.
+## ▣ Repository map
 
-## Known limitations in v0.1
+| Path | Purpose |
+|---|---|
+| `main.cpp` | Main firmware entry point and system integration |
+| `*_app.h` | Built-in application modules |
+| `display2.h`, `epaper_ui.h` | Display and UI support |
+| `os_core.h` | Core application registry |
+| `RELEASE_NOTES_v0.1.md` | Version 0.1 release notes |
+| `docs/PROJECT_STATUS.md` | Current development and validation status |
 
-- Built-in applications are part of the firmware and share the same address space.
-- Installing and running arbitrary executable applications directly from the SD card is not implemented yet.
-- Some applications require an SD card, Wi-Fi or additional hardware modules.
-- Performance, power consumption and reliability still need validation on the actual device.
-- This development version should not yet be considered a stable release for everyday use.
+The source tree is evolving; this map highlights the main entry points rather than every header.
 
-## Development
+## ◈ Project status
 
-PocketOS is developed within the Arduino/ESP32 ecosystem. The project uses **Schematic.io** and targets the Waveshare ESP32-S3 board described above.
+**Current stage: experimental v0.1 / pre-release preparation.**
 
-Before a stable release, the build configuration, library versions, Flash/PSRAM settings and partition layout must be pinned down, followed by firmware validation on the target hardware.
+- [x] Bilingual project overview
+- [x] Initial v0.1 release notes
+- [ ] Reproducible build configuration
+- [ ] Dependency and toolchain versions pinned
+- [ ] Flash, PSRAM and partition settings verified
+- [ ] Automated build workflow
+- [ ] Firmware artifacts and flashing instructions
+- [ ] Full validation on the target device
+
+See **[Project status & validation checklist](docs/PROJECT_STATUS.md)** for details.
+
+## ▣ Development
+
+The project is currently developed in **Schematic.io** for the Waveshare ESP32-S3 E-Ink target.
+
+Before a reproducible build can be published, the project export must be checked and the exact toolchain, board definition, libraries, memory configuration and partition table must be established. Build instructions will be added after those settings are verified—not guessed.
+
+For contribution workflow and coding expectations, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## ◈ Known limitations
+
+- Built-in applications share one address space.
+- Arbitrary executable applications cannot currently be installed and launched from the SD card.
+- Some features depend on external modules, Wi-Fi or SD-card availability.
+- Memory use, refresh behavior, power consumption and long-term stability require testing on real hardware.
+- No stable firmware binary or universal flashing configuration is promised by this development branch.
+
+## ▣ Safety & data
+
+- Back up the SD card before testing experimental firmware.
+- Do not assume an update preserves every user file until that behavior has been tested.
+- Use firmware and flashing parameters only when they match the exact board revision.
+- Report reproducible failures with logs, steps and hardware details.
+
+---
+
+# PocketOS v0.1 — Русский
+
+### Карманный E-Ink-компьютер на базе ESP32-S3
+
+**PocketOS** — экспериментальная встроенная операционная система для устройства на базе Waveshare ESP32-S3 с E-Ink-дисплеем 800 × 480. Проект объединяет графический интерфейс, встроенные приложения, хранение пользовательских данных на SD-карте, сетевые и мультимедийные функции.
+
+> [!IMPORTANT]
+> PocketOS находится на ранней стадии разработки. Возможности и работа периферии ещё проверяются. Это не стабильная прошивка для повседневного использования. Перед экспериментами сделайте резервную копию SD-карты.
+
+## ✦ Что умеет PocketOS
+
+| Направление | Возможности |
+|---|---|
+| **Интерфейс** | Главный экран, меню приложений, настройки и системные экраны |
+| **Файлы и заметки** | Файловый менеджер SD-карты, текстовые заметки и чтение документов |
+| **Органайзер** | Календарь, таймер, часы RTC и быстрые настройки |
+| **Мультимедиа** | Аудиоплеер и инструменты, диктофон, просмотр изображений и видео |
+| **Связь** | Wi-Fi, веб-просмотр и обмен файлами |
+| **Навигация** | GPS-функции при подключении совместимого модуля |
+| **Развлечения** | Встроенные игры и интерактивные приложения |
+| **Состояние устройства** | Батарея, зарядка, температура, влажность, Wi-Fi и SD-карта |
+
+Наличие модуля в исходниках ещё не означает, что функция полностью проверена на реальном устройстве.
+
+## ▣ Аппаратная платформа
+
+| Компонент | Целевая конфигурация |
+|---|---|
+| Контроллер | Waveshare ESP32-S3 |
+| Основной экран | E-Ink 800 × 480 |
+| Контроллер E-Ink | GDEM0397T81 |
+| Хранилище | SD-карта через SD_MMC |
+| Ввод | Клавиатура CardKB2 по I²C |
+| Часы | RTC по I²C |
+| Датчик среды | SHTC3 |
+| Управление питанием | AXP2101 |
+| Беспроводная связь | Wi-Fi ESP32-S3 |
+| Дополнительные модули | GPS и другая совместимая периферия |
+
+Распиновку, ревизию платы, параметры Flash/PSRAM, таблицу разделов и версии библиотек необходимо сверить с проектом Schematic.io и конкретным устройством.
+
+## ◈ Как устроена система
+
+PocketOS v0.1 собирается как **единая прошивка**. Встроенные приложения входят в проект и работают в общем адресном пространстве.
+
+Это пока не классическая многозадачная ОС с изоляцией процессов. Произвольные исполняемые приложения с SD-карты сейчас не запускаются.
+
+SD-карта предназначена для пользовательских файлов, данных приложений, ресурсов и сохранений.
+
+## ▣ Состояние проекта
+
+**Текущий этап: экспериментальная v0.1 / подготовка предварительного релиза.**
+
+- [x] Описание проекта на русском и английском
+- [x] Первые Release Notes v0.1
+- [ ] Воспроизводимая конфигурация сборки
+- [ ] Зафиксированные версии инструментов и библиотек
+- [ ] Проверенные параметры Flash, PSRAM и разделов
+- [ ] Автоматическая сборка
+- [ ] Бинарники и инструкция по прошивке
+- [ ] Полная проверка на целевом устройстве
+
+Подробности: **[статус проекта и чек-лист проверки](docs/PROJECT_STATUS.md)**.
+
+## ▣ Разработка
+
+Проект разрабатывается в **Schematic.io** под Waveshare ESP32-S3 E-Ink.
+
+Перед публикацией воспроизводимой сборки необходимо проверить экспорт проекта, точную конфигурацию платы, версии библиотек, параметры памяти и таблицу разделов. Инструкции по сборке появятся после подтверждения этих настроек.
+
+Правила работы с проектом описаны в [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## ◈ Ограничения и безопасность
+
+- Встроенные приложения используют общее адресное пространство.
+- Установка и запуск произвольных исполняемых приложений с SD-карты пока не реализованы.
+- Часть функций зависит от внешних модулей, Wi-Fi или наличия SD-карты.
+- Память, обновление E-Ink, энергопотребление и стабильность требуют испытаний на реальном устройстве.
+- В этой ветке пока не гарантируются стабильный бинарник и универсальные параметры прошивки.
+
+Перед тестированием сделайте резервную копию SD-карты. Используйте только те параметры прошивки, которые соответствуют вашей аппаратной ревизии.
+
+---
+
+<div align="center">
+
+**PocketOS · Built for the E-Ink form factor**
+
+*Small device. Big possibilities.*
+
+</div>
