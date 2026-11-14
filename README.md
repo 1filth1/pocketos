@@ -12,7 +12,7 @@
 [![Status](https://img.shields.io/badge/status-experimental-orange?style=for-the-badge)](#project-status)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-**[English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md) · [Release process](docs/RELEASE_PROCESS.md) · [Firmware archive audit](docs/FIRMWARE_ARCHIVE_AUDIT.md) · [License](LICENSE)**
+**[English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md) · [Release process](docs/RELEASE_PROCESS.md) · [Firmware archive audit](docs/FIRMWARE_ARCHIVE_AUDIT.md) · [Build guide](docs/BUILD.md) · [License](LICENSE)**
 
 </div>
 
@@ -92,10 +92,10 @@ The source tree is evolving; this map highlights the main entry points rather th
 
 - [x] Bilingual project overview
 - [x] Initial v0.1 release notes
-- [ ] Reproducible build configuration
-- [ ] Dependency and toolchain versions pinned
-- [ ] Flash, PSRAM and partition settings verified
-- [ ] Automated build workflow
+- [x] Reproducible build configuration documented
+- [x] Dependency and toolchain versions pinned for CI baseline
+- [x] Manufacturer 16 MB Flash / OPI PSRAM profile documented
+- [x] Automated firmware build workflow added (first run pending)
 - [ ] Firmware artifacts and flashing instructions
 - [ ] Full validation on the target device
 
