@@ -4,18 +4,31 @@ import hashlib, json, os, pathlib, shutil, sys, zipfile
 
 build = pathlib.Path(sys.argv[1])
 out = pathlib.Path(sys.argv[2])
+boot_app0 = pathlib.Path(sys.argv[3]) if len(sys.argv) > 3 else None
 out.mkdir(parents=True, exist_ok=True)
 
 def one(pattern):
     matches = sorted(build.glob(pattern))
     if len(matches) != 1:
-        raise SystemExit(f"Expected exactly one {pattern}, found: {[p.name for p in matches]}")
+        available = sorted(p.name for p in build.glob("*.bin"))
+        raise SystemExit(
+            f"Expected exactly one {pattern}, found: {[p.name for p in matches]}. "
+            f"Build directory binaries: {available}"
+        )
     return matches[0]
+
+if boot_app0 is None or not boot_app0.is_file():
+    raise SystemExit(
+        "boot_app0.bin must be supplied as the third argument from the installed "
+        "Arduino-ESP32 core (tools/partitions/boot_app0.bin)."
+    )
+if boot_app0.stat().st_size == 0:
+    raise SystemExit(f"boot_app0.bin is empty: {boot_app0}")
 
 files = [
     ("bootloader", one("*.bootloader.bin"), 0x0000, "Bootloader"),
     ("partitions", one("*.partitions.bin"), 0x8000, "Partition table"),
-    ("boot_app0", one("boot_app0.bin"), 0xE000, "OTA data initializer"),
+    ("boot_app0", boot_app0, 0xE000, "OTA data initializer"),
     ("application", one("pocketos.ino.bin"), 0x10000, "PocketOS application"),
 ]
 manifest_files = []
