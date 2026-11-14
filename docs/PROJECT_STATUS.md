@@ -21,7 +21,7 @@ This page separates source-code presence from verified device behavior. A module
 | Dependencies | Not yet pinned | Library names and versions |
 | Flash / PSRAM | Not yet verified | Board settings and memory report |
 | Partition layout | Not yet verified | Exact partition table and offsets |
-| Automated build | Pending | Successful clean CI build |
+| Firmware archive CI check | Configured; local static check passes | Successful GitHub Actions run |
 | Firmware artifacts | Pending | Reproducible binary outputs and hashes |
 | Flashing guide | Pending | Verified offsets and recovery procedure |
 | Hardware validation | Pending | Test report from target device |
@@ -29,6 +29,7 @@ This page separates source-code presence from verified device behavior. A module
 ## Validation checklist
 
 ### Build and toolchain
+- [x] Add a static validator for the checked-in firmware ZIP and a GitHub Actions workflow (workflow run still needs confirmation).
 - [ ] Export the complete project from Schematic.io.
 - [ ] Identify the exact ESP32-S3 board target and Arduino/ESP-IDF core version.
 - [ ] Record compiler and framework versions.
@@ -49,6 +50,7 @@ This page separates source-code presence from verified device behavior. A module
 
 ### Release package
 - [ ] Publish only binaries produced by a verified build.
+- [ ] Add a reproducible source compilation job; the current workflow checks archive metadata only.
 - [ ] Record SHA-256 checksums.
 - [ ] Document exact flashing offsets for the exact board configuration.
 - [ ] Include recovery and troubleshooting instructions.
