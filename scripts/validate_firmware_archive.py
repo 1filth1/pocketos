@@ -71,8 +71,14 @@ def main() -> None:
 
     offsets_text = files["FLASH-OFFSETS.txt"].decode("utf-8", "replace")
     for filename, expected in EXPECTED_OFFSETS.items():
-        matches = [line for line in offsets_text.splitlines()
-                   if filename in line and f"0x{expected:04X}".lower() in line.lower()]
+        matches = []
+        for line in offsets_text.splitlines():
+            if filename not in line:
+                continue
+            import re
+            addresses = re.findall(r"0x[0-9a-fA-F]+", line)
+            if any(int(address, 16) == expected for address in addresses):
+                matches.append(line)
         if not matches:
             fail(f"FLASH-OFFSETS.txt does not document {filename} at 0x{expected:x}")
 
