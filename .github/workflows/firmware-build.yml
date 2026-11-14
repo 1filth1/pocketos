@@ -40,7 +40,6 @@ jobs:
           arduino-cli lib install "Adafruit SSD1306@2.5.17"
           arduino-cli lib install "JPEGDEC@1.8.5"
           arduino-cli lib install "bb_spi_lcd@2.9.10"
-          arduino-cli lib install "QRCode@0.0.1"
           arduino-cli lib install "TinyGPSPlus@1.0.3"
 
       - name: Compile PocketOS
