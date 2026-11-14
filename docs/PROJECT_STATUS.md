@@ -93,3 +93,12 @@ When reporting a failure, include:
 - `ESP_I2S.h` and ESP-IDF driver headers also make the Arduino-ESP32 / ESP-IDF version choice significant. The current tree does not pin the framework or external library versions.
 - Details and safe next steps: [docs/BUILD.md](BUILD.md).
 - **Release gate remains blocked:** do not add guessed board/framework/library versions or publish a supposedly verified firmware build until the missing display driver and known-good toolchain are identified.
+
+
+## Build pipeline update (2026-11-14)
+
+- Added `pocketos.ino` as the Arduino sketch marker; the existing `setup()` and `loop()` remain in `main.cpp`.
+- Added `.github/workflows/firmware-build.yml` to install Arduino-ESP32 3.3.12, pinned libraries and compile for the documented Waveshare ESP32-S3 16 MB / OPI PSRAM profile. It uploads the build output as a workflow artifact.
+- Resolved the apparent GDEM header blocker: `gdem/GxEPD2_397_GDEM0397T81.h` is included in GxEPD2 1.6.9.
+- Updated [build instructions](BUILD.md), including the migration from the historical 4 MB partition map to the manufacturer's 16 MB profile.
+- **Not yet a release:** the new workflow must complete successfully, build artifacts must be inspected, and the firmware must be tested on the physical board. PMIC compatibility remains a hardware-review item.
