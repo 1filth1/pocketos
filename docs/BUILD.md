@@ -28,7 +28,7 @@ CI FQBN: `esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PartitionScheme=app3M_
 - JPEGDEC **1.8.5**
 - bb_spi_lcd **2.9.10** (JPEGDEC dependency)
 - QRCode **0.0.1**
-- TinyGPSPlus **1.1.0**
+- TinyGPSPlus **1.0.3**
 
 The GDEM0397T81 header is not missing from the project ecosystem: it is provided by GxEPD2 1.6.9. The previous audit's missing-driver blocker is resolved. The repository's vendored ES8311 driver remains sourced from Waveshare's ESP32-S3 ePaper 3.97 Arduino audio example.
 
@@ -60,7 +60,7 @@ arduino-cli lib install "Adafruit SSD1306@2.5.17"
 arduino-cli lib install "JPEGDEC@1.8.5"
 arduino-cli lib install "bb_spi_lcd@2.9.10"
 arduino-cli lib install "QRCode@0.0.1"
-arduino-cli lib install "TinyGPSPlus@1.1.0"
+arduino-cli lib install "TinyGPSPlus@1.0.3"
 FQBN="esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi"
 arduino-cli compile --fqbn "$FQBN" --warnings all .
 ```
@@ -85,7 +85,7 @@ An archive-integrity pass is not a firmware build. A successful CI compile is no
 
 ### Закреплённые библиотеки
 
-GxEPD2 1.6.9, Adafruit GFX 1.13.0, Adafruit BusIO 1.17.4, U8g2_for_Adafruit_GFX 1.8.0, Adafruit SSD1306 2.5.17, JPEGDEC 1.8.5, bb_spi_lcd 2.9.10, QRCode 0.0.1, TinyGPSPlus 1.1.0.
+GxEPD2 1.6.9, Adafruit GFX 1.13.0, Adafruit BusIO 1.17.4, U8g2_for_Adafruit_GFX 1.8.0, Adafruit SSD1306 2.5.17, JPEGDEC 1.8.5, bb_spi_lcd 2.9.10, QRCode 0.0.1, TinyGPSPlus 1.0.3.
 
 **Исправление аудита:** заголовок `gdem/GxEPD2_397_GDEM0397T81.h` предоставляется библиотекой GxEPD2 1.6.9. Он не потерян, прежняя блокирующая пометка снята. ES8311 остаётся локальным драйвером, происхождение которого — пример Waveshare для этой платы.
 
