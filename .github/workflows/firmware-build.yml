@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -88,3 +88,25 @@ jobs:
         if: github.event_name != 'pull_request'
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Publish PocketOS v0.1 release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/release/pocketos-1.0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view v0.1.0 >/dev/null 2>&1; then
+            echo "PocketOS v0.1.0 already exists; leaving the published release unchanged."
+          else
+            gh release create v0.1.0 \
+              "$RUNNER_TEMP/pocketos-release/PocketOS-firmware.zip" \
+              "$RUNNER_TEMP/pocketos-release/bootloader.bin" \
+              "$RUNNER_TEMP/pocketos-release/partitions.bin" \
+              "$RUNNER_TEMP/pocketos-release/boot_app0.bin" \
+              "$RUNNER_TEMP/pocketos-release/application.bin" \
+              "$RUNNER_TEMP/pocketos-release/manifest.json" \
+              "$RUNNER_TEMP/pocketos-release/SHA256SUMS" \
+              --target "$GITHUB_SHA" \
+              --title "PocketOS v0.1" \
+              --notes-file docs/RELEASE_NOTES_v0.1.md
+          fi
+
