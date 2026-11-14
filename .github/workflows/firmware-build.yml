@@ -9,6 +9,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 jobs:
   arduino-build:
@@ -47,13 +49,39 @@ jobs:
         run: |
           arduino-cli compile --fqbn "$FQBN" --warnings all --output-dir "$RUNNER_TEMP/pocketos-build" .
 
+      - name: Package firmware and generate checksums
+        env:
+          GITHUB_SHA: \${{ github.sha }}
+        run: |
+          python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release"
+          mkdir -p "$RUNNER_TEMP/pocketos-pages"
+          cp webflasher/index.html "$RUNNER_TEMP/pocketos-pages/index.html"
+          cp "$RUNNER_TEMP/pocketos-release/"* "$RUNNER_TEMP/pocketos-pages/"
+
       - name: Report firmware artifact sizes
         run: |
-          find "$RUNNER_TEMP/pocketos-build" -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
+          find "$RUNNER_TEMP/pocketos-release" -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
 
-      - name: Upload build artifacts
+      - name: Upload release bundle
         uses: actions/upload-artifact@v4
         with:
-          name: pocketos-arduino-esp32-3.3.12
-          path: ${{ runner.temp }}/pocketos-build/*
+          name: pocketos-firmware-and-webflasher
+          path: |
+            \${{ runner.temp }}/pocketos-release/*
+            \${{ runner.temp }}/pocketos-pages/index.html
           if-no-files-found: error
+
+      - name: Configure GitHub Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+
+      - name: Upload Web Flasher site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: \${{ runner.temp }}/pocketos-pages
+
+      - name: Deploy Web Flasher
+        if: github.event_name != 'pull_request'
+        id: deployment
+        uses: actions/deploy-pages@v4
