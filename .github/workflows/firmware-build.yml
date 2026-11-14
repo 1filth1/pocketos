@@ -51,7 +51,7 @@ jobs:
 
       - name: Package firmware and generate checksums
         env:
-          GITHUB_SHA: \${{ github.sha }}
+          GITHUB_SHA: ${{ github.sha }}
         run: |
           python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release"
           mkdir -p "$RUNNER_TEMP/pocketos-pages"
@@ -67,8 +67,8 @@ jobs:
         with:
           name: pocketos-firmware-and-webflasher
           path: |
-            \${{ runner.temp }}/pocketos-release/*
-            \${{ runner.temp }}/pocketos-pages/index.html
+            ${{ runner.temp }}/pocketos-release/*
+            ${{ runner.temp }}/pocketos-pages/index.html
           if-no-files-found: error
 
       - name: Configure GitHub Pages
@@ -79,7 +79,7 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: \${{ runner.temp }}/pocketos-pages
+          path: ${{ runner.temp }}/pocketos-pages
 
       - name: Deploy Web Flasher
         if: github.event_name != 'pull_request'
