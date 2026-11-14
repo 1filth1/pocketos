@@ -21,15 +21,18 @@ This page separates source-code presence from verified device behavior. A module
 | Dependencies | Not yet pinned | Library names and versions |
 | Flash / PSRAM | Not yet verified | Board settings and memory report |
 | Partition layout | Not yet verified | Exact partition table and offsets |
-| Firmware archive CI check | Configured; local static check passes | Successful GitHub Actions run |
+| Firmware archive CI check | **PASS** — GitHub Actions run #5 on commit `758a91f4e073a8a200df3edf9f4f2f78c1a6290e` | [Run #5](https://github.com/1filth1/pocketos/actions/runs/43568349097); archive metadata validator only |
 | Firmware artifacts | Pending | Reproducible binary outputs and hashes |
 | Flashing guide | Pending | Verified offsets and recovery procedure |
 | Hardware validation | Pending | Test report from target device |
 
 ## Validation checklist
 
+**Latest CI evidence (2026-11-14):** GitHub Actions run [#5](https://github.com/1filth1/pocketos/actions/runs/43568349097) completed with `success` for commit `758a91f4e073a8a200df3edf9f4f2f78c1a6290e`. It runs only `scripts/validate_firmware_archive.py`; it does **not** compile the firmware or test hardware.
+
+
 ### Build and toolchain
-- [x] Add a static validator for the checked-in firmware ZIP and a GitHub Actions workflow (workflow run still needs confirmation).
+- [x] Add a static validator for the checked-in firmware ZIP and a GitHub Actions workflow; run #5 completed successfully.
 - [ ] Export the complete project from Schematic.io.
 - [ ] Identify the exact ESP32-S3 board target and Arduino/ESP-IDF core version.
 - [ ] Record compiler and framework versions.
