@@ -1,6 +1,6 @@
 #pragma once
 #include <WebServer.h>
-#include <qrcode.h>
+#include "src/qrcode.h"
 WebServer exchangeServer(80);
 bool exchangeOn=false,exchangeCancel=false,exchangeConfigured=false;
 String exchangePassword,exchangeToken,exchangeTemp,exchangeTarget,exchangeResult;
