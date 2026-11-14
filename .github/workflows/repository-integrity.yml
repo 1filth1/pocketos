@@ -1,0 +1,25 @@
+name: Repository integrity
+
+on:
+  push:
+    branches: [release/pocketos-1.0]
+  pull_request:
+    branches: [release/pocketos-1.0]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  firmware-archive:
+    name: Check firmware archive metadata
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate checked-in firmware archive
+        run: python scripts/validate_firmware_archive.py firmware.zip
