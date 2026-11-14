@@ -12,7 +12,7 @@
 [![Status](https://img.shields.io/badge/status-experimental-orange?style=for-the-badge)](#project-status)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-**[English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md) · [Release process](docs/RELEASE_PROCESS.md) · [License](LICENSE)**
+**[English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md) · [Release process](docs/RELEASE_PROCESS.md) · [Firmware archive audit](docs/FIRMWARE_ARCHIVE_AUDIT.md) · [License](LICENSE)**
 
 </div>
 
@@ -81,6 +81,7 @@ The SD card is intended for user files, application data, resources and saves.
 | `docs/HARDWARE.md` | Source-derived hardware reference (not a verified wiring guide) |
 | `docs/TESTING.md` | Hardware and software test plan |
 | `docs/RELEASE_PROCESS.md` | Release and verification process |
+| `docs/FIRMWARE_ARCHIVE_AUDIT.md` | Static audit of the supplied firmware ZIP |
 | `LICENSE` | MIT License |
 
 The source tree is evolving; this map highlights the main entry points rather than every header.
