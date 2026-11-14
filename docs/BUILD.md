@@ -41,7 +41,7 @@ Arduino CLI expects an `.ino` sketch whose name matches the sketch folder. `pock
 
 The historical `firmware.zip` uses a partition table covering only the first 4 MiB, with a 3 MiB app partition plus SPIFFS and coredump. The manufacturer's current 16 MB profile uses `app3M_fat9M_16MB`. The app starts at `0x10000` in both layouts, but the remaining partition map differs.
 
-The current source uses SD_MMC and NVS Preferences; it does not directly mount SPIFFS or FATFS. The CI profile follows the current 16 MB Waveshare profile. A future browser flasher must bundle the partition table from this same build and warn that changing the table replaces the old layout; old SPIFFS data must not be promised to survive.
+The current source uses SD_MMC and NVS Preferences; it does not directly mount SPIFFS or FATFS. The CI profile follows the current 16 MB Waveshare profile. The repository Web Flasher bundles the partition table from this exact build, checks SHA-256 for every image, and warns that changing the table replaces the old layout; old SPIFFS data must not be promised to survive.
 
 ## Build locally
 
@@ -63,13 +63,13 @@ FQBN="esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PartitionScheme=app3M_fat9
 arduino-cli compile --fqbn "$FQBN" --warnings all .
 ```
 
-## Remaining verification gates
+## Release and hardware verification gates
 
-1. Run the clean pinned build in GitHub Actions and fix real compiler/linker errors.
-2. Inspect generated bootloader, partition table and app image; record sizes and SHA-256.
-3. Resolve the PMIC discrepancy for the exact board revision. Waveshare's schematic and board materials must be checked against the actual hardware before validating power-management code.
-4. Flash and test E-Ink, side OLED, CardKB/I2C, SD_MMC, audio, Wi-Fi and power behavior on the physical device.
-5. Only then publish v0.1 and the browser flasher.
+1. GitHub Actions performs the clean pinned compile and packages bootloader, partition table, boot_app0 and application from the same build.
+2. The packaging step records file sizes and SHA-256; the Web Flasher checks these hashes before writing.
+3. After the firmware build and GitHub Pages deployment succeed, CI publishes the v0.1.0 GitHub Release with the matching binaries and manifest.
+4. The PMIC discrepancy between board materials must be checked against the exact physical revision before claiming power-management support.
+5. On the physical device, verify E-Ink, side OLED, CardKB/I2C, SD_MMC, audio, Wi-Fi and power behavior. This hardware test is deliberately separate from CI compilation.
 
 An archive-integrity pass is not a firmware build. A successful CI compile is not a hardware test.
 
