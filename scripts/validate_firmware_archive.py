@@ -51,7 +51,7 @@ def parse_partitions(data: bytes):
         if magic != PARTITION_MAGIC:
             fail(f"partition table: unexpected magic 0x{magic:04x} at 0x{pos:x}")
         ptype, subtype, offset, size = struct.unpack_from("<BBII", data, pos + 2)
-        label = data[pos + 12:pos + 28].split(b"\\0", 1)[0].decode("ascii", "replace")
+        label = data[pos + 12:pos + 28].split(b"\0", 1)[0].decode("ascii", "replace")
         if size == 0 or offset + size > 0x1000000:
             fail(f"partition {label}: invalid range")
         rows.append((label, ptype, subtype, offset, size))
