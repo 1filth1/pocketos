@@ -76,7 +76,12 @@ The SD card is intended for user files, application data, resources and saves.
 | `display2.h`, `epaper_ui.h` | Display and UI support |
 | `os_core.h` | Core application registry |
 | `RELEASE_NOTES_v0.1.md` | Version 0.1 release notes |
-| `docs/PROJECT_STATUS.md` | Current development and validation status |\n| `docs/ARCHITECTURE.md` | Preliminary system architecture |\n| `docs/HARDWARE.md` | Source-derived hardware reference (not a verified wiring guide) |\n| `docs/TESTING.md` | Hardware and software test plan |\n| `docs/RELEASE_PROCESS.md` | Release and verification process |\n| `LICENSE` | MIT License |
+| `docs/PROJECT_STATUS.md` | Current development and validation status |
+| `docs/ARCHITECTURE.md` | Preliminary system architecture |
+| `docs/HARDWARE.md` | Source-derived hardware reference (not a verified wiring guide) |
+| `docs/TESTING.md` | Hardware and software test plan |
+| `docs/RELEASE_PROCESS.md` | Release and verification process |
+| `LICENSE` | MIT License |
 
 The source tree is evolving; this map highlights the main entry points rather than every header.
 
