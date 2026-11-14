@@ -85,3 +85,11 @@ When reporting a failure, include:
 - License: MIT for original project materials; third-party components remain subject to their own licenses.
 - Release procedure: [docs/RELEASE_PROCESS.md](RELEASE_PROCESS.md) describes the verification gates required before publishing a firmware release.
 - Engineering references: [architecture](ARCHITECTURE.md), [hardware notes](HARDWARE.md), and [test plan](TESTING.md).
+
+## Build investigation update (2026-11-14)
+
+- GitHub Actions run [#6](https://github.com/1filth1/pocketos/actions/runs/43568594098) completed successfully on commit `be424b232a0f15b839895c66830f2dbcd311b096`. Like run #5, this is only the firmware archive metadata check; it is not a source compilation.
+- A source dependency review found that `main.cpp` includes `gdem/GxEPD2_397_GDEM0397T81.h`, but that header is absent from the current repository tree and no pinned dependency manifest identifies its provider.
+- `ESP_I2S.h` and ESP-IDF driver headers also make the Arduino-ESP32 / ESP-IDF version choice significant. The current tree does not pin the framework or external library versions.
+- Details and safe next steps: [docs/BUILD.md](BUILD.md).
+- **Release gate remains blocked:** do not add guessed board/framework/library versions or publish a supposedly verified firmware build until the missing display driver and known-good toolchain are identified.
