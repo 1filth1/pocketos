@@ -52,11 +52,23 @@ jobs:
         run: |
           arduino-cli compile --fqbn "$FQBN" --warnings all --output-dir "$RUNNER_TEMP/pocketos-build" .
 
+      - name: Locate Arduino-ESP32 boot_app0
+        id: boot-app0
+        run: |
+          mapfile -t BOOT_APP0_FILES < <(find "$HOME/.arduino15/packages/esp32" -type f -name boot_app0.bin -print)
+          if [ "${#BOOT_APP0_FILES[@]}" -ne 1 ]; then
+            printf 'Expected one boot_app0.bin in installed Arduino-ESP32 package; found %s\n' "${#BOOT_APP0_FILES[@]}"
+            printf '%s\n' "${BOOT_APP0_FILES[@]}"
+            exit 1
+          fi
+          echo "path=${BOOT_APP0_FILES[0]}" >> "$GITHUB_OUTPUT"
+          echo "Using ${BOOT_APP0_FILES[0]}"
+
       - name: Package firmware and generate checksums
         env:
           GITHUB_SHA: ${{ github.sha }}
         run: |
-          python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release"
+          python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release" "${{ steps.boot-app0.outputs.path }}"
           mkdir -p "$RUNNER_TEMP/pocketos-pages"
           cp webflasher/index.html "$RUNNER_TEMP/pocketos-pages/index.html"
           cp "$RUNNER_TEMP/pocketos-release/"* "$RUNNER_TEMP/pocketos-pages/"
@@ -107,6 +119,7 @@ jobs:
               "$RUNNER_TEMP/pocketos-release/SHA256SUMS" \
               --target "$GITHUB_SHA" \
               --title "PocketOS v0.1" \
+              --prerelease \
               --notes-file docs/RELEASE_NOTES_v0.1.md
           fi
 
