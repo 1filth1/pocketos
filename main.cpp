@@ -907,7 +907,74 @@ void idleSleep(){
   epd.nextPage();
   timerTick();display2Tick();
 }
-void setup(){pinMode(0,INPUT_PULLUP);gpsInit();Serial.begin(115200);delay(100);randomSeed(esp_random());SD_MMC.setPins(SD_CLK,SD_CMD,SD_D0,SD_D1,SD_D2,SD_D3);cardOK=SD_MMC.begin("/sdcard",true)&&SD_MMC.cardType()!=CARD_NONE;prefs.begin("epaperpc",false);loadPowerDelays();time24=prefs.getBool("time24",true);largeText=prefs.getBool("epLarge",false);epd.partial=prefs.getBool("epPartial",true);epd.cleanEvery=prefs.getUShort("epClean",20);if(epd.cleanEvery!=5&&epd.cleanEvery!=10&&epd.cleanEvery!=20&&epd.cleanEvery!=50)epd.cleanEvery=20;Wire.begin(KB_SDA,KB_SCL);Wire.setClock(100000);Wire.setTimeOut(25);audioVolume=constrain((int)prefs.getUChar("volume",40),0,100);audioMuted=prefs.getBool("soundMuted",false);audioInit();initPowerKey();Wire.beginTransmission(RTC_ADDR);rtcOK=!Wire.endTransmission();Wire.beginTransmission(KB_ADDR);kbOK=!Wire.endTransmission();SPI.begin(EPD_SCLK,-1,EPD_MOSI,EPD_CS);pinMode(EPD_CS,OUTPUT);digitalWrite(EPD_CS,HIGH);pinMode(EPD_RST,OUTPUT);digitalWrite(EPD_RST,HIGH);pinMode(EPD_DC,OUTPUT);digitalWrite(EPD_DC,HIGH);epd.init(115200,true,2,false);epd.setRotation(0);if(cardOK&&!loadFolder("/"))cardOK=false;display2Init();noticeLoad();if(prefs.getBool("wifiEnabled",false))resumeSavedWifi();home();deviceActivity=millis();display2ActivityReset();display2Tick();}
+void setup(){
+  // Start USB CDC before touching peripherals so early boot failures are visible.
+  Serial.begin(115200);
+  delay(500);
+  Serial.println();
+  Serial.println("[PocketOS] setup: entered");
+
+  pinMode(0, INPUT_PULLUP);
+  Serial.println("[PocketOS] init GPS power control");
+  gpsInit();
+
+  Serial.println("[PocketOS] init SD_MMC");
+  SD_MMC.setPins(SD_CLK, SD_CMD, SD_D0, SD_D1, SD_D2, SD_D3);
+  cardOK = SD_MMC.begin("/sdcard", true) && SD_MMC.cardType() != CARD_NONE;
+  Serial.printf("[PocketOS] SD_MMC: %s\\n", cardOK ? "ready" : "unavailable");
+
+  Serial.println("[PocketOS] init preferences");
+  prefs.begin("epaperpc", false);
+  loadPowerDelays();
+  time24 = prefs.getBool("time24", true);
+  largeText = prefs.getBool("epLarge", false);
+  epd.partial = prefs.getBool("epPartial", true);
+  epd.cleanEvery = prefs.getUShort("epClean", 20);
+  if (epd.cleanEvery != 5 && epd.cleanEvery != 10 && epd.cleanEvery != 20 && epd.cleanEvery != 50) epd.cleanEvery = 20;
+
+  Serial.println("[PocketOS] init I2C");
+  Wire.begin(KB_SDA, KB_SCL);
+  Wire.setClock(100000);
+  Wire.setTimeOut(25);
+  audioVolume = constrain((int)prefs.getUChar("volume", 40), 0, 100);
+  audioMuted = prefs.getBool("soundMuted", false);
+
+  Serial.println("[PocketOS] init audio");
+  audioInit();
+  Serial.println("[PocketOS] init power key");
+  initPowerKey();
+  Wire.beginTransmission(RTC_ADDR);
+  rtcOK = !Wire.endTransmission();
+  Wire.beginTransmission(KB_ADDR);
+  kbOK = !Wire.endTransmission();
+
+  Serial.println("[PocketOS] init E-Ink SPI pins");
+  SPI.begin(EPD_SCLK, -1, EPD_MOSI, EPD_CS);
+  pinMode(EPD_CS, OUTPUT);
+  digitalWrite(EPD_CS, HIGH);
+  pinMode(EPD_RST, OUTPUT);
+  digitalWrite(EPD_RST, HIGH);
+  pinMode(EPD_DC, OUTPUT);
+  digitalWrite(EPD_DC, HIGH);
+
+  Serial.println("[PocketOS] init E-Ink panel");
+  epd.init(115200, true, 2, false);
+  epd.setRotation(0);
+  Serial.println("[PocketOS] E-Ink initialized");
+
+  if (cardOK && !loadFolder("/")) cardOK = false;
+  Serial.println("[PocketOS] init side display");
+  display2Init();
+  noticeLoad();
+  if (prefs.getBool("wifiEnabled", false)) resumeSavedWifi();
+
+  Serial.println("[PocketOS] draw home");
+  home();
+  deviceActivity = millis();
+  display2ActivityReset();
+  display2Tick();
+  Serial.println("[PocketOS] setup complete");
+}
 void wifiTick(){
   if(wifiWanted && !wifiSuspended && WiFi.status()!=WL_CONNECTED && millis()-wifiAttemptAt>=30000){
     if(WiFi.scanComplete()!=WIFI_SCAN_RUNNING)resumeSavedWifi();
