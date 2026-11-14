@@ -6,6 +6,7 @@ firmware on hardware. It only checks that the archive and its own metadata agree
 """
 from __future__ import annotations
 import hashlib
+import re
 import struct
 import sys
 import zipfile
@@ -75,7 +76,6 @@ def main() -> None:
         for line in offsets_text.splitlines():
             if filename not in line:
                 continue
-            import re
             addresses = re.findall(r"0x[0-9a-fA-F]+", line)
             if any(int(address, 16) == expected for address in addresses):
                 matches.append(line)
