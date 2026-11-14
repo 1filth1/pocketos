@@ -1,77 +1,98 @@
-# Reproducible build investigation
+# Reproducible build
 
-**Status:** blocked — the current repository snapshot does not yet contain enough information to define a safe, reproducible build.
+**CI build baseline:** Arduino-ESP32 3.3.12, ESP32-S3 Dev Module and pinned Arduino libraries. This is a source-supported build baseline, not a claim that the historical `firmware.zip` was produced with these exact versions.
 
-This document records findings from the checked-in source tree on branch `release/pocketos-1.0`. It deliberately does not guess board options, dependency versions or flash settings.
+## Target board profile
 
-## Source-derived framework requirements
+Waveshare documentation for ESP32-S3-ePaper-3.97 identifies ESP32-S3R8 / N16R8, 16 MB Flash, 8 MB PSRAM and 800 × 480 E-Ink. Its Arduino setup guide selects:
 
-- The firmware is an Arduino-style ESP32-S3 sketch with `main.cpp` as its entry point.
-- `audio_app.h` includes `ESP_I2S.h`. This is the Arduino-ESP32 I2S C++ API; the project must pin a framework release that actually provides this header and the API used by the source.
-- `es8311.cpp` uses ESP-IDF headers such as `driver/i2c.h`, `driver/gpio.h`, `esp_err.h` and `esp_check.h`, plus Arduino `Wire.h`. Compatibility must be checked against the selected Arduino-ESP32 / ESP-IDF combination.
-- Framework-provided headers also include `Arduino.h`, `SPI.h`, `Wire.h`, `SD_MMC.h`, `WiFi.h`, `HTTPClient.h`, `WiFiClientSecure.h`, `esp_bt.h`, `esp_timer.h`, `esp_sleep.h`, `esp_heap_caps.h` and `esp32-hal-psram.h`.
+- Board: `ESP32S3 Dev Module`
+- Flash: `16MB (128Mb)`; mode `QIO 80MHz`
+- PSRAM: `OPI PSRAM`
+- Partition: `16M Flash (3MB APP/9.9MB FATFS)`
+- CPU: `240MHz`
+- USB CDC On Boot: enabled
 
-## External library dependencies visible in includes
+References: [Waveshare board documentation](https://docs.waveshare.com/ESP32-S3-ePaper-3.97), [Arduino setup](https://docs.waveshare.com/ESP32-S3-ePaper-3.97/Development-Environment-Setup-Arduino).
 
-| Dependency | Evidence | Version status |
-|---|---|---|
-| GxEPD2 | `GxEPD2_BW.h`, `Fonts/*.h` | Not pinned |
-| U8g2 for Adafruit GFX | `U8g2_for_Adafruit_GFX.h` | Not pinned |
-| Adafruit GFX | Used through GxEPD2 / U8g2 display APIs | Transitive version not pinned |
+CI FQBN: `esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi`.
 
-The exact transitive dependency versions must be captured from a known-good Schematic.io/Arduino environment or an existing build manifest before CI can reproduce the build.
+## Framework and libraries pinned in CI
 
-## Confirmed source-tree blocker
+- Arduino-ESP32 core **3.3.12**
+- GxEPD2 **1.6.9** — includes `gdem/GxEPD2_397_GDEM0397T81.h`
+- Adafruit GFX Library **1.13.0**
+- Adafruit BusIO **1.17.4**
+- U8g2_for_Adafruit_GFX **1.8.0**
+- Adafruit SSD1306 **2.5.17**
+- JPEGDEC **1.8.5**
+- bb_spi_lcd **2.9.10** (JPEGDEC dependency)
+- QRCode **0.0.1**
+- TinyGPSPlus **1.1.0**
 
-`main.cpp` includes:
+The GDEM0397T81 header is not missing from the project ecosystem: it is provided by GxEPD2 1.6.9. The previous audit's missing-driver blocker is resolved. The repository's vendored ES8311 driver remains sourced from Waveshare's ESP32-S3 ePaper 3.97 Arduino audio example.
 
-```cpp
-#include <gdem/GxEPD2_397_GDEM0397T81.h>
+The project uses `ESP_I2S.h`, Arduino Wi-Fi/SD_MMC/Preferences and ESP-IDF headers; the pinned Arduino-ESP32 framework is therefore significant.
+
+## Arduino sketch entry
+
+Arduino CLI expects an `.ino` sketch whose name matches the sketch folder. `pocketos.ino` is a minimal sketch marker; the real `setup()` and `loop()` remain in `main.cpp`.
+
+## Flash layout migration
+
+The historical `firmware.zip` uses a partition table covering only the first 4 MiB, with a 3 MiB app partition plus SPIFFS and coredump. The manufacturer's current 16 MB profile uses `app3M_fat9M_16MB`. The app starts at `0x10000` in both layouts, but the remaining partition map differs.
+
+The current source uses SD_MMC and NVS Preferences; it does not directly mount SPIFFS or FATFS. The CI profile follows the current 16 MB Waveshare profile. A future browser flasher must bundle the partition table from this same build and warn that changing the table replaces the old layout; old SPIFFS data must not be promised to survive.
+
+## Build locally
+
+```sh
+arduino-cli config init
+arduino-cli config add board_manager.additional_urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+arduino-cli core update-index
+arduino-cli core install esp32:esp32@3.3.12
+arduino-cli lib update-index
+arduino-cli lib install "GxEPD2@1.6.9"
+arduino-cli lib install "Adafruit GFX Library@1.13.0"
+arduino-cli lib install "Adafruit BusIO@1.17.4"
+arduino-cli lib install "U8g2_for_Adafruit_GFX@1.8.0"
+arduino-cli lib install "Adafruit SSD1306@2.5.17"
+arduino-cli lib install "JPEGDEC@1.8.5"
+arduino-cli lib install "bb_spi_lcd@2.9.10"
+arduino-cli lib install "QRCode@0.0.1"
+arduino-cli lib install "TinyGPSPlus@1.1.0"
+FQBN="esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi"
+arduino-cli compile --fqbn "$FQBN" --warnings all .
 ```
 
-The current Git tree does **not** contain a `gdem/` directory or this header. No checked-in dependency manifest identifies the library/package that provides it. The display driver is therefore an unresolved dependency, not something CI can safely infer from the generic GxEPD2 library name.
+## Remaining verification gates
 
-The checked-in `es8311.cpp/.h` files are a vendored ES8311 driver. Their source comments identify the Waveshare ESP32-S3 ePaper 3.97 Arduino audio example as the origin and the source carries Espressif's Apache-2.0 SPDX notice. Keep this provenance and license notice when packaging the firmware.
+1. Run the clean pinned build in GitHub Actions and fix real compiler/linker errors.
+2. Inspect generated bootloader, partition table and app image; record sizes and SHA-256.
+3. Resolve the PMIC discrepancy for the exact board revision. Waveshare's schematic and board materials must be checked against the actual hardware before validating power-management code.
+4. Flash and test E-Ink, side OLED, CardKB/I2C, SD_MMC, audio, Wi-Fi and power behavior on the physical device.
+5. Only then publish v0.1 and the browser flasher.
 
-## Firmware archive is not a reproducible build
-
-`firmware.zip` contains prebuilt binaries and offsets. It does not identify the source commit, compiler, Arduino-ESP32 version, board FQBN, external library versions or exact build command. It is useful as a historical flashing artifact for analysis, but cannot prove that the current source compiles or that a new binary is equivalent.
-
-The archive's image header and partition table are validated separately by `scripts/validate_firmware_archive.py`. That validation does not identify the physical flash chip or prove compatibility with the user's exact board revision.
-
-## Safe next steps
-
-1. Resolve the missing GDEM0397T81 driver header and identify its upstream/package provenance and license.
-2. Capture exact versions of GxEPD2, U8g2_for_Adafruit_GFX and their transitive dependencies from the known-good project environment.
-3. Confirm the exact Waveshare board/module revision and Arduino-ESP32 target/core version.
-4. Add a pinned build manifest only after steps 1–3 are evidenced.
-5. Run a clean build in CI, retain the compiler log and upload generated artifacts.
-6. Test the resulting image on the target hardware before describing it as a verified release.
+An archive-integrity pass is not a firmware build. A successful CI compile is not a hardware test.
 
 ## Русский
 
-**Статус:** сборка пока заблокирована — в текущем снимке репозитория не хватает сведений и как минимум одной зависимости для безопасной воспроизводимой компиляции.
+### Базовая конфигурация CI
 
-### Что установлено по исходникам
+Зафиксированы Arduino-ESP32 **3.3.12**, плата `ESP32S3 Dev Module`, Flash 16 MB, OPI PSRAM 8 MB, E-Ink 800 × 480, разметка `16M Flash (3MB APP/9.9MB FATFS)`, CPU 240 MHz, QIO 80 MHz и USB CDC On Boot.
 
-- Проект использует Arduino-подход для ESP32-S3, точка входа — `main.cpp`.
-- `audio_app.h` подключает `ESP_I2S.h`; это API Arduino-ESP32 I2S. Нужно закрепить версию framework, в которой реально присутствует используемый API.
-- `es8311.cpp` использует ESP-IDF заголовки `driver/i2c.h`, `driver/gpio.h`, `esp_err.h`, `esp_check.h` и Arduino `Wire.h`. Совместимость зависит от выбранной версии Arduino-ESP32 / ESP-IDF.
-- Из внешних библиотек в исходниках явно видны GxEPD2 и U8g2_for_Adafruit_GFX; их версии и транзитивные зависимости не закреплены.
+Официальные материалы: [страница платы Waveshare](https://docs.waveshare.com/ESP32-S3-ePaper-3.97), [настройка Arduino IDE](https://docs.waveshare.com/ESP32-S3-ePaper-3.97/Development-Environment-Setup-Arduino).
 
-### Подтверждённая блокирующая проблема
+### Закреплённые библиотеки
 
-В `main.cpp` есть подключение `gdem/GxEPD2_397_GDEM0397T81.h`, но в текущем Git tree нет каталога `gdem/` и самого заголовка. Манифеста, указывающего пакет, который предоставляет этот драйвер, тоже нет. Подменять его случайной версией GxEPD2 небезопасно.
+GxEPD2 1.6.9, Adafruit GFX 1.13.0, Adafruit BusIO 1.17.4, U8g2_for_Adafruit_GFX 1.8.0, Adafruit SSD1306 2.5.17, JPEGDEC 1.8.5, bb_spi_lcd 2.9.10, QRCode 0.0.1, TinyGPSPlus 1.1.0.
 
-### Почему нельзя просто собрать старый ZIP
+**Исправление аудита:** заголовок `gdem/GxEPD2_397_GDEM0397T81.h` предоставляется библиотекой GxEPD2 1.6.9. Он не потерян, прежняя блокирующая пометка снята. ES8311 остаётся локальным драйвером, происхождение которого — пример Waveshare для этой платы.
 
-В `firmware.zip` лежат готовые бинарники и адреса записи, но нет связи с конкретным коммитом исходников, версии компилятора, Arduino-ESP32, FQBN платы, списка библиотек и команды сборки. Архив пригоден для анализа, но не доказывает воспроизводимость текущих исходников.
+### Разметка Flash
 
-### Следующие безопасные шаги
+Старая `firmware.zip` использует таблицу разделов на первые 4 MB. Профиль производителя для 16 MB использует `app3M_fat9M_16MB`. Начало приложения совпадает (`0x10000`), остальная разметка отличается. Будущий Web Flasher обязан использовать таблицу от той же сборки и предупредить о замене старой разметки. Сохранность старых данных SPIFFS не гарантируется.
 
-1. Найти точное происхождение и лицензию драйвера GDEM0397T81.
-2. Зафиксировать версии библиотек из заведомо рабочего окружения Schematic.io / Arduino.
-3. Подтвердить точную ревизию платы Waveshare и версию Arduino-ESP32.
-4. Только после этого добавить манифест сборки и CI-компиляцию.
-5. Выполнить чистую сборку и сохранить лог/артефакты.
-6. Проверить полученную прошивку на устройстве до объявления релиза проверенным.
+### Что осталось
+
+Сначала дождаться CI-компиляции и исправить реальные ошибки, затем проверить бинарники и SHA-256, после этого прошить устройство и проверить дисплеи, клавиатуру/I2C, SD, аудио, Wi-Fi и питание. Только после этого можно выпускать v0.1 и Web Flasher. CI-сборка не заменяет проверку на физической плате.
