@@ -49,7 +49,7 @@ String rtcTime(){
   clockReadAt=millis();
   uint8_t yy,mo,dd,hh,mm,ss;
   if(!rtcRead(yy,mo,dd,hh,mm,ss)){cachedClock="--:--";return cachedClock;}
-  char out[9];
+  char out[12];
   if(time24) snprintf(out,sizeof(out),"%02u:%02u",hh,mm);
   else { uint8_t shownHour=hh%12; if(!shownHour) shownHour=12; snprintf(out,sizeof(out),"%02u:%02u %s",shownHour,mm,hh>=12?"PM":"AM"); }
   cachedClock=String(out);
@@ -252,7 +252,7 @@ void terminalRun(){
   if(u=="DIR"){if(!cardOK)appResult="TF CARD NOT MOUNTED";else{File d=SD_MMC.open(folder.c_str());int n=0;while(d&&n<7){File f=d.openNextFile();if(!f)break;appResult+=(f.isDirectory()?"<DIR> ":"      ")+leaf(String(f.name()))+"\\n";f.close();n++;}if(d)d.close();if(!appResult.length())appResult="EMPTY";}}
   else if(u=="CD .."){if(cardOK){folder=parent(folder);appResult="NOW "+folder;}}
   else if(u.startsWith("CD ")){String p=c.substring(3);if(!p.startsWith("/"))p=folder+(folder=="/"?"":"/")+p;File d=cardOK?SD_MMC.open(p.c_str()):File();if(d&&d.isDirectory()){folder=p;appResult="NOW "+folder;d.close();}else{if(d)d.close();appResult="FOLDER NOT FOUND";}}
-  else if(u.startsWith("TYPE ")){String p=c.substring(5);if(!p.startsWith("/"))p=folder+(folder=="/"?"":"/")+p;File f=cardOK?SD_MMC.open(p.c_str()):File();if(f&&!f.isDirectory()){appResult=clip(f.readStringUntil('\\n'),78);f.close();}else{if(f)f.close();appResult="FILE NOT FOUND";}}
+  else if(u.startsWith("TYPE ")){String p=c.substring(5);if(!p.startsWith("/"))p=folder+(folder=="/"?"":"/")+p;File f=cardOK?SD_MMC.open(p.c_str()):File();if(f&&!f.isDirectory()){appResult=clip(f.readStringUntil('\n'),78);f.close();}else{if(f)f.close();appResult="FILE NOT FOUND";}}
   else if(u.startsWith("DEL ")){String p=c.substring(4);if(!p.startsWith("/"))p=folder+(folder=="/"?"":"/")+p;File f=cardOK?SD_MMC.open(p.c_str()):File();if(f&&f.isDirectory())appResult="REFUSES TO DELETE FOLDERS";else if(f&&SD_MMC.remove(p.c_str()))appResult="FILE DELETED";else appResult="FILE NOT FOUND";if(f)f.close();}
   else if(u=="HELP")appResult="DIR  CD name  CD ..  TYPE file  DEL file";
   else appResult="UNKNOWN COMMAND - TYPE HELP";
@@ -260,9 +260,9 @@ void terminalRun(){
 }
 String display2Status();
 void infoView(){view=INFO;beginDraw();do{
-  if(infoName=="NOTES"||infoName=="EDITOR"){header(infoName,"saved on TF card","TYPE: WRITE   ENTER: NEW LINE   S: SAVE   ESC: HOME");String note=prefs.getString("notes","");text("SAVED NOTE:",35,112,true);int pos=0;for(int row=0;row<5&&pos<(int)note.length();row++){int e=note.indexOf('\\n',pos);if(e<0)e=note.length();text(clip(note.substring(pos,e),82),35,145+row*30);pos=e+1;}text("EDIT: "+clip(typed,74),35,330,true);text(status,35,405);}
+  if(infoName=="NOTES"||infoName=="EDITOR"){header(infoName,"saved on TF card","TYPE: WRITE   ENTER: NEW LINE   S: SAVE   ESC: HOME");String note=prefs.getString("notes","");text("SAVED NOTE:",35,112,true);int pos=0;for(int row=0;row<5&&pos<(int)note.length();row++){int e=note.indexOf('\n',pos);if(e<0)e=note.length();text(clip(note.substring(pos,e),82),35,145+row*30);pos=e+1;}text("EDIT: "+clip(typed,74),35,330,true);text(status,35,405);}
   else if(infoName=="CALC"){header("CALCULATOR","integer arithmetic","TYPE e.g. 12*7   ENTER: CALCULATE   ESC: HOME");text("EXPRESSION: "+(typed.length()?typed:"--"),40,140,true);text("RESULT: "+(appResult.length()?appResult:"--"),40,205,true);text("SUPPORTED: +  -  *  /",40,275);}
-  else if(infoName=="TERMINAL"){header("TERMINAL",String("TF ")+(cardOK?folder:"NOT MOUNTED"),"TYPE COMMAND  ENTER: RUN  ESC: CANCEL");text("> "+typed,35,125,true);int pos=0;for(int row=0;row<7&&pos<(int)appResult.length();row++){int e=appResult.indexOf('\\n',pos);if(e<0)e=appResult.length();text(clip(appResult.substring(pos,e),82),35,170+row*32);pos=e+1;}text("HELP: DIR, CD, TYPE, DEL",35,424);}
+  else if(infoName=="TERMINAL"){header("TERMINAL",String("TF ")+(cardOK?folder:"NOT MOUNTED"),"TYPE COMMAND  ENTER: RUN  ESC: CANCEL");text("> "+typed,35,125,true);int pos=0;for(int row=0;row<7&&pos<(int)appResult.length();row++){int e=appResult.indexOf('\n',pos);if(e<0)e=appResult.length();text(clip(appResult.substring(pos,e),82),35,170+row*32);pos=e+1;}text("HELP: DIR, CD, TYPE, DEL",35,424);}
   else if(infoName=="MONITOR"){header("MONITOR","live board status","ESC/BACKSPACE: HOME");text("UPTIME: "+String(millis()/1000)+" s",40,125,true);text("FREE HEAP: "+String(ESP.getFreeHeap())+" bytes",40,165);text(String("WIFI: ")+(wifiState()+String(WiFi.status()==WL_CONNECTED?" "+WiFi.SSID():"")),40,205);text(String("TF CARD: ")+(cardOK?"MOUNTED":"NOT MOUNTED"),40,245);text(String("KEYBOARD: ")+(kbOK?"READY":"NOT FOUND"),40,285);text(String("RTC: ")+(rtcOK?rtcTime():"NOT FOUND"),40,325);text("MIC LEVEL: NOT TESTED (NO CONFIRMED AUDIO PINOUT)",40,375);}
   else {header("STATUS","honest hardware state","ESC/BACKSPACE: HOME");text(String("DISPLAY: READY    TF: ")+(cardOK?"MOUNTED":"NOT MOUNTED"),40,130,true);text(String("CLOCK: ")+(rtcOK?rtcTime():"RTC NOT FOUND"),40,175);text(String("WIFI: ")+(wifiState()+String(WiFi.status()==WL_CONNECTED?" "+WiFi.SSID():"")),40,220);text(String("KEYBOARD: ")+(kbOK?"READY":"NOT FOUND"),40,265);text("CODEC: "+String(codecReady?"INITIALIZED":"NOT FOUND / INIT FAILED"),40,305);text("SPEAKER: "+clip(audioResult,49),40,340);text("MIC: "+clip(micResult,53),40,375);text("DISPLAY 2: "+display2Status(),40,410);}
 }while(epd.nextPage());}
@@ -698,7 +698,7 @@ bool paperKey(uint8_t k){
 #include "file_exchange.h"
 void legacyRoute(uint8_t k){if(view==FILE_EXCHANGE){if(k==27||k==8||k=='x'||k=='X'){exchangeStop();loadFolder(folder);status="FILE ACCESS OFF";system();}return;}if(paperKey(k))return;if(timerKey(k))return;if(calendarKey(k))return;if(view==HOME){if(k=='d'||k=='D'){calDateFromHome=true;calSetCurrent=true;calInput="";calMessage="ENTER YYYYMMDD, THEN ENTER TO SAVE TO RTC";calendarInput(true);return;}int old=chosen;if(k=='t'||k=='T'){timerDraw();return;}if(k=='w'||k=='W'||k==0xB5)chosen=(chosen+5)%6;else if(k=='s'||k=='S'||k==0xB6)chosen=(chosen+1)%6;else if(k==10||k==13){if(chosen==0){if(cardOK)manager();else{status="TF CARD NOT MOUNTED";home();}}else if(chosen==1)system();else if(chosen==2){url="";webEdit();}else if(chosen==3)games();else if(chosen==4){openCalendar();}else{infoName="STATUS";infoView();}}else if(k=='r'||k=='R')home();else return;if(old!=chosen)home();return;}if(view==INFO){
   if(k==8||k==27){if(infoName=="TERMINAL")manager();else home();return;}
-  if(infoName=="NOTES"||infoName=="EDITOR"){if(k=='s'||k=='S'||k==0x13){prefs.putString("notes",typed);status="NOTE SAVED";typed="";}else if(k==10||k==13){if(typed.length()<700)typed+='\\n';}else appendText(k,typed);infoView();return;}
+  if(infoName=="NOTES"||infoName=="EDITOR"){if(k=='s'||k=='S'||k==0x13){prefs.putString("notes",typed);status="NOTE SAVED";typed="";}else if(k==10||k==13){if(typed.length()<700)typed+='\n';}else appendText(k,typed);infoView();return;}
   if(infoName=="CALC"){if(k==10||k==13){bool ok=false;int value=evalSimple(typed,ok);appResult=ok?String(value):"USE TWO INTEGERS, E.G. 12*7";typed="";}else appendText(k,typed);infoView();return;}
   if(infoName=="TERMINAL"){if(k==10||k==13)terminalRun();else appendText(k,typed);infoView();return;}
   infoView();return;
