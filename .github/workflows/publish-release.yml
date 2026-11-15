@@ -69,7 +69,7 @@ jobs:
           for heading in "## Added" "## Fixed" "## Changed" "## Known issues" "## Build & package" "## Upgrade"; do
             grep -Fq "$heading" "$NOTES_FILE" || { echo "Missing section: $heading" >&2; exit 1; }
           done
-          grep -Eiq '^#.*(Русский|Russian)' "$NOTES_FILE" || { echo "Release notes need a Russian section." >&2; exit 1; }
+          grep -Eq '^#.*[А-Яа-яЁё]' "$NOTES_FILE" || { echo "Release notes need a Russian-language section." >&2; exit 1; }
 
       - name: Set up Arduino CLI
         uses: arduino/setup-arduino-cli@v2
