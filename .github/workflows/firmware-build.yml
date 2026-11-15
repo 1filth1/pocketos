@@ -49,9 +49,9 @@ jobs:
           arduino-cli lib install "bb_spi_lcd@2.9.10"
           arduino-cli lib install "TinyGPSPlus@1.0.3"
 
-      - name: Compile PocketOS
+      - name: Compile PocketOS for Waveshare N16R8
         env:
-          FQBN: esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashMode=dio,FlashSize=16M,PartitionScheme=huge_app,PSRAM=opi
+          FQBN: esp32:esp32:esp32s3:CDCOnBoot=cdc,CPUFreq=240,FlashMode=dio,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi
         run: |
           arduino-cli compile --fqbn "$FQBN" --warnings all --output-dir "$RUNNER_TEMP/pocketos-build" .
 
@@ -67,10 +67,10 @@ jobs:
           echo "path=${BOOT_APP0_FILES[0]}" >> "$GITHUB_OUTPUT"
           echo "Using ${BOOT_APP0_FILES[0]}"
 
-      - name: Package firmware and generate checksums
+      - name: Package and validate firmware bundle
         env:
           GITHUB_SHA: ${{ github.sha }}
-          RELEASE_VERSION: PocketOS-v0.1.1-rc.1
+          RELEASE_VERSION: PocketOS-v0.1.1-rc.2
         run: |
           python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release" "${{ steps.boot-app0.outputs.path }}"
           mkdir -p "$RUNNER_TEMP/pocketos-pages"
@@ -105,25 +105,25 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Publish PocketOS v0.1 release
+      - name: Publish PocketOS v0.1.1-rc.2
         if: github.event_name == 'push' && github.ref == 'refs/heads/release/pocketos-1.0'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: v0.1.1-rc.2
         run: |
-          if gh release view v0.1.1-rc.1 >/dev/null 2>&1; then
-            echo "PocketOS v0.1.1-rc.1 already exists; leaving the candidate release unchanged."
-          else
-            gh release create v0.1.1-rc.1 \
-              "$RUNNER_TEMP/pocketos-release/PocketOS-firmware.zip" \
-              "$RUNNER_TEMP/pocketos-release/bootloader.bin" \
-              "$RUNNER_TEMP/pocketos-release/partitions.bin" \
-              "$RUNNER_TEMP/pocketos-release/boot_app0.bin" \
-              "$RUNNER_TEMP/pocketos-release/application.bin" \
-              "$RUNNER_TEMP/pocketos-release/manifest.json" \
-              "$RUNNER_TEMP/pocketos-release/SHA256SUMS" \
-              --target "$GITHUB_SHA" \
-              --title "PocketOS v0.1.1-rc.1 (DIO reference profile)" \
-              --prerelease \
-              --notes "Candidate rebuilt against the user-tested firmware.zip reference: DIO, 80 MHz, 16 MB flash header and matching legacy partition table. Physical validation of this candidate is still required."
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Refusing to reuse an existing $RELEASE_TAG release; publish a new version instead." >&2
+            exit 1
           fi
-
+          gh release create "$RELEASE_TAG" \
+            "$RUNNER_TEMP/pocketos-release/PocketOS-firmware.zip" \
+            "$RUNNER_TEMP/pocketos-release/bootloader.bin" \
+            "$RUNNER_TEMP/pocketos-release/partitions.bin" \
+            "$RUNNER_TEMP/pocketos-release/boot_app0.bin" \
+            "$RUNNER_TEMP/pocketos-release/application.bin" \
+            "$RUNNER_TEMP/pocketos-release/manifest.json" \
+            "$RUNNER_TEMP/pocketos-release/SHA256SUMS" \
+            --target "$GITHUB_SHA" \
+            --title "PocketOS v0.1.1-rc.2 — Waveshare N16R8 / DIO" \
+            --prerelease \
+            --notes-file RELEASE_NOTES_v0.1.1-rc.2.md

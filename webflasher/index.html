@@ -1,31 +1,199 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#17191d"><title>PocketOS Web Flasher</title>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17191d">
+<title>PocketOS Web Flasher</title>
 <style>
 :root{color-scheme:dark;--bg:#111317;--panel:#1b1e24;--line:#343943;--text:#f0f1f3;--muted:#a6abb4;--orange:#ff8a32;--warn:#ffc078}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% 0,#392316 0,transparent 42%),var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
 main{max-width:820px;margin:0 auto;padding:32px 20px 60px}.brand{color:var(--orange);font-weight:800;letter-spacing:.18em;font-size:12px}.hero{margin:10px 0 26px}h1{font-size:clamp(30px,6vw,48px);line-height:1.05;margin:8px 0}p{color:var(--muted)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;margin:16px 0}.steps{display:grid;gap:14px}.step{display:flex;gap:14px}.num{flex:0 0 30px;height:30px;border-radius:9px;background:#382719;color:var(--orange);display:grid;place-items:center;font-weight:800}.step b{display:block}.btn{background:var(--orange);color:#17191d;border:0;border-radius:10px;padding:13px 18px;font-weight:800;font-size:15px;cursor:pointer}.btn:disabled{opacity:.4;cursor:not-allowed}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.status{padding:12px 14px;border-radius:10px;background:#111317;border:1px solid var(--line);color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}.status.error{color:#ff9b91;border-color:#783c35}.status.ok{color:#a7e3b2;border-color:#386246}.bar{height:8px;background:#30343c;border-radius:9px;overflow:hidden;margin-top:14px}.bar i{display:block;height:100%;width:0;background:var(--orange);transition:width .2s}.small{font-size:12px}.warning{border-left:3px solid var(--orange);padding-left:14px;color:var(--warn)}a{color:var(--orange)}code{color:#ffd0a8}footer{margin-top:24px;color:var(--muted);font-size:12px}
-</style></head><body><main>
-<div class="brand">POCKETOS / ESP32-S3</div><header class="hero"><h1>Web Flasher</h1><p>Установка PocketOS прямо из браузера. Нужен Chromium-браузер с поддержкой Web Serial и USB-кабель с передачей данных.</p></header>
-<section class="panel"><h2>Комплект прошивки</h2><div id="build">Загружаю описание последней сборки…</div><p class="small">Прошивка и таблица разделов должны происходить из одного CI-комплекта. Никакие старые бинарники не используются.</p></section>
-<section class="panel"><h2>Установка</h2><div class="steps">
-<div class="step"><span class="num">1</span><div><b>Подготовь устройство</b><span class="small">Подключи собранную Waveshare ESP32-S3 ePaper к компьютеру USB-кабелем. Закрой Arduino IDE и Serial Monitor.</span></div></div>
-<div class="step"><span class="num">2</span><div><b>Подключи порт</b><span class="small">Нажми «Подключить ESP32» и выбери последовательный порт платы.</span></div></div>
-<div class="step"><span class="num">3</span><div><b>Запиши PocketOS</b><span class="small">Загрузчик запишет bootloader, partition table, boot_app0 и приложение по адресам из манифеста.</span></div></div></div>
-<div class="warning small" style="margin:18px 0">Внимание: запись таблицы разделов меняет разметку Flash. Старые данные SPIFFS и содержимое Flash могут быть потеряны. Не отключай USB во время прошивки.</div>
-<div class="row"><button class="btn" id="connect">Подключить ESP32</button><button class="btn" id="flash" disabled>Прошить PocketOS</button></div>
-<div class="bar"><i id="progress"></i></div><p id="status" class="status" role="status" aria-live="polite">Проверяю поддержку Web Serial…</p></section>
-<section class="panel"><h3>Требования и восстановление</h3><p class="small">Работает в Chrome / Edge на компьютере через HTTPS или localhost. Firefox и Safari не поддерживают Web Serial. Если устройство не определяется, удерживай BOOT при подключении USB, затем отпусти после появления порта. Не прошивай устройство при нестабильном питании.</p><p class="small">После установки перезагрузка запускает первичную диагностику. Аппаратные функции (E-Ink, OLED, SD_MMC, аудио, питание) необходимо проверить на самой плате.</p></section>
-<footer>PocketOS · Web Flasher · Автоматически публикуется из проверенной сборки GitHub Actions.</footer>
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">POCKETOS / ESP32-S3</div>
+  <header class="hero">
+    <h1>Web Flasher</h1>
+    <p>Установка PocketOS прямо из браузера. Нужен Chrome или Edge на компьютере, Web Serial и USB-кабель с передачей данных.</p>
+  </header>
+  <section class="panel">
+    <h2>Проверенный комплект</h2>
+    <pre id="build">Загружаю manifest.json и SHA256SUMS…</pre>
+    <p class="small">Флешер разрешит подключение только после проверки целевой платы, разметки, адресов, размеров и SHA-256 комплекта.</p>
+  </section>
+  <section class="panel">
+    <h2>Установка</h2>
+    <div class="steps">
+      <div class="step"><span class="num">1</span><div><b>Подготовь устройство</b><span class="small">Подключи Waveshare ESP32-S3-ePaper-3.97 (N16R8) к компьютеру USB-кабелем с передачей данных. Закрой Arduino IDE и Serial Monitor.</span></div></div>
+      <div class="step"><span class="num">2</span><div><b>Подключи порт</b><span class="small">Нажми «Подключить ESP32» и выбери последовательный порт платы.</span></div></div>
+      <div class="step"><span class="num">3</span><div><b>Запиши PocketOS</b><span class="small">Перед записью флешер повторно проверит размер и SHA-256 каждого бинарника, затем запишет файлы по адресам из манифеста.</span></div></div>
+    </div>
+    <div class="warning small" style="margin:18px 0">
+      Перед прошивкой сделай резервную копию SD-карты и всех важных данных во внутренней Flash. Новая разметка app3M_fat9M_16MB заменяет прежнюю карту разделов; старые данные SPIFFS могут стать недоступны. Не отключай USB и питание до сообщения о завершении прошивки.
+    </div>
+    <p class="small">Полное стирание Flash не запускается (eraseAll=false); eFuse не изменяются. Записываются только четыре образа, перечисленные в проверенном манифесте.</p>
+    <div class="row">
+      <button class="btn" id="connect" disabled>Подключить ESP32</button>
+      <button class="btn" id="flash" disabled>Прошить PocketOS</button>
+    </div>
+    <div class="bar"><i id="progress"></i></div>
+    <p id="status" class="status" role="status" aria-live="polite">Проверяю поддержку Web Serial…</p>
+  </section>
+  <section class="panel">
+    <h3>Требования и восстановление</h3>
+    <p class="small">Работает в Chrome / Edge на компьютере через HTTPS. Firefox и Safari не поддерживают Web Serial. Если устройство не определяется, удерживай BOOT при подключении USB, затем отпусти после появления порта. Не прошивай устройство при нестабильном питании.</p>
+    <p class="small">После установки проверь холодный запуск, E-Ink, боковой OLED, клавиатуру/I²C, SD_MMC, аудио, Wi-Fi и питание. Успешная запись бинарников сама по себе не подтверждает работу периферии.</p>
+  </section>
+  <footer>PocketOS · Web Flasher · Публикуется из того же CI-комплекта, что и GitHub Release.</footer>
 </main>
 <script type="module">
 import { ESPLoader, Transport } from 'https://unpkg.com/esptool-js@0.6.1/bundle.js';
-const $=id=>document.getElementById(id);let manifest=null,port=null,transport=null,loader=null,connected=false;
-function status(s,kind=''){ $('status').textContent=s;$('status').className='status '+kind; }
-function supported(){return !!(navigator.serial&&window.isSecureContext)}
-async function loadManifest(){try{const r=await fetch('./manifest.json',{cache:'no-store'});if(!r.ok)throw new Error('manifest.json пока не опубликован');manifest=await r.json();$('build').innerHTML='<b>'+manifest.version+'</b><br><span class="small">Commit: <code>'+manifest.commit.slice(0,12)+'</code> · Arduino-ESP32 '+manifest.core+' · '+manifest.flash+' Flash ('+manifest.flash_mode.toUpperCase()+' / '+manifest.flash_freq+') / '+manifest.psram+' PSRAM</span><ul>'+manifest.flash_files.map(f=>'<li class="small">'+f.label+' — 0x'+f.address.toString(16)+' · '+f.size.toLocaleString()+' bytes</li>').join('')+'</ul>'; }catch(e){$('build').textContent=e.message;}}
-if(!supported())status('Web Serial недоступен. Открой страницу в Chrome или Edge на компьютере по HTTPS.','error');else status('Браузер поддерживает Web Serial. Загружаю комплект…');
+const $ = id => document.getElementById(id);
+let manifest = null, port = null, transport = null, loader = null;
+let connected = false, manifestReady = false;
+function status(message, kind = '') {
+  $('status').textContent = message;
+  $('status').className = 'status ' + kind;
+}
+function supported() {
+  return !!(navigator.serial && window.isSecureContext);
+}
+async function sha256(bytes) {
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest)).map(x => x.toString(16).padStart(2, '0')).join('');
+}
+async function loadManifest() {
+  try {
+    const [manifestResponse, sumsResponse] = await Promise.all([
+      fetch('./manifest.json', { cache: 'no-store' }),
+      fetch('./SHA256SUMS', { cache: 'no-store' })
+    ]);
+    if (!manifestResponse.ok || !sumsResponse.ok) throw new Error('manifest.json или SHA256SUMS ещё не опубликован');
+    const manifestBytes = new Uint8Array(await manifestResponse.arrayBuffer());
+    manifest = JSON.parse(new TextDecoder().decode(manifestBytes));
+    const sumsText = await sumsResponse.text();
+    const sums = new Map();
+    for (const line of sumsText.split(/\r?\n/).filter(Boolean)) {
+      const match = line.match(/^([0-9a-f]{64})  ([A-Za-z0-9._-]+)$/);
+      if (!match || sums.has(match[2])) throw new Error('Некорректный или повторяющийся элемент SHA256SUMS');
+      sums.set(match[2], match[1]);
+    }
+    const expectedFiles = [
+      ['bootloader', 'bootloader.bin', 0x0000],
+      ['partitions', 'partitions.bin', 0x8000],
+      ['boot_app0', 'boot_app0.bin', 0xE000],
+      ['application', 'application.bin', 0x10000]
+    ];
+    const expectedSumNames = new Set([...expectedFiles.map(x => x[1]), 'manifest.json']);
+    if (manifest.version !== 'PocketOS-v0.1.1-rc.2') throw new Error('Неожиданная версия комплекта');
+    if (!/^[0-9a-f]{40}$/.test(manifest.commit || '')) throw new Error('Некорректный commit SHA в манифесте');
+    if (manifest.board !== 'Waveshare ESP32-S3-ePaper-3.97 (N16R8)' ||
+        manifest.flash !== '16MB' || manifest.psram !== '8MB OPI' ||
+        manifest.core !== '3.3.12') throw new Error('Профиль платы или памяти не соответствует N16R8');
+    if (manifest.flash_mode !== 'dio' || manifest.flash_freq !== '80m') throw new Error('Отклонён режим Flash: требуется DIO / 80 MHz');
+    if (manifest.partition_scheme !== 'app3M_fat9M_16MB') throw new Error('Отклонена таблица разделов');
+    if (manifest.partition_layout !== 'app3M_fat9M_16MB (3 MiB APP / 9.875 MiB FATFS)') throw new Error('Описание таблицы разделов не совпадает');
+    if (manifest.baudrate !== 460800 || !Array.isArray(manifest.flash_files) || manifest.flash_files.length !== 4) {
+      throw new Error('Некорректная структура flash_files или baudrate');
+    }
+    if (sums.size !== expectedSumNames.size || [...sums.keys()].some(name => !expectedSumNames.has(name))) {
+      throw new Error('SHA256SUMS содержит неполный или неожиданный набор файлов');
+    }
+    if (sums.get('manifest.json') !== await sha256(manifestBytes)) {
+      throw new Error('SHA-256 manifest.json не совпадает с SHA256SUMS');
+    }
+    for (let i = 0; i < expectedFiles.length; i++) {
+      const [id, filename, address] = expectedFiles[i];
+      const file = manifest.flash_files[i];
+      if (file.id !== id || file.file !== filename || file.address !== address ||
+          !Number.isSafeInteger(file.size) || file.size <= 0 ||
+          !/^[0-9a-f]{64}$/.test(file.sha256 || '') ||
+          sums.get(filename) !== file.sha256) {
+        throw new Error('Адрес, размер или SHA-256 не совпадает для ' + filename);
+      }
+    }
+    manifestReady = true;
+    $('build').textContent =
+      manifest.version + '\nCommit: ' + manifest.commit +
+      '\nBoard: ' + manifest.board +
+      '\nFlash: ' + manifest.flash + ' / ' + manifest.flash_mode.toUpperCase() + ' ' + manifest.flash_freq +
+      '\nPSRAM: ' + manifest.psram +
+      '\nPartitions: ' + manifest.partition_scheme +
+      '\n' + manifest.partition_layout +
+      '\nImages: ' + manifest.flash_files.map(f => f.file + ' @ 0x' + f.address.toString(16) + ' (' + f.size + ' bytes)').join('\n') +
+      '\nManifest + images: SHA-256 verified';
+    $('connect').disabled = !supported();
+    status('Комплект проверен. Commit ' + manifest.commit.slice(0, 12) + '. Можно подключать плату.', 'ok');
+  } catch (error) {
+    manifestReady = false;
+    $('connect').disabled = true;
+    $('flash').disabled = true;
+    $('build').textContent = 'Комплект отклонён: ' + error.message;
+    status('Проверка комплекта не пройдена: ' + error.message, 'error');
+  }
+}
+if (!supported()) status('Web Serial недоступен. Открой страницу в Chrome или Edge на компьютере по HTTPS.', 'error');
+else status('Браузер поддерживает Web Serial. Проверяю комплект…');
 await loadManifest();
-$('connect').onclick=async()=>{try{if(!supported())throw new Error('Нужен Chrome или Edge с Web Serial и HTTPS.');port=await navigator.serial.requestPort();transport=new Transport(port,true);const terminal={clean(){},write(){},writeLine(s){console.log(s)}};loader=new ESPLoader({transport,baudrate:manifest?.baudrate||460800,terminal});const chip=await loader.main();connected=true;$('flash').disabled=!manifest;status('Подключено: '+chip+'\nПорт готов к записи.','ok');}catch(e){status('Не удалось подключиться: '+e.message,'error');}};
-$('flash').onclick=async()=>{if(!connected||!manifest)return;try{$('flash').disabled=true;$('connect').disabled=true;status('Загружаю бинарники…');const fileArray=[];for(const f of manifest.flash_files){const r=await fetch(f.file);if(!r.ok)throw new Error('Не удалось загрузить '+f.file);const b=new Uint8Array(await r.arrayBuffer());if(b.byteLength!==f.size)throw new Error('Размер файла не совпадает с манифестом: '+f.file);const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',b))).map(x=>x.toString(16).padStart(2,'0')).join('');if(hash!==f.sha256)throw new Error('SHA-256 не совпадает: '+f.file);fileArray.push({data:b,address:f.address});}
-status('Записываю Flash. Не отключай устройство…');await loader.writeFlash({fileArray,flashMode:manifest.flash_mode||'dio',flashFreq:manifest.flash_freq||'80m',flashSize:manifest.flash,eraseAll:false,compress:true,reportProgress:(file, written, total)=>{const pct=total?Math.min(100,Math.round(written/total*100)):0;$('progress').style.width=pct+'%';status('Запись '+file+'\n'+pct+'%');}});await loader.after('hard_reset');status('Прошивка записана, плата перезагружена. Проверь экран и периферию.','ok');$('progress').style.width='100%';}catch(e){status('Ошибка прошивки: '+e.message+'\nНе отключай устройство, если запись ещё продолжается.','error');}finally{$('connect').disabled=false;$('flash').disabled=!connected;}};
-</script></body></html>
+$('connect').onclick = async () => {
+  try {
+    if (!manifestReady) throw new Error('Комплект не прошёл проверку');
+    if (!supported()) throw new Error('Нужен Chrome или Edge с Web Serial и HTTPS');
+    port = await navigator.serial.requestPort();
+    transport = new Transport(port, true);
+    const terminal = { clean() {}, write() {}, writeLine(line) { console.log(line); } };
+    loader = new ESPLoader({ transport, baudrate: manifest.baudrate, terminal });
+    const chip = await loader.main();
+    connected = true;
+    $('flash').disabled = false;
+    status('Подключено: ' + chip + '\nПорт готов к записи.', 'ok');
+  } catch (error) {
+    status('Не удалось подключиться: ' + error.message, 'error');
+  }
+};
+$('flash').onclick = async () => {
+  if (!connected || !manifestReady) return;
+  try {
+    $('flash').disabled = true;
+    $('connect').disabled = true;
+    $('progress').style.width = '0%';
+    status('Загружаю и повторно проверяю бинарники…');
+    const fileArray = [];
+    for (const file of manifest.flash_files) {
+      const response = await fetch(file.file, { cache: 'no-store' });
+      if (!response.ok) throw new Error('Не удалось загрузить ' + file.file);
+      const bytes = new Uint8Array(await response.arrayBuffer());
+      if (bytes.byteLength !== file.size) throw new Error('Размер не совпадает с манифестом: ' + file.file);
+      if (await sha256(bytes) !== file.sha256) throw new Error('SHA-256 не совпадает: ' + file.file);
+      fileArray.push({ data: bytes, address: file.address });
+    }
+    status('Записываю Flash. Не отключай USB и питание…');
+    await loader.writeFlash({
+      fileArray,
+      flashMode: manifest.flash_mode,
+      flashFreq: manifest.flash_freq,
+      flashSize: manifest.flash,
+      eraseAll: false,
+      compress: true,
+      reportProgress(file, written, total) {
+        const percent = total ? Math.min(100, Math.round(written / total * 100)) : 0;
+        $('progress').style.width = percent + '%';
+        status('Запись ' + file + '\n' + percent + '%\nНе отключай USB и питание.');
+      }
+    });
+    await loader.after('hard_reset');
+    connected = false;
+    status('Запись завершена, плата перезагружена. Проверь экран и периферию.', 'ok');
+    $('progress').style.width = '100%';
+  } catch (error) {
+    status('Ошибка прошивки: ' + error.message + '\nНе отключай устройство, пока запись не остановлена.', 'error');
+  } finally {
+    $('connect').disabled = !manifestReady || !supported();
+    $('flash').disabled = !connected || !manifestReady;
+  }
+};
+</script>
+</body>
+</html>

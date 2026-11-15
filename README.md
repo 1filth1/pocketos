@@ -12,7 +12,7 @@
 [![Status](https://img.shields.io/badge/status-experimental-orange?style=for-the-badge)](#project-status)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-**[Web Flasher / Прошивка из браузера](https://1filth1.github.io/pocketos/) · [English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md) · [Release process](docs/RELEASE_PROCESS.md) · [Firmware archive audit](docs/FIRMWARE_ARCHIVE_AUDIT.md) · [Build guide](docs/BUILD.md) · [License](LICENSE)**
+**[Web Flasher / Прошивка из браузера](https://1filth1.github.io/pocketos/) · [English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.1-rc.2.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md) · [Release process](docs/RELEASE_PROCESS.md) · [Firmware archive audit](docs/FIRMWARE_ARCHIVE_AUDIT.md) · [Build guide](docs/BUILD.md) · [License](LICENSE)**
 
 </div>
 
@@ -25,7 +25,7 @@
 
 Use the **[PocketOS Web Flasher](https://1filth1.github.io/pocketos/)** to install the firmware directly from a supported desktop browser—no separate flashing utility is required. Connect the ESP32-S3 board with a USB data cable, open the flasher in the latest Chrome or Edge, select the device's serial port, and follow the on-screen steps.
 
-The flasher loads the firmware package and flash addresses from the published build manifest and verifies each downloaded file with SHA-256 before writing. Use only a package that matches your exact board configuration. **Important:** flashing writes the bootloader, partition table and application; changing the partition layout can erase data stored in Flash. Back up anything important first, keep the USB connection stable, and do not disconnect the board while writing. The browser flasher requires Web Serial and HTTPS; it is not supported by Firefox or Safari.
+The flasher loads the firmware package and flash addresses from the published build manifest and verifies each downloaded file with SHA-256 before writing. Use only a package that matches your exact board configuration. **Important:** flashing writes the bootloader, partition table and application; changing the partition layout can erase data stored in Flash. Back up the SD card and important internal Flash data first. The candidate uses the app3M_fat9M_16MB layout; data from the older SPIFFS layout may become inaccessible. Keep USB and power connected until flashing has fully completed. The browser flasher requires Web Serial and HTTPS; it is not supported by Firefox or Safari.
 
 ## ✦ What is PocketOS?
 
@@ -87,7 +87,7 @@ The SD card is intended for user files, application data, resources and saves.
 | `*_app.h` | Built-in application modules |
 | `display2.h`, `epaper_ui.h` | Display and UI support |
 | `os_core.h` | Core application registry |
-| `RELEASE_NOTES_v0.1.md` | Version 0.1 release notes |
+| `RELEASE_NOTES_v0.1.1-rc.2.md` | v0.1.1-rc.2 candidate release notes |
 | `docs/PROJECT_STATUS.md` | Current development and validation status |
 | `docs/ARCHITECTURE.md` | Preliminary system architecture |
 | `docs/HARDWARE.md` | Source-derived hardware reference (not a verified wiring guide) |
@@ -100,19 +100,19 @@ The source tree is evolving; this map highlights the main entry points rather th
 
 ## ◈ Project status
 
-**Current stage: experimental v0.1.1-rc.1 pre-release published; physical validation of this candidate is pending.**
+**Current stage: experimental v0.1.1-rc.2 candidate; physical validation on the target board is still pending.**
 
 - [x] Bilingual project overview and release notes
 - [x] Pinned Arduino-ESP32 toolchain and library dependencies
-- [x] Waveshare 16 MB Flash / 8 MB OPI PSRAM build profile documented
+- [x] Waveshare N16R8 profile: 16 MB Flash / 8 MB OPI PSRAM, DIO 80 MHz, app3M_fat9M_16MB layout
 - [x] GitHub Actions firmware compilation and packaging completed successfully
 - [x] Firmware binaries, manifest and SHA-256 checksums published in the prerelease
 - [x] Web Flasher deployed to GitHub Pages
 - [x] Connection diagram added to the hardware documentation
-- [ ] Flash the v0.1.1-rc.1 candidate onto the target device
+- [ ] Flash the v0.1.1-rc.2 candidate onto the target device
 - [ ] Complete physical validation of E-Ink, side OLED, keyboard/I²C, SD, audio, Wi-Fi and power
 
-**Latest candidate:** [v0.1.1-rc.1](https://github.com/1filth1/pocketos/releases/tag/v0.1.1-rc.1) · [Web Flasher](https://1filth1.github.io/pocketos/) · [Build workflow](https://github.com/1filth1/pocketos/actions/runs/43688353570)
+**Latest candidate:** [v0.1.1-rc.2](https://github.com/1filth1/pocketos/releases/tag/v0.1.1-rc.2) · [Web Flasher](https://1filth1.github.io/pocketos/) · [Build workflow](https://github.com/1filth1/pocketos/actions/workflows/firmware-build.yml)
 
 See **[Project status & validation checklist](docs/PROJECT_STATUS.md)** for details.
 
@@ -120,7 +120,7 @@ See **[Project status & validation checklist](docs/PROJECT_STATUS.md)** for deta
 
 The project is currently developed in **Schematic.io** for the Waveshare ESP32-S3 E-Ink target.
 
-Before a reproducible build can be published, the project export must be checked and the exact toolchain, board definition, libraries, memory configuration and partition table must be established. Build instructions will be added after those settings are verified—not guessed.
+The CI build uses a pinned Arduino-ESP32 toolchain and libraries with the Waveshare N16R8 memory profile. The DIO flash mode follows the user's known-good firmware archive and addresses the earlier ROM-stage QIO boot failure; the exact app3M_fat9M_16MB partition table is checked against the generated binary. Hardware behavior still requires testing on the physical board.
 
 For contribution workflow and coding expectations, see [CONTRIBUTING.md](CONTRIBUTING.md). The development priorities are listed in the [roadmap](docs/ROADMAP.md). See the preliminary [architecture overview](docs/ARCHITECTURE.md), [source-derived hardware reference](docs/HARDWARE.md), and [test plan](docs/TESTING.md). Security reports are covered by [SECURITY.md](SECURITY.md). The project is distributed under the [MIT License](LICENSE), subject to the notices and licenses of third-party components.
 
@@ -149,7 +149,7 @@ For contribution workflow and coding expectations, see [CONTRIBUTING.md](CONTRIB
 
 Открой **[PocketOS Web Flasher](https://1filth1.github.io/pocketos/)** — он позволяет установить прошивку прямо из браузера, без отдельной программы для прошивки. Подключи плату ESP32-S3 USB-кабелем с передачей данных, открой страницу в актуальном Chrome или Edge на компьютере, выбери последовательный порт устройства и следуй инструкциям на экране.
 
-Флешер получает файлы прошивки и адреса записи из манифеста опубликованной сборки и проверяет SHA-256 каждого файла перед записью. Используй только комплект, соответствующий твоей аппаратной конфигурации. **Важно:** при прошивке записываются загрузчик, таблица разделов и приложение; изменение разметки Flash может привести к потере данных во Flash-памяти. Заранее сохрани важные данные, не допускай обрыва USB-соединения и не отключай плату во время записи. Для работы нужны Web Serial и HTTPS; Firefox и Safari не поддерживаются.
+Флешер получает файлы прошивки и адреса записи из манифеста опубликованной сборки и проверяет SHA-256 каждого файла перед записью. Используй только комплект, соответствующий твоей аппаратной конфигурации. **Важно:** при прошивке записываются загрузчик, таблица разделов и приложение; изменение разметки Flash может привести к потере данных во Flash-памяти. Заранее сделай резервную копию SD-карты и важных данных во внутренней Flash. Кандидат использует разметку app3M_fat9M_16MB; данные старого раздела SPIFFS могут стать недоступны. Не отключай USB и питание до полного завершения прошивки. Для работы нужны Web Serial и HTTPS; Firefox и Safari не поддерживаются.
 
 **PocketOS** — экспериментальная встроенная операционная система для устройства на базе Waveshare ESP32-S3 с E-Ink-дисплеем 800 × 480. Проект объединяет графический интерфейс, встроенные приложения, хранение пользовательских данных на SD-карте, сетевые и мультимедийные функции.
 
@@ -198,19 +198,19 @@ SD-карта предназначена для пользовательских
 
 ## ▣ Состояние проекта
 
-**Текущий этап: экспериментальная v0.1 / подготовка предварительного релиза.**
+**Текущий этап: экспериментальный кандидат v0.1.1-rc.2; аппаратная проверка на целевой плате ещё не выполнена.**
 
 - [x] Описание проекта и Release Notes на двух языках
 - [x] Зафиксированы версии Arduino-ESP32 и библиотек
-- [x] Описан профиль Waveshare: Flash 16 MB / OPI PSRAM 8 MB
+- [x] Профиль Waveshare N16R8: Flash 16 MB / OPI PSRAM 8 MB, DIO 80 MHz, разметка app3M_fat9M_16MB
 - [x] GitHub Actions успешно собрал и упаковал прошивку
 - [x] Бинарники, manifest.json и SHA-256 опубликованы в prerelease
 - [x] Web Flasher опубликован на GitHub Pages
 - [x] Схема подключения добавлена в документацию
-- [ ] Прошить кандидат v0.1.1-rc.1 на целевое устройство
+- [ ] Прошить кандидат v0.1.1-rc.2 на целевое устройство
 - [ ] Завершить проверку E-Ink, бокового OLED, клавиатуры/I²C, SD, аудио, Wi-Fi и питания
 
-**Последний кандидат:** [v0.1.1-rc.1](https://github.com/1filth1/pocketos/releases/tag/v0.1.1-rc.1) · [Web Flasher](https://1filth1.github.io/pocketos/) · [Сборка GitHub Actions](https://github.com/1filth1/pocketos/actions/runs/43688353570)
+**Последний кандидат:** [v0.1.1-rc.2](https://github.com/1filth1/pocketos/releases/tag/v0.1.1-rc.2) · [Web Flasher](https://1filth1.github.io/pocketos/) · [Сборка GitHub Actions](https://github.com/1filth1/pocketos/actions/workflows/firmware-build.yml)
 
 Подробности: **[статус проекта и чек-лист проверки](docs/PROJECT_STATUS.md)**.
 
@@ -218,7 +218,7 @@ SD-карта предназначена для пользовательских
 
 Проект разрабатывается в **Schematic.io** под Waveshare ESP32-S3 E-Ink.
 
-Перед публикацией воспроизводимой сборки необходимо проверить экспорт проекта, точную конфигурацию платы, версии библиотек, параметры памяти и таблицу разделов. Инструкции по сборке появятся после подтверждения этих настроек.
+CI использует зафиксированные версии Arduino-ESP32 и библиотек, профиль памяти Waveshare N16R8 и проверяет бинарную таблицу app3M_fat9M_16MB. Режим Flash DIO выбран по пользовательскому рабочему архиву и устраняет выявленное несоответствие QIO на ранней стадии ROM-загрузки. Физическую работу периферии всё равно необходимо проверить на самой плате.
 
 Правила работы с проектом описаны в [CONTRIBUTING.md](CONTRIBUTING.md). Приоритеты дальнейшей разработки собраны в [дорожной карте](docs/ROADMAP.md). Предварительное описание архитектуры — в [ARCHITECTURE.md](docs/ARCHITECTURE.md), аппаратные заметки — в [HARDWARE.md](docs/HARDWARE.md), план проверок — в [TESTING.md](docs/TESTING.md). Порядок сообщения об уязвимостях — в [SECURITY.md](SECURITY.md). Проект распространяется по [лицензии MIT](LICENSE) с учётом лицензий и уведомлений сторонних компонентов.
 

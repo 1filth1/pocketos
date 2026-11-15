@@ -1,103 +1,51 @@
-# Test Plan
+# PocketOS Test Plan
 
-> No test in this document is marked as passed by default. Record actual results, hardware revision, firmware commit and test date before changing a status to PASS.
+No physical test is marked PASS without an actual result, board revision, date and evidence.
 
-## Result format
+## Software release integrity
 
-For each test, record:
+| ID | Check | Expected result |
+|---|---|---|
+| SW-01 | CI source identity | Build run head SHA equals branch HEAD and release tag commit |
+| SW-02 | Target profile | ESP32-S3 N16R8, 16 MB Flash, 8 MB OPI PSRAM |
+| SW-03 | Image headers | Bootloader and application: DIO / 16 MB / 80 MHz |
+| SW-04 | Partition table | Exact app3M_fat9M_16MB entries and offsets |
+| SW-05 | Manifest | Commit, board, memory, partition scheme, addresses, sizes and SHA-256 values are correct |
+| SW-06 | SHA256SUMS | Covers bootloader, partitions, boot_app0, application and manifest.json |
+| SW-07 | ZIP archive | Contains byte-identical files from the verified package |
+| SW-08 | Web Flasher | Deployed from the same CI package; checks manifest and binary hashes before write |
+| SW-09 | Flash safety | Uses eraseAll: false; no full-chip erase or eFuse write |
+
+## Physical hardware tests
+
+| ID | Test | Expected result | Status |
+|---|---|---|---|
+| HW-01 | Cold boot | ROM reaches second-stage bootloader; no repeating TG0WDT_SYS_RST | NOT RUN |
+| HW-02 | E-Ink | GDEM0397T81 initializes and refreshes the 800 × 480 panel | NOT RUN |
+| HW-03 | Side OLED | OLED initializes and status indicators update | NOT RUN |
+| HW-04 | Keyboard / I²C | CardKB2 input is reliable; RTC, SHTC3 and PMIC are handled | NOT RUN |
+| HW-05 | SD_MMC | Card mounts; file listing, read and write work | NOT RUN |
+| HW-06 | Audio | ES8311 output and recording functions behave correctly | NOT RUN |
+| HW-07 | Wi-Fi | Station connection, HTTP/TLS and file exchange behave correctly | NOT RUN |
+| HW-08 | Power | Battery/charging values are plausible; no unexpected shutdown | NOT RUN |
+| HW-09 | Stability | App switching, memory headroom and repeated restarts work | NOT RUN |
+
+## Controlled first-flash precautions
+
+1. Back up the SD card and important internal Flash data.
+2. Use only the v0.1.1-rc.2 package whose manifest commit matches the release tag and branch build.
+3. Use Chrome or Edge with Web Serial over HTTPS and a stable USB data cable.
+4. Do not disconnect USB or power while flashing.
+5. Do not use a full-chip erase or eFuse operation.
+6. After reboot, capture the serial log and verify the boot sequence before testing peripherals.
+
+The partition map changes from the old 4 MiB single-app/SPIFFS reference archive to app3M_fat9M_16MB; old SPIFFS contents may become inaccessible.
+
+## Test record format
 
 - Result: PASS / FAIL / BLOCKED / NOT RUN
-- Firmware commit:
-- Board model and revision:
-- Test date:
+- Firmware release and commit:
+- Board model/revision:
+- Date:
 - Steps and observed result:
-- Logs, photos or other evidence:
-
-## Hardware smoke tests
-
-| ID | Test | Expected result | Status |
-|---|---|---|---|
-| HW-01 | Cold boot | Device starts without reset loop | NOT RUN |
-| HW-02 | E-Ink initialization | Display initializes and renders the home screen | NOT RUN |
-| HW-03 | Input device | Key presses are detected reliably | NOT RUN |
-| HW-04 | RTC | Time can be read and displayed correctly | NOT RUN |
-| HW-05 | Environmental sensor | Valid readings are displayed or sensor absence is handled | NOT RUN |
-| HW-06 | SD card present | Card mounts and files can be listed | NOT RUN |
-| HW-07 | SD card absent | System reports unavailable storage without crashing | NOT RUN |
-| HW-08 | Battery/power telemetry | Readings are plausible and failures are handled | NOT RUN |
-
-## Core software tests
-
-| ID | Test | Expected result | Status |
-|---|---|---|---|
-| SW-01 | Launcher navigation | All registered entries can be selected | NOT RUN |
-| SW-02 | Application entry/exit | Navigation does not leave stale or corrupted UI state | NOT RUN |
-| SW-03 | Long text rendering | Text remains within display bounds | NOT RUN |
-| SW-04 | File operations | Errors and unavailable files are handled safely | NOT RUN |
-| SW-05 | Interrupted SD write | Filesystem remains recoverable; data-loss behavior documented | NOT RUN |
-| SW-06 | Wi-Fi unavailable | Network-dependent features fail gracefully | NOT RUN |
-| SW-07 | HTTP/TLS failure | Timeouts and connection errors are handled | NOT RUN |
-| SW-08 | Extended runtime | No progressive memory exhaustion or unexpected reset | NOT RUN |
-
-## Release gate
-
-A build should not be described as a verified release until:
-
-- [ ] Build instructions are reproducible from a clean environment.
-- [ ] Toolchain and dependency versions are recorded.
-- [ ] Flash and partition settings are confirmed.
-- [ ] A firmware artifact is produced and its checksum recorded.
-- [ ] Relevant hardware smoke tests are completed.
-- [ ] Known limitations and failed tests are documented.
-
-## Русский
-
-> Ни один тест не считается пройденным автоматически. Перед установкой статуса PASS укажите реальный результат, ревизию платы, коммит прошивки и дату проверки.
-
-### Формат записи результата
-
-Для каждого теста фиксируйте:
-
-- Результат: PASS / FAIL / BLOCKED / NOT RUN.
-- Коммит прошивки.
-- Модель и ревизию платы.
-- Дату проверки.
-- Шаги и фактический результат.
-- Логи, фотографии или другие подтверждения.
-
-### Аппаратные проверки
-
-| ID | Проверка | Ожидаемый результат | Статус |
-|---|---|---|---|
-| HW-01 | Холодный запуск | Устройство стартует без циклической перезагрузки | NOT RUN |
-| HW-02 | Инициализация E-Ink | Дисплей запускается и показывает главный экран | NOT RUN |
-| HW-03 | Устройство ввода | Нажатия клавиш стабильно распознаются | NOT RUN |
-| HW-04 | RTC | Время корректно считывается и отображается | NOT RUN |
-| HW-05 | Датчик окружающей среды | Корректные значения отображаются или отсутствие датчика обрабатывается | NOT RUN |
-| HW-06 | SD-карта установлена | Карта монтируется, файлы отображаются | NOT RUN |
-| HW-07 | SD-карта отсутствует | Система сообщает об отсутствии хранилища без аварии | NOT RUN |
-| HW-08 | Телеметрия питания | Значения правдоподобны, ошибки обрабатываются | NOT RUN |
-
-### Программные проверки
-
-| ID | Проверка | Ожидаемый результат | Статус |
-|---|---|---|---|
-| SW-01 | Навигация лаунчера | Все зарегистрированные пункты доступны | NOT RUN |
-| SW-02 | Вход и выход из приложений | Переходы не оставляют повреждённое состояние UI | NOT RUN |
-| SW-03 | Отображение длинного текста | Текст остаётся в пределах экрана | NOT RUN |
-| SW-04 | Операции с файлами | Ошибки и отсутствующие файлы обрабатываются безопасно | NOT RUN |
-| SW-05 | Прерывание записи на SD | Файловая система остаётся восстанавливаемой; поведение при потере данных описано | NOT RUN |
-| SW-06 | Недоступность Wi-Fi | Сетевые функции корректно сообщают об ошибке | NOT RUN |
-| SW-07 | Ошибки HTTP/TLS | Тайм-ауты и ошибки соединения обрабатываются | NOT RUN |
-| SW-08 | Длительная работа | Нет постепенного исчерпания памяти и неожиданных перезагрузок | NOT RUN |
-
-### Условия публикации релиза
-
-Сборку нельзя называть проверенным релизом, пока:
-
-- [ ] Инструкция сборки не воспроизводится в чистой среде.
-- [ ] Версии инструментов и библиотек не зафиксированы.
-- [ ] Параметры Flash и разделов не подтверждены.
-- [ ] Бинарный файл не собран и его контрольная сумма не записана.
-- [ ] Не завершены необходимые аппаратные smoke tests.
-- [ ] Не описаны известные ограничения и проваленные тесты.
+- Serial log, photo or other evidence:

@@ -1,71 +1,65 @@
-# Firmware ZIP audit
+# Firmware archive audit and boot-loop root-cause analysis
 
-> Scope: static inspection of the user-supplied `firmware.zip`. This report does not establish that the archive was built from this branch or that it boots on the target board.
+## Known-good reference archive
 
-## Package contents
+The user supplied a firmware.zip from Schematic.io and reported that it boots and launches applications on the physical **Waveshare ESP32-S3-ePaper-3.97 (N16R8)**. Static inspection of that archive found:
 
-| File | Size (bytes) | SHA-256 |
+| File | Size | SHA-256 |
 |---|---:|---|
-| `bootloader.bin` | 19,984 | `b68c1ed33c43a4290375213f24d608c125e31e22880d16d4a5dcba89e083716d` |
-| `partitions.bin` | 3,072 | `aaae2888c5a6a348004b5b436f47abb25ae32e72d9003902955a998eda723edd` |
-| `boot_app0.bin` | 8,192 | `f94c5d786a7a8fab06ac5d10e33bf37711a6697636dc037559ea19cc410a17f0` |
-| `firmware.bin` | 1,705,856 | `600fefc715ba7ba48c1c1cafbe32a64cb8103c74e8187107c2549d471d14829f` |
-| `FLASH-OFFSETS.txt` | 138 | `4d17011b1ea2d87a32d1b26fd9cf7e6b58c806ea9619c486865bba01c5d0e92d` |
+| bootloader.bin | 19,984 bytes | b68c1ed33c43a4290375213f24d608c125e31e22880d16d4a5dcba89e083716d |
+| partitions.bin | 3,072 bytes | aaae2888c5a6a348004b5b436f47abb25ae32e72d9003902955a998eda723edd |
+| boot_app0.bin | 8,192 bytes | f94c5d786a7a8fab06ac5d10e33bf37711a6697636dc037559ea19cc410a17f0 |
+| firmware.bin | 1,705,856 bytes | 600fefc715ba7ba48c1c1cafbe32a64cb8103c74e8187107c2549d471d14829f |
 
-## Declared flash map
+Its bootable image headers declare **DIO / 16 MB / 80 MHz**. Its partition table is an older single-app layout ending at 4 MiB: NVS at 0x9000, OTA data at 0xE000, a 3 MiB app at 0x10000, SPIFFS at 0x310000, and coredump at 0x3F0000. This archive is a user-confirmed recovery baseline, but it has no embedded source commit and is not the PocketOS CI release package.
 
-The supplied offset file specifies:
+## Observed failure
 
-| Address | File |
-|---:|---|
-| `0x0000` | `bootloader.bin` |
-| `0x8000` | `partitions.bin` |
-| `0xE000` | `boot_app0.bin` |
-| `0x10000` | `firmware.bin` |
+The user-reported ROM output from the earlier PocketOS candidate was:
 
-These offsets are recorded as archive metadata, not independently verified for the physical board.
+~~~text
+ESP-ROM:esp32s3-20210327
+rst:0x7 (TG0WDT_SYS_RST) boot:0x2a (SPI_FAST_FLASH_BOOT)
+mode:QIO, clock div:1
+load:0x3fce2820,len:0x10cc
+ets_loader.c 78
+~~~
 
-## Partition table decoded from `partitions.bin`
+The sequence repeated and the USB serial port detached/reappeared. The log stops during the ROM's attempt to load the second-stage bootloader from SPI Flash. It does not reach the ESP-IDF second-stage boot messages or Arduino setup().
 
-| Name | Offset | Size |
-|---|---:|---:|
-| nvs | `0x9000` | `0x5000` (20 KiB) |
-| otadata | `0xE000` | `0x2000` (8 KiB) |
-| app0 | `0x10000` | `0x300000` (3 MiB) |
-| spiffs | `0x310000` | `0xE0000` (896 KiB) |
-| coredump | `0x3F0000` | `0x10000` (64 KiB) |
+## Root cause assessment
 
-The partition layout ends at `0x400000` (4 MiB). The 1,705,856-byte application image fits inside the 3 MiB app0 slot.
+**The strongest evidence points to a QIO flash-read-mode mismatch on this N16R8 board.**
 
-## Image header finding requiring resolution
+- The failed image explicitly reports mode:QIO in the ROM boot line.
+- The user-confirmed working archive declares DIO / 80 MHz.
+- The initial ROM bootloader must read the second-stage bootloader before it can parse the partition table or run any application code.
+- Espressif documents that some devices cannot boot when QIO is selected, even if writing succeeds, and recommends trying DIO when flash reads fail: [SPI flash modes](https://docs.espressif.com/projects/esptool/en/latest/esp32s3/advanced-topics/spi-flash-modes.html) and [troubleshooting](https://docs.espressif.com/projects/esptool/en/latest/esp32s3/troubleshooting.html).
 
-Both `bootloader.bin` and `firmware.bin` start with ESP image magic `0xE9`. Their image headers contain:
+The earlier diagnostic commit moved Serial.begin() before peripheral initialization and added trace messages. That change cannot fix this failure because Arduino setup() is never reached. It was diagnostic instrumentation, not a root-cause fix.
 
-- SPI mode: `2` (DIO)
-- Flash-size field: `4` (16 MiB according to Espressif's ESP32 image format)
-- Flash-frequency field: `0xF` (80 MHz)
+The partition table is also not the cause of this specific ROM-stage failure: the ROM must load the second-stage bootloader before that bootloader reads the partition table. The old partition layout still matters for data compatibility, so it is handled as a separate release decision.
 
-This declared 16 MiB image-header setting differs from the 4 MiB address range described by the partition table. A 16 MiB physical flash could contain this 4 MiB partition layout, but a 4 MiB device would not match the image-header declaration. The actual chip capacity must be read from the target device or identified from its module marking before flashing.
+This is a high-confidence software/configuration diagnosis, not a physical proof. The new candidate must still be tested on the user's board. No eFuse changes are proposed or performed.
 
-## Provenance and limits
+## Current candidate profile
 
-The ZIP contains prebuilt binaries and offsets, not source files, a dependency manifest or a build log. No source commit identifier is embedded in the package metadata examined here. Therefore the archive cannot currently be proven to correspond to any particular Git commit in this repository.
+The candidate is built for:
 
-The reported PSRAM capacity and mode also cannot be established from this partition table alone. Do not infer PSRAM configuration from the 4 MiB Flash partition layout.
+- Waveshare ESP32-S3-ePaper-3.97 (N16R8)
+- 16 MB Flash
+- 8 MB OPI PSRAM
+- DIO / 80 MHz flash mode
+- Arduino-ESP32 3.3.12
+- app3M_fat9M_16MB partition scheme
 
-## Next verification steps
+The requested 16 MB partition map is intentionally different from the 4 MiB reference archive. It has two 3 MiB OTA app slots and a 9.875 MiB FATFS partition. Old SPIFFS data may become inaccessible after changing the partition table. Back up the SD card and important internal Flash data before testing.
 
-1. Identify the exact Waveshare ESP32-S3 board/module revision and flash chip marking.
-2. Read the connected device's flash ID/capacity and PSRAM information.
-3. Export the complete Schematic.io source and pin the Arduino-ESP32 core, libraries and board settings.
-4. Rebuild from a clean checkout and compare the resulting artifacts and hashes.
-5. Only then finalize browser flashing instructions and publish a pre-release artifact.
+The Web Flasher writes only the bootloader, partition table, boot_app0 and application at the manifest addresses. It uses eraseAll: false, does not issue a full-chip erase and does not write eFuses.
 
+## Validation limits
 
-## Hardware feedback received after this audit
-
-On 2026-11-15 the user reported that this exact supplied archive was flashed back onto the physical Waveshare ESP32-S3-ePaper-3.97 (N16R8) and ran without the boot-loop symptom. This is a user-reported physical validation of the archive, not a validation of the newer CI build.
-
-## Compatibility issue found in the newer CI/Web Flasher profile
-
-The newer CI profile selected `app3M_fat9M_16MB`, while the tested archive carries the distinct 4 MiB reference table described above. The Web Flasher also hard-coded `flashMode: 'qio'`, while both ESP images in the tested archive declare DIO (header mode byte `0x02`) at 80 MHz. The next CI candidate therefore reproduces the reference partition table and DIO / 80 MHz settings. These differences are confirmed; whether either one alone caused the earlier watchdog reset remains unproven until the rebuilt candidate is tested on the board.
+- The original archive's boot success is user-reported physical evidence.
+- CI compile/package/deployment success is software evidence only.
+- The new DIO + app3M_fat9M_16MB candidate has not been physically validated by the assistant.
+- E-Ink, side OLED, SD_MMC, I²C, audio, Wi-Fi, power behavior and repeated cold boots remain user-side hardware tests.

@@ -1,51 +1,69 @@
-# Reproducible build
+# Reproducible build — Waveshare N16R8
 
-**CI build baseline:** Arduino-ESP32 3.3.12, ESP32-S3 Dev Module and pinned Arduino libraries. This is a source-supported build baseline, not a claim that the historical `firmware.zip` was produced with these exact versions.
+## Target board
 
-## Target board profile
+- Board: Waveshare ESP32-S3-ePaper-3.97 (N16R8), ESP32-S3R8
+- Flash: 16 MB
+- PSRAM: 8 MB OPI
+- Main display: GDEM0397T81, 800 × 480 E-Ink
+- CPU: 240 MHz
+- USB CDC on boot: enabled
+- Arduino board definition: ESP32S3 Dev Module (esp32:esp32:esp32s3)
 
-Waveshare documentation for ESP32-S3-ePaper-3.97 identifies ESP32-S3R8 / N16R8, 16 MB Flash, 8 MB PSRAM and 800 × 480 E-Ink. Its Arduino setup guide selects:
+## Pinned build profile
 
-- Board: `ESP32S3 Dev Module`
-- Flash: `16MB (128Mb)`; mode `QIO 80MHz`
-- PSRAM: `OPI PSRAM`
-- Partition: `16M Flash (3MB APP/9.9MB FATFS)`
-- CPU: `240MHz`
-- USB CDC On Boot: enabled
+CI uses Arduino-ESP32 **3.3.12** and this FQBN:
 
-References: [Waveshare board documentation](https://docs.waveshare.com/ESP32-S3-ePaper-3.97), [Arduino setup](https://docs.waveshare.com/ESP32-S3-ePaper-3.97/Development-Environment-Setup-Arduino).
+~~~text
+esp32:esp32:esp32s3:CDCOnBoot=cdc,CPUFreq=240,FlashMode=dio,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi
+~~~
 
-CI FQBN: `esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashFreq=80,FlashMode=dio,FlashSize=16M,PartitionScheme=huge_app,PSRAM=opi`. The sketch-local `partitions.csv` takes precedence and reproduces the exact partition table from the user-tested reference archive.
+**Flash mode is deliberately DIO / 80 MHz.** The earlier candidate emitted a ROM boot line with mode:QIO and repeatedly reset at ets_loader.c 78 before the second-stage bootloader or Arduino setup(). The user-supplied firmware archive that boots on this exact N16R8 board declares DIO / 80 MHz. Espressif documents that some ESP32-S3 devices cannot boot in QIO and recommends DIO when flash reads fail. The candidate therefore keeps the known-good DIO mode; this is a software-level diagnosis, not a claim that the new candidate has passed a physical test.
 
-## Framework and libraries pinned in CI
+## Partition layout
 
-- Arduino-ESP32 core **3.3.12**
-- GxEPD2 **1.6.9** — includes `gdem/GxEPD2_397_GDEM0397T81.h`
+The selected layout is exactly app3M_fat9M_16MB from Arduino-ESP32 3.3.12. The repository partitions.csv mirrors that scheme and the packaging script decodes the generated partitions.bin, rejecting any unexpected entry, offset or size.
+
+| Name | Type / subtype | Offset | Size |
+|---|---|---:|---:|
+| nvs | data / nvs | 0x9000 | 0x5000 |
+| otadata | data / ota | 0xE000 | 0x2000 |
+| app0 | app / ota_0 | 0x10000 | 0x300000 |
+| app1 | app / ota_1 | 0x310000 | 0x300000 |
+| ffat | data / fat | 0x610000 | 0x9E0000 |
+| coredump | data / coredump | 0xFF0000 | 0x10000 |
+
+The previous user-supplied archive used a different single-app 4 MiB map with SPIFFS. The candidate intentionally uses the requested 16 MB app3M_fat9M_16MB layout. Back up the SD card and important internal Flash data first; old SPIFFS data may become inaccessible under the new map. PocketOS currently uses external SD_MMC for user files and does not mount the internal FFAT partition.
+
+## Pinned Arduino libraries
+
+- GxEPD2 **1.6.9**
 - Adafruit GFX Library **1.13.0**
 - Adafruit BusIO **1.17.4**
 - U8g2_for_Adafruit_GFX **1.8.0**
 - Adafruit SSD1306 **2.5.17**
 - JPEGDEC **1.8.5**
-- bb_spi_lcd **2.9.10** (JPEGDEC dependency)
+- bb_spi_lcd **2.9.10**
 - TinyGPSPlus **1.0.3**
 
-The GDEM0397T81 header is not missing from the project ecosystem: it is provided by GxEPD2 1.6.9. The previous audit's missing-driver blocker is resolved. The repository's vendored ES8311 driver remains sourced from Waveshare's ESP32-S3 ePaper 3.97 Arduino audio example.
+The GDEM0397T81 display driver is supplied by GxEPD2 1.6.9. The ES8311 driver is vendored from the Waveshare ESP32-S3 ePaper 3.97 Arduino audio example. The QR encoder is vendored under src/ with its upstream MIT license.
 
-The QR encoder from ricmoo/QRCode is vendored under `src/` with its upstream MIT license, so Arduino's unrelated `qrcode.h` cannot shadow its API. The project uses `ESP_I2S.h`, Arduino Wi-Fi/SD_MMC/Preferences and ESP-IDF headers; the pinned Arduino-ESP32 framework is therefore significant.
+## Packaging and release checks
 
-## Arduino sketch entry
+scripts/package_firmware.py fails closed unless:
 
-Arduino CLI expects an `.ino` sketch whose name matches the sketch folder. `pocketos.ino` is a minimal sketch marker; the real `setup()` and `loop()` remain in `main.cpp`.
+1. The generated partition table exactly matches app3M_fat9M_16MB.
+2. Bootloader and application headers declare DIO / 16 MB / 80 MHz.
+3. The package contains bootloader, partition table, boot_app0 and application from the same CI run.
+4. manifest.json records the exact Git commit, board, memory profile, partition scheme, addresses, sizes and SHA-256 hashes.
+5. SHA256SUMS authenticates all four binaries and manifest.json.
+6. The ZIP archive contains byte-for-byte copies of those verified files.
 
-## Flash layout migration
+The Web Flasher verifies the manifest hash against SHA256SUMS, checks the expected board profile and flash addresses, then verifies each binary's size and SHA-256 again before writing. It uses DIO / 80 MHz from the manifest and eraseAll: false; it does not perform a full-chip erase or write eFuses.
 
-The user supplied `firmware.zip` and reports that it successfully boots on the physical Waveshare ESP32-S3-ePaper-3.97 (N16R8). Its image headers specify DIO / 80 MHz / 16 MB, while its partition table maps the first 4 MiB: NVS, OTA data, one 3 MiB OTA_0 application slot, SPIFFS and coredump. The physical Flash is still 16 MB; the remaining address space is intentionally left unused by this reference layout.
+## Local build
 
-The repository `partitions.csv` reproduces that exact reference table. Arduino-ESP32 copies a sketch-local `partitions.csv` over the selected built-in table during the build. The source uses SD_MMC and NVS Preferences; it does not mount SPIFFS or FATFS. Keeping the reference table avoids changing existing NVS/SPIFFS offsets while the known-good firmware is the hardware baseline. The Web Flasher reads `flash_mode` and `flash_freq` from the generated manifest and verifies the SHA-256 of every image before writing.
-
-## Build locally
-
-```sh
+~~~sh
 arduino-cli config init
 arduino-cli config add board_manager.additional_urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
 arduino-cli core update-index
@@ -59,38 +77,16 @@ arduino-cli lib install "Adafruit SSD1306@2.5.17"
 arduino-cli lib install "JPEGDEC@1.8.5"
 arduino-cli lib install "bb_spi_lcd@2.9.10"
 arduino-cli lib install "TinyGPSPlus@1.0.3"
-FQBN="esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi"
+
+FQBN="esp32:esp32:esp32s3:CDCOnBoot=cdc,CPUFreq=240,FlashMode=dio,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi"
 arduino-cli compile --fqbn "$FQBN" --warnings all .
-```
+~~~
 
-## Release and hardware verification gates
+A successful compile is not a hardware test. Verify E-Ink, side OLED, keyboard/I²C, RTC, SHTC3, SD_MMC, audio, Wi-Fi, power management and repeated cold boots on the actual device.
 
-1. GitHub Actions performs the clean pinned compile and packages bootloader, partition table, boot_app0 and application from the same build.
-2. The packaging step records file sizes and SHA-256; the Web Flasher checks these hashes before writing.
-3. After the firmware build and GitHub Pages deployment succeed, CI publishes the v0.1.0 GitHub Release with the matching binaries and manifest.
-4. The PMIC discrepancy between board materials must be checked against the exact physical revision before claiming power-management support.
-5. On the physical device, verify E-Ink, side OLED, CardKB/I2C, SD_MMC, audio, Wi-Fi and power behavior. This hardware test is deliberately separate from CI compilation.
+## References
 
-The package step fails closed unless the generated partition table hash and bootloader/application image headers match the tested reference profile. An archive-integrity pass is not a firmware build. A successful CI compile is not a hardware test.
-
-## Русский
-
-### Базовая конфигурация CI
-
-Зафиксированы Arduino-ESP32 **3.3.12**, плата `ESP32S3 Dev Module`, Flash 16 MB, OPI PSRAM 8 MB, E-Ink 800 × 480, DIO 80 MHz и USB CDC On Boot. Локальный `partitions.csv` повторяет проверенную пользователем таблицу разделов из `firmware.zip`.
-
-Официальные материалы: [страница платы Waveshare](https://docs.waveshare.com/ESP32-S3-ePaper-3.97), [настройка Arduino IDE](https://docs.waveshare.com/ESP32-S3-ePaper-3.97/Development-Environment-Setup-Arduino).
-
-### Закреплённые библиотеки
-
-GxEPD2 1.6.9, Adafruit GFX 1.13.0, Adafruit BusIO 1.17.4, U8g2_for_Adafruit_GFX 1.8.0, Adafruit SSD1306 2.5.17, JPEGDEC 1.8.5, bb_spi_lcd 2.9.10, TinyGPSPlus 1.0.3.
-
-**Исправление аудита:** заголовок `gdem/GxEPD2_397_GDEM0397T81.h` предоставляется библиотекой GxEPD2 1.6.9. Он не потерян, прежняя блокирующая пометка снята. ES8311 остаётся локальным драйвером, происхождение которого — пример Waveshare для этой платы.
-
-### Разметка Flash
-
-Проверенный пользователем `firmware.zip` использует DIO / 80 MHz и таблицу разделов на первые 4 MB при физической Flash 16 MB. В PocketOS сохранена именно эта таблица: NVS, OTA data, OTA_0 (3 MB), SPIFFS и coredump. Это не использует оставшиеся 12 MB внутренней Flash, зато сохраняет совместимость с известной рабочей прошивкой. Web Flasher использует режим DIO из манифеста и не стирает всю Flash.
-
-### Что осталось
-
-Сначала дождаться CI-компиляции и исправить реальные ошибки, затем проверить бинарники и SHA-256, после этого прошить устройство и проверить дисплеи, клавиатуру/I2C, SD, аудио, Wi-Fi и питание. Только после этого можно выпускать v0.1 и Web Flasher. CI-сборка не заменяет проверку на физической плате.
+- [Waveshare ESP32-S3-ePaper-3.97](https://docs.waveshare.com/ESP32-S3-ePaper-3.97)
+- [Waveshare Arduino setup](https://docs.waveshare.com/ESP32-S3-ePaper-3.97/Development-Environment-Setup-Arduino)
+- [Espressif ESP32-S3 SPI flash modes](https://docs.espressif.com/projects/esptool/en/latest/esp32s3/advanced-topics/spi-flash-modes.html)
+- [Espressif ESP32-S3 troubleshooting](https://docs.espressif.com/projects/esptool/en/latest/esp32s3/troubleshooting.html)
