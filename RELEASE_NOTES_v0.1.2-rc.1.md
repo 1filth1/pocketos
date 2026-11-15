@@ -30,7 +30,7 @@
 
 ---
 
-# PocketOS v0.1.2-rc.1 — предварительный релиз
+# Русский — PocketOS v0.1.2-rc.1 — предварительный релиз
 
 **Цель:** Waveshare ESP32-S3-ePaper-3.97 (N16R8)  
 **Профиль:** Flash 16 MB / OPI PSRAM 8 MB / DIO 80 MHz / app3M_fat9M_16MB  
