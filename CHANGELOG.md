@@ -30,12 +30,15 @@ All notable changes to PocketOS are documented here. Every release and pre-relea
 
 ## [Unreleased] — В разработке
 
-### Fixed
-- Исправлено регулярное выражение проверки версии в Web Flasher: корректные теги `PocketOS-vX.Y.Z` и `alpha/beta/rc` снова распознаются; development-сборки по-прежнему отклоняются.
-
 ### Added
+- Добавлена игра «5 в ряд» (Gomoku) для E-Ink 800×480: поле 15×15, управление клавиатурой, сохранение партии и игра против компьютера.
 - Mandatory release-note structure for every release and pre-release: new features, fixes, improvements, known issues, build/package details and upgrade instructions.
 - A bilingual release-notes template and CI checks that require version-specific notes before publishing a GitHub Release.
+
+### Fixed
+- ИИ в «5 в ряд» теперь сначала выбирает немедленный выигрыш, затем блокирует немедленную победу игрока и только после этого оценивает позиционные ходы.
+- Проверка сохранённой партии сверяет количество ходов, очередность, состояние победы и допустимые значения клеток.
+- Исправлено регулярное выражение проверки версии в Web Flasher: корректные теги `PocketOS-vX.Y.Z` и `alpha/beta/rc` снова распознаются; development-сборки по-прежнему отклоняются.
 
 ### Validated
 - User-reported smoke test of v0.1.1-rc.2 on Waveshare ESP32-S3-ePaper-3.97 (N16R8): firmware flashed successfully and PocketOS starts and works on the device. This is an initial smoke test, not full peripheral validation.
