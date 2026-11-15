@@ -999,6 +999,8 @@ void setup(){
   noticeLoad();
   if (prefs.getBool("wifiEnabled", false)) resumeSavedWifi();
 
+  Serial.println("[PocketOS] boot diagnostics");
+  drawBootDiagnostics();
   Serial.println("[PocketOS] draw home");
   home();
   deviceActivity = millis();
