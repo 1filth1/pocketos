@@ -177,27 +177,27 @@ jobs:
           }
 
       - name: Configure GitHub Pages
-        if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
+        if: (github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')) || (github.event_name == 'workflow_dispatch' && inputs.publish_release)
         uses: actions/configure-pages@v5
         with:
           enablement: true
 
       - name: Upload Web Flasher site
-        if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
+        if: (github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')) || (github.event_name == 'workflow_dispatch' && inputs.publish_release)
         uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ runner.temp }}/pocketos-pages
 
       - name: Deploy Web Flasher
-        if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
+        if: (github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')) || (github.event_name == 'workflow_dispatch' && inputs.publish_release)
         id: deployment
         uses: actions/deploy-pages@v4
 
       - name: Publish PocketOS release
-        if: github.event_name == 'push' && github.ref_type == 'tag'
+        if: (github.event_name == 'push' && github.ref_type == 'tag') || (github.event_name == 'workflow_dispatch' && inputs.publish_release)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
         run: |
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
             echo "Refusing to reuse an existing $RELEASE_TAG release; publish a new version instead." >&2
