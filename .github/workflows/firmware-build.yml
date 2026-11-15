@@ -3,6 +3,7 @@ name: PocketOS firmware build
 on:
   push:
     branches: [release/pocketos-1.0]
+    tags: ['v*']
   pull_request:
     branches: [release/pocketos-1.0]
   workflow_dispatch:
@@ -70,7 +71,7 @@ jobs:
       - name: Package and validate firmware bundle
         env:
           GITHUB_SHA: ${{ github.sha }}
-          RELEASE_VERSION: PocketOS-v0.1.1-rc.2
+          RELEASE_VERSION: PocketOS-${{ github.ref_type == 'tag' && github.ref_name || 'development' }}
         run: |
           python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release" "${{ steps.boot-app0.outputs.path }}"
           mkdir -p "$RUNNER_TEMP/pocketos-pages"
@@ -91,25 +92,42 @@ jobs:
           if-no-files-found: error
 
       - name: Configure GitHub Pages
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         uses: actions/configure-pages@v5
 
       - name: Upload Web Flasher site
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ runner.temp }}/pocketos-pages
 
       - name: Deploy Web Flasher
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Publish PocketOS v0.1.1-rc.2
-        if: github.event_name == 'push' && github.ref == 'refs/heads/release/pocketos-1.0'
+      - name: Validate release notes and changelog entry
+        if: github.event_name == 'push' && github.ref_type == 'tag'
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          NOTES_FILE="RELEASE_NOTES_${RELEASE_TAG}.md"
+          CHANGELOG_VERSION="${RELEASE_TAG#v}"
+          test -s "$NOTES_FILE" || { echo "Missing bilingual release notes: $NOTES_FILE" >&2; exit 1; }
+          grep -Fq "## [${CHANGELOG_VERSION}]" CHANGELOG.md || {
+            echo "Missing CHANGELOG.md section: ## [${CHANGELOG_VERSION}]" >&2
+            exit 1
+          }
+          grep -Eiq '^#.*(Русский|Russian)' "$NOTES_FILE" || {
+            echo "Release notes must contain both English and Russian sections." >&2
+            exit 1
+          }
+
+      - name: Publish PocketOS release
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: v0.1.1-rc.2
+          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
             echo "Refusing to reuse an existing $RELEASE_TAG release; publish a new version instead." >&2
@@ -124,6 +142,6 @@ jobs:
             "$RUNNER_TEMP/pocketos-release/manifest.json" \
             "$RUNNER_TEMP/pocketos-release/SHA256SUMS" \
             --target "$GITHUB_SHA" \
-            --title "PocketOS v0.1.1-rc.2 — Waveshare N16R8 / DIO" \
+            --title "PocketOS $RELEASE_TAG — Waveshare N16R8 / DIO" \
             --prerelease \
-            --notes-file RELEASE_NOTES_v0.1.1-rc.2.md
+            --notes-file "RELEASE_NOTES_${RELEASE_TAG}.md"
