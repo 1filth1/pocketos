@@ -209,6 +209,7 @@ void frMoveCursor(int dx, int dy) {
   if (x == fiveRow.cursorX && y == fiveRow.cursorY) return;
   fiveRow.cursorX = x;
   fiveRow.cursorY = y;
+  frSave();
   drawFiveRow();
 }
 
