@@ -63,6 +63,12 @@ Availability depends on the connected hardware and the current state of developm
 | Wireless | ESP32-S3 Wi-Fi |
 | Optional expansion | GPS and other compatible peripherals |
 
+### Connection diagram
+
+![PocketOS connection diagram](docs/build.png)
+
+The diagram is provided in the repository documentation. Confirm the exact board revision and wiring against the physical device before making changes.
+
 > Pin mapping, board revision, Flash/PSRAM configuration, partition layout and library versions must be confirmed against the actual Schematic.io project and hardware revision before producing release firmware.
 
 ## ◈ Project architecture
@@ -94,16 +100,19 @@ The source tree is evolving; this map highlights the main entry points rather th
 
 ## ◈ Project status
 
-**Current stage: experimental v0.1 / pre-release preparation.**
+**Current stage: experimental v0.1.1-rc.1 pre-release published; physical validation of this candidate is pending.**
 
-- [x] Bilingual project overview
-- [x] Initial v0.1 release notes
-- [x] Reproducible build configuration documented
-- [x] Dependency and toolchain versions pinned for CI baseline
-- [x] Manufacturer 16 MB Flash / OPI PSRAM profile documented
-- [x] Automated firmware build workflow added (first run pending)
-- [ ] Firmware artifacts and flashing instructions
-- [ ] Full validation on the target device
+- [x] Bilingual project overview and release notes
+- [x] Pinned Arduino-ESP32 toolchain and library dependencies
+- [x] Waveshare 16 MB Flash / 8 MB OPI PSRAM build profile documented
+- [x] GitHub Actions firmware compilation and packaging completed successfully
+- [x] Firmware binaries, manifest and SHA-256 checksums published in the prerelease
+- [x] Web Flasher deployed to GitHub Pages
+- [x] Connection diagram added to the hardware documentation
+- [ ] Flash the v0.1.1-rc.1 candidate onto the target device
+- [ ] Complete physical validation of E-Ink, side OLED, keyboard/I²C, SD, audio, Wi-Fi and power
+
+**Latest candidate:** [v0.1.1-rc.1](https://github.com/1filth1/pocketos/releases/tag/v0.1.1-rc.1) · [Web Flasher](https://1filth1.github.io/pocketos/) · [Build workflow](https://github.com/1filth1/pocketos/actions/runs/43688353570)
 
 See **[Project status & validation checklist](docs/PROJECT_STATUS.md)** for details.
 
@@ -191,14 +200,17 @@ SD-карта предназначена для пользовательских
 
 **Текущий этап: экспериментальная v0.1 / подготовка предварительного релиза.**
 
-- [x] Описание проекта на русском и английском
-- [x] Первые Release Notes v0.1
-- [ ] Воспроизводимая конфигурация сборки
-- [ ] Зафиксированные версии инструментов и библиотек
-- [ ] Проверенные параметры Flash, PSRAM и разделов
-- [ ] Автоматическая сборка
-- [ ] Бинарники и инструкция по прошивке
-- [ ] Полная проверка на целевом устройстве
+- [x] Описание проекта и Release Notes на двух языках
+- [x] Зафиксированы версии Arduino-ESP32 и библиотек
+- [x] Описан профиль Waveshare: Flash 16 MB / OPI PSRAM 8 MB
+- [x] GitHub Actions успешно собрал и упаковал прошивку
+- [x] Бинарники, manifest.json и SHA-256 опубликованы в prerelease
+- [x] Web Flasher опубликован на GitHub Pages
+- [x] Схема подключения добавлена в документацию
+- [ ] Прошить кандидат v0.1.1-rc.1 на целевое устройство
+- [ ] Завершить проверку E-Ink, бокового OLED, клавиатуры/I²C, SD, аудио, Wi-Fi и питания
+
+**Последний кандидат:** [v0.1.1-rc.1](https://github.com/1filth1/pocketos/releases/tag/v0.1.1-rc.1) · [Web Flasher](https://1filth1.github.io/pocketos/) · [Сборка GitHub Actions](https://github.com/1filth1/pocketos/actions/runs/43688353570)
 
 Подробности: **[статус проекта и чек-лист проверки](docs/PROJECT_STATUS.md)**.
 
