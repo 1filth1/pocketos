@@ -907,6 +907,37 @@ void idleSleep(){
   epd.nextPage();
   timerTick();display2Tick();
 }
+static void drawBootDiagnostics(){
+  // A short, visible hardware self-check before the home screen.
+  // Values reflect initialization results; optional peripherals are not fatal.
+  view=HOME;
+  epd.fillScreen(GxEPD_WHITE);
+  epd.drawRoundRect(18,18,764,444,10,GxEPD_BLACK);
+  epd.fillRect(19,19,762,58,GxEPD_BLACK);
+  epd.setFont(&FreeSansBold12pt7b);
+  epd.setTextColor(GxEPD_WHITE);
+  epd.setCursor(42,55);
+  epd.print("POCKETOS  /  SYSTEM CHECK");
+  epd.setTextColor(GxEPD_BLACK);
+  text("v0.1.2-rc.1   WAVESHARE N16R8",42,112,true);
+  epd.drawLine(38,128,762,128,GxEPD_BLACK);
+  text("E-INK DISPLAY",42,166,true);
+  text("READY  /  800 x 480",42,194);
+  text(String("SD CARD: ")+(cardOK?"MOUNTED":"NOT FOUND"),42,246,true);
+  text(String("KEYBOARD: ")+(kbOK?"READY":"NOT FOUND"),42,282,true);
+  text(String("RTC: ")+(rtcOK?"READY":"NOT FOUND"),42,318,true);
+  text(String("AUDIO: ")+(codecReady?"INITIALIZED":"NOT AVAILABLE"),42,354,true);
+  text(String("PSRAM: ")+(psramFound()?String(ESP.getPsramSize()/1024/1024)+" MB":"NOT FOUND"),420,246,true);
+  text("FLASH: "+String(ESP.getFlashChipSize()/1024/1024)+" MB",420,282,true);
+  text("FREE HEAP: "+String(ESP.getFreeHeap()/1024)+" KB",420,318,true);
+  text("SIDE OLED: "+display2Status(),420,354,true);
+  epd.drawLine(38,390,762,390,GxEPD_BLACK);
+  text("OPTIONAL DEVICES MAY SHOW NOT FOUND.",42,424);
+  text("STARTING DESKTOP...",42,452,true);
+  epd.nextPage();
+  delay(900);
+}
+
 void setup(){
   // Start USB CDC before touching peripherals so early boot failures are visible.
   Serial.begin(115200);
@@ -968,6 +999,8 @@ void setup(){
   noticeLoad();
   if (prefs.getBool("wifiEnabled", false)) resumeSavedWifi();
 
+  Serial.println("[PocketOS] boot diagnostics");
+  drawBootDiagnostics();
   Serial.println("[PocketOS] draw home");
   home();
   deviceActivity = millis();

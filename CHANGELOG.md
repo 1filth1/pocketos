@@ -5,6 +5,7 @@ All notable changes to PocketOS are documented here. Every release and pre-relea
 ## [0.1.2-rc.1] — 2026-11-15 — Experimental pre-release
 
 ### Added
+- A visible E-Ink boot diagnostics screen reporting display, SD card, CardKB2, RTC, audio, PSRAM, Flash capacity, free heap and side OLED initialization states.
 - Clearer bilingual repository documentation for the browser flasher and 3D-printable enclosure models.
 
 ### Fixed
@@ -12,7 +13,8 @@ All notable changes to PocketOS are documented here. Every release and pre-relea
 - Fixed README rendering on GitHub Pages by removing the unsupported centering wrapper and replacing literal escaped newline sequences with real Markdown line breaks.
 
 ### Changed
-- No firmware feature changes are intended in this candidate; the firmware is rebuilt from the same source tree for a traceable, versioned package.
+- Startup now pauses briefly on the diagnostics screen before opening the desktop; this is an intentional boot-time increase.
+- Existing applications, storage layout, peripheral wiring and Web Flasher write behavior remain unchanged.
 
 ### Known issues
 - Full hardware validation of E-Ink, side OLED, SD_MMC, keyboard/I²C, RTC, sensors, audio, Wi-Fi, power and long-term stability remains outstanding.
@@ -80,6 +82,7 @@ All notable changes to PocketOS are documented here. Every release and pre-relea
 ## [0.1.2-rc.1] — 2026-11-15 — Экспериментальный пререлиз
 
 ### Добавлено
+- Добавлен видимый диагностический экран E-Ink при загрузке: состояние дисплея, SD-карты, CardKB2, RTC, аудио, PSRAM, объём Flash, свободная heap-память и инициализация бокового OLED.
 - Уточнена двуязычная документация репозитория: описание веб-флешера и моделей корпуса для 3D-печати.
 
 ### Исправлено
@@ -87,7 +90,8 @@ All notable changes to PocketOS are documented here. Every release and pre-relea
 - Исправлено отображение README на GitHub Pages: удалена неподдерживаемая HTML-обёртка центрирования, буквальные последовательности переноса строк заменены настоящими переносами Markdown.
 
 ### Изменено
-- Изменения функциональности прошивки в этом кандидате не планируются; прошивка пересобирается из того же дерева исходников для получения воспроизводимого пакета с версионной меткой.
+- Перед открытием рабочего стола система ненадолго задерживается на диагностическом экране; это намеренно увеличивает время загрузки.
+- Существующие приложения, разметка хранилища, распиновка периферии и поведение Web Flasher не меняются.
 
 ### Известные ограничения
 - Полная аппаратная проверка E-Ink, бокового OLED, SD_MMC, клавиатуры/I²C, RTC, датчиков, аудио, Wi-Fi, питания и долговременной стабильности ещё не выполнена.

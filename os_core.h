@@ -2,7 +2,7 @@
 // Built-in applications share an address space. This registry is not a loader
 // for SD executables and does not claim process isolation.
 namespace PocketOS {
-static constexpr const char *version = "0.1";
+static constexpr const char *version = "0.1.2-rc.1";
 struct Application { const char *id; const char *label; int action; };
 static constexpr Application apps[] = {
  {"files","FILES",310}, {"notes","NOTES",311},
