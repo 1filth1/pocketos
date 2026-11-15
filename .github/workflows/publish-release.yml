@@ -35,9 +35,9 @@ jobs:
     steps:
       - name: Validate inputs
         env:
-          CONFIRM: ${ inputs.confirm_publish }}
-          SOURCE_BRANCH: ${ inputs.source_branch }}
-          RELEASE_TAG: ${ inputs.release_tag }}
+          CONFIRM: ${{ inputs.confirm_publish }}
+          SOURCE_BRANCH: ${{ inputs.source_branch }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           if [[ "$CONFIRM" != "true" ]]; then echo "Confirmation checkbox must be enabled." >&2; exit 1; fi
           if [[ -z "$SOURCE_BRANCH" || "$SOURCE_BRANCH" == *".."* ]]; then echo "Invalid source branch." >&2; exit 1; fi
@@ -46,7 +46,7 @@ jobs:
       - name: Check out selected firmware branch
         uses: actions/checkout@v4
         with:
-          ref: ${ inputs.source_branch }}
+          ref: ${{ inputs.source_branch }}
           fetch-depth: 0
 
       - name: Record exact source commit
@@ -57,8 +57,8 @@ jobs:
 
       - name: Validate tag and bilingual release notes
         env:
-          GH_TOKEN: ${ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${ inputs.release_tag }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           gh release view "$RELEASE_TAG" >/dev/null 2>&1 && { echo "Release already exists: $RELEASE_TAG" >&2; exit 1; }
           git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_TAG" >/dev/null 2>&1 && { echo "Git tag already exists: $RELEASE_TAG" >&2; exit 1; }
@@ -107,18 +107,18 @@ jobs:
 
       - name: Package firmware and Web Flasher
         env:
-          GITHUB_SHA: ${ steps.source.outputs.sha }}
-          RELEASE_VERSION: PocketOS-${ inputs.release_tag }}
+          GITHUB_SHA: ${{ steps.source.outputs.sha }}
+          RELEASE_VERSION: PocketOS-${{ inputs.release_tag }}
         run: |
-          python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release" "${ steps.boot-app0.outputs.path }}"
+          python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release" "${{ steps.boot-app0.outputs.path }}"
           mkdir -p "$RUNNER_TEMP/pocketos-pages"
           cp webflasher/index.html "$RUNNER_TEMP/pocketos-pages/index.html"
           cp "$RUNNER_TEMP/pocketos-release/"* "$RUNNER_TEMP/pocketos-pages/"
 
       - name: Build release selector catalogue
         env:
-          GH_TOKEN: ${ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${ inputs.release_tag }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           gh release list --limit 100 --json tagName,name,isPrerelease > "$RUNNER_TEMP/releases.json"
           python3 - "$RUNNER_TEMP/pocketos-pages" "$RUNNER_TEMP/releases.json" "$RELEASE_TAG" <<'PY'
@@ -144,9 +144,9 @@ jobs:
 
       - name: Publish GitHub release
         env:
-          GH_TOKEN: ${ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${ inputs.release_tag }}
-          SOURCE_SHA: ${ steps.source.outputs.sha }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
         run: |
           RELEASE_ARGS=()
           if [[ "$RELEASE_TAG" =~ (alpha|beta|rc|pre) ]]; then RELEASE_ARGS+=(--prerelease); fi
@@ -169,7 +169,7 @@ jobs:
       - name: Upload Web Flasher site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${ runner.temp }}/pocketos-pages
+          path: ${{ runner.temp }}/pocketos-pages
 
       - name: Deploy Web Flasher
         uses: actions/deploy-pages@v4
@@ -177,6 +177,6 @@ jobs:
       - name: Upload firmware build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pocketos-${ inputs.release_tag }}-firmware
-          path: ${ runner.temp }}/pocketos-release/*
+          name: pocketos-${{ inputs.release_tag }}-firmware
+          path: ${{ runner.temp }}/pocketos-release/*
           if-no-files-found: error
