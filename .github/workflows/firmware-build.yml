@@ -51,7 +51,7 @@ jobs:
 
       - name: Compile PocketOS
         env:
-          FQBN: esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashFreq=80,FlashMode=dio,FlashSize=16M,PartitionScheme=huge_app,PSRAM=opi
+          FQBN: esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashMode=dio,FlashSize=16M,PartitionScheme=huge_app,PSRAM=opi
         run: |
           arduino-cli compile --fqbn "$FQBN" --warnings all --output-dir "$RUNNER_TEMP/pocketos-build" .
 
