@@ -15,7 +15,7 @@ Waveshare documentation for ESP32-S3-ePaper-3.97 identifies ESP32-S3R8 / N16R8, 
 
 References: [Waveshare board documentation](https://docs.waveshare.com/ESP32-S3-ePaper-3.97), [Arduino setup](https://docs.waveshare.com/ESP32-S3-ePaper-3.97/Development-Environment-Setup-Arduino).
 
-CI FQBN: `esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi`.
+CI FQBN: `esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashFreq=80,FlashMode=dio,FlashSize=16M,PartitionScheme=huge_app,PSRAM=opi`. The sketch-local `partitions.csv` takes precedence and reproduces the exact partition table from the user-tested reference archive.
 
 ## Framework and libraries pinned in CI
 
@@ -39,9 +39,9 @@ Arduino CLI expects an `.ino` sketch whose name matches the sketch folder. `pock
 
 ## Flash layout migration
 
-The historical `firmware.zip` uses a partition table covering only the first 4 MiB, with a 3 MiB app partition plus SPIFFS and coredump. The manufacturer's current 16 MB profile uses `app3M_fat9M_16MB`. The app starts at `0x10000` in both layouts, but the remaining partition map differs.
+The user supplied `firmware.zip` and reports that it successfully boots on the physical Waveshare ESP32-S3-ePaper-3.97 (N16R8). Its image headers specify DIO / 80 MHz / 16 MB, while its partition table maps the first 4 MiB: NVS, OTA data, one 3 MiB OTA_0 application slot, SPIFFS and coredump. The physical Flash is still 16 MB; the remaining address space is intentionally left unused by this reference layout.
 
-The current source uses SD_MMC and NVS Preferences; it does not directly mount SPIFFS or FATFS. The CI profile follows the current 16 MB Waveshare profile. The repository Web Flasher bundles the partition table from this exact build, checks SHA-256 for every image, and warns that changing the table replaces the old layout; old SPIFFS data must not be promised to survive.
+The repository `partitions.csv` reproduces that exact reference table. Arduino-ESP32 copies a sketch-local `partitions.csv` over the selected built-in table during the build. The source uses SD_MMC and NVS Preferences; it does not mount SPIFFS or FATFS. Keeping the reference table avoids changing existing NVS/SPIFFS offsets while the known-good firmware is the hardware baseline. The Web Flasher reads `flash_mode` and `flash_freq` from the generated manifest and verifies the SHA-256 of every image before writing.
 
 ## Build locally
 
@@ -71,13 +71,13 @@ arduino-cli compile --fqbn "$FQBN" --warnings all .
 4. The PMIC discrepancy between board materials must be checked against the exact physical revision before claiming power-management support.
 5. On the physical device, verify E-Ink, side OLED, CardKB/I2C, SD_MMC, audio, Wi-Fi and power behavior. This hardware test is deliberately separate from CI compilation.
 
-An archive-integrity pass is not a firmware build. A successful CI compile is not a hardware test.
+The package step fails closed unless the generated partition table hash and bootloader/application image headers match the tested reference profile. An archive-integrity pass is not a firmware build. A successful CI compile is not a hardware test.
 
 ## Русский
 
 ### Базовая конфигурация CI
 
-Зафиксированы Arduino-ESP32 **3.3.12**, плата `ESP32S3 Dev Module`, Flash 16 MB, OPI PSRAM 8 MB, E-Ink 800 × 480, разметка `16M Flash (3MB APP/9.9MB FATFS)`, CPU 240 MHz, QIO 80 MHz и USB CDC On Boot.
+Зафиксированы Arduino-ESP32 **3.3.12**, плата `ESP32S3 Dev Module`, Flash 16 MB, OPI PSRAM 8 MB, E-Ink 800 × 480, DIO 80 MHz и USB CDC On Boot. Локальный `partitions.csv` повторяет проверенную пользователем таблицу разделов из `firmware.zip`.
 
 Официальные материалы: [страница платы Waveshare](https://docs.waveshare.com/ESP32-S3-ePaper-3.97), [настройка Arduino IDE](https://docs.waveshare.com/ESP32-S3-ePaper-3.97/Development-Environment-Setup-Arduino).
 
@@ -89,7 +89,7 @@ GxEPD2 1.6.9, Adafruit GFX 1.13.0, Adafruit BusIO 1.17.4, U8g2_for_Adafruit_GFX 
 
 ### Разметка Flash
 
-Старая `firmware.zip` использует таблицу разделов на первые 4 MB. Профиль производителя для 16 MB использует `app3M_fat9M_16MB`. Начало приложения совпадает (`0x10000`), остальная разметка отличается. Будущий Web Flasher обязан использовать таблицу от той же сборки и предупредить о замене старой разметки. Сохранность старых данных SPIFFS не гарантируется.
+Проверенный пользователем `firmware.zip` использует DIO / 80 MHz и таблицу разделов на первые 4 MB при физической Flash 16 MB. В PocketOS сохранена именно эта таблица: NVS, OTA data, OTA_0 (3 MB), SPIFFS и coredump. Это не использует оставшиеся 12 MB внутренней Flash, зато сохраняет совместимость с известной рабочей прошивкой. Web Flasher использует режим DIO из манифеста и не стирает всю Flash.
 
 ### Что осталось
 
