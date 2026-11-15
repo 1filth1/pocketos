@@ -60,3 +60,12 @@ The reported PSRAM capacity and mode also cannot be established from this partit
 3. Export the complete Schematic.io source and pin the Arduino-ESP32 core, libraries and board settings.
 4. Rebuild from a clean checkout and compare the resulting artifacts and hashes.
 5. Only then finalize browser flashing instructions and publish a pre-release artifact.
+
+
+## Hardware feedback received after this audit
+
+On 2026-11-15 the user reported that this exact supplied archive was flashed back onto the physical Waveshare ESP32-S3-ePaper-3.97 (N16R8) and ran without the boot-loop symptom. This is a user-reported physical validation of the archive, not a validation of the newer CI build.
+
+## Compatibility issue found in the newer CI/Web Flasher profile
+
+The newer CI profile selected `app3M_fat9M_16MB`, while the tested archive carries the distinct 4 MiB reference table described above. The Web Flasher also hard-coded `flashMode: 'qio'`, while both ESP images in the tested archive declare DIO (header mode byte `0x02`) at 80 MHz. The next CI candidate therefore reproduces the reference partition table and DIO / 80 MHz settings. These differences are confirmed; whether either one alone caused the earlier watchdog reset remains unproven until the rebuilt candidate is tested on the board.
