@@ -37,7 +37,7 @@ for i in range(pos, len(text)):
 if len(groups) != 10:
     raise SystemExit(f"Expected 10 car sprites, parsed {len(groups)}")
 root = out / "Games" / "JDM_Garage_Empire"
-assets = root / "assets"
+assets = root / "assets" / "cars"
 assets.mkdir(parents=True, exist_ok=True)
 files = []
 for index, group in enumerate(groups):
@@ -48,7 +48,7 @@ for index, group in enumerate(groups):
     name = f"car_shaded_v2_{index}.mono"
     (assets / name).write_bytes(data)
     files.append({
-        "file": f"assets/{name}",
+        "file": f"assets/cars/{name}",
         "width": 240,
         "height": 104,
         "bits_per_pixel": 1,
@@ -73,7 +73,7 @@ manifest = {
     "==========================================\n\n"
     "Copy the included Games folder to the root of the PocketOS SD card.\n"
     "The resulting game artwork paths are:\n"
-    "/Games/JDM_Garage_Empire/assets/car_shaded_v2_0.mono ... car_shaded_v2_9.mono\n\n"
+    "/Games/JDM_Garage_Empire/assets/cars/car_shaded_v2_0.mono ... car_shaded_v2_9.mono\n\n"
     "Each car image is a 240x104, 1-bit, MSB-first bitmap (3,120 bytes).\n"
     "The game can also seed these files from built-in firmware artwork when no SD pack is present.\n"
     "Existing files are never overwritten automatically. Back up the SD card before installing.\n",
