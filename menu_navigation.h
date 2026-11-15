@@ -86,7 +86,7 @@ void buildMenu(int c){
  if(c==333){addMenu("GROOVE BOX",324);addMenu("MUSIC SEQUENCER",321);addMenu("CALCULATOR",315);addMenu("COMMAND LINE",316);}
  if(c==SYSTEM){addMenu(String("WI-FI: ")+wifiState(),319);addMenu("SCAN / CONNECT WI-FI",318);addMenu("DISPLAY",'e');addMenu("SOUND / MICROPHONE",209);addMenu("DATE / TIME",201);addMenu("SLEEP / POWER",216);addMenu("DEVICE STATUS",317);addMenu("OS / SERVICES",1902);}
  if(c==301){addMenu("WI-FI NETWORKS",200);addMenu("SCAN WI-FI",318);}
- if(c==GAMES){const char* n[]={"SNAKE","TETRIS","SOKOBAN","2048","TAMAGOTCHI"};for(int i=0;i<5;i++)addMenu(n[i],1100+i);addMenu("JDM GARAGE EMPIRE",1105);}
+ if(c==GAMES){const char* n[]={"SNAKE","TETRIS","SOKOBAN","2048","TAMAGOTCHI","5 IN A ROW"};for(int i=0;i<6;i++)addMenu(n[i],1100+i);addMenu("JDM GARAGE EMPIRE",1106);}
  if(c==PAPER_SETTINGS){addMenu(String("TEXT: ")+(largeText?"LARGE":"NORMAL"),1200);addMenu("CLEAN EVERY "+String(epd.cleanEvery)+" UPDATES",1201);addMenu(String("PARTIAL UPDATE: ")+(epd.partial?"ON":"OFF"),1202);addMenu("CLEAN SCREEN NOW",'c');}
  if(c==TIMER_APP){timerLoad();addMenu(timerAlert?"CONFIRM / NEXT INTERVAL":timerRunning?"PAUSE":"START / CONTINUE",13);addMenu(String("MODE: ")+(timerPomo?"POMODORO":"TIMER"),'m');addMenu("EDIT DURATIONS",'e');addMenu("RESET",'r');}
  if(c==CALENDAR){addMenu("TASKS FOR "+calendarDateText(),13);addMenu("CHOOSE DATE",'d');addMenu("PREVIOUS DAY",1300);addMenu("NEXT DAY",1301);addMenu("PREVIOUS MONTH",'p');addMenu("NEXT MONTH",'n');}
@@ -229,8 +229,8 @@ void route(uint8_t k){
   if(a==1806){home();return;}
   if(a==1805){resumeLast();return;}
   if(a>=1000&&a<1060){selected=a-1000;showMenu(202,FILES);return;}
-  if(a==1105){menuActive=false;JDM::open();return;}
-  if(a>=1100&&a<1105){gameSelected=a-1100;startGame();if(view==SNAKE)drawSnake();else if(view==TETRIS)drawTetris();else if(view==SOKOBAN)drawSokoban();else if(view==G2048)draw2048();if(view==TAMAGOTCHI){menuActive=false;petDraw();}return;}
+  if(a==1106){menuActive=false;JDM::open();return;}
+  if(a>=1100&&a<1106){gameSelected=a-1100;startGame();if(view==SNAKE)drawSnake();else if(view==TETRIS)drawTetris();else if(view==SOKOBAN)drawSokoban();else if(view==G2048)draw2048();else if(view==FIVE_ROW)drawFiveRow();if(view==TAMAGOTCHI){menuActive=false;petDraw();}return;}
   if(a>=1200&&a<=1202){paperField=a-1200;legacyRoute(13);return;}
   if(a==1300||a==1301){calendarMove(a==1300?-1:1);calendarDraw();return;}
   if(a>=1400&&a<1464){calSelected=a-1400;showMenu(205,CAL_TASKS);return;}
