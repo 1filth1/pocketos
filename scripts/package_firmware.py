@@ -158,16 +158,28 @@ if sum_map["manifest.json"] != sha256(manifest_path.read_bytes()):
     raise SystemExit("SHA256SUMS does not authenticate manifest.json")
 
 archive = out / "PocketOS-firmware.zip"
+archive_names = expected_sum_names | {"SHA256SUMS"}
 with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as z:
-    for filename in sorted(expected_sum_names):
+    for filename in sorted(archive_names):
         z.write(out / filename, filename)
 
 with zipfile.ZipFile(archive) as z:
-    if set(z.namelist()) != expected_sum_names:
+    if set(z.namelist()) != archive_names:
         raise SystemExit("Firmware ZIP contents do not match the verified release bundle")
-    for filename in expected_sum_names:
+    for filename in archive_names:
         if z.read(filename) != (out / filename).read_bytes():
             raise SystemExit(f"Firmware ZIP content mismatch for {filename}")
+
+# Each image must fit entirely inside the reserved region before the next address.
+region_limits = {
+    "bootloader.bin": 0x8000,
+    "partitions.bin": 0x6000,
+    "boot_app0.bin": 0x2000,
+    "application.bin": 0x300000,
+}
+for filename, limit in region_limits.items():
+    if (out / filename).stat().st_size > limit:
+        raise SystemExit(f"{filename} exceeds its reserved flash region ({limit} bytes)")
 
 print(json.dumps(manifest, indent=2))
 print("Verified: N16R8 profile, DIO/16MB/80MHz headers, app3M_fat9M_16MB partitions, manifest and SHA256SUMS.")

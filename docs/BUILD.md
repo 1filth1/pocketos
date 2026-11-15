@@ -57,7 +57,7 @@ scripts/package_firmware.py fails closed unless:
 3. The package contains bootloader, partition table, boot_app0 and application from the same CI run.
 4. manifest.json records the exact Git commit, board, memory profile, partition scheme, addresses, sizes and SHA-256 hashes.
 5. SHA256SUMS authenticates all four binaries and manifest.json.
-6. The ZIP archive contains byte-for-byte copies of those verified files.
+6. The ZIP archive contains all four binaries, manifest.json and SHA256SUMS, verified byte-for-byte.
 
 The Web Flasher verifies the manifest hash against SHA256SUMS, checks the expected board profile and flash addresses, then verifies each binary's size and SHA-256 again before writing. It uses DIO / 80 MHz from the manifest and eraseAll: false; it does not perform a full-chip erase or write eFuses.
 
