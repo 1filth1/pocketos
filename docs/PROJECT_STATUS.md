@@ -1,7 +1,7 @@
 # PocketOS — Project Status
 
 **Candidate:** v0.1.1-rc.2  
-**Stage:** software release candidate; physical validation pending  
+**Stage:** software candidate; initial user smoke test passed, full peripheral validation pending  
 **Target:** Waveshare ESP32-S3-ePaper-3.97 (N16R8), E-Ink 800 × 480  
 **Build:** Arduino-ESP32 3.3.12, 16 MB Flash, 8 MB OPI PSRAM, DIO / 80 MHz, app3M_fat9M_16MB
 
@@ -12,6 +12,13 @@
 - [Firmware build workflow](https://github.com/1filth1/pocketos/actions/workflows/firmware-build.yml)
 
 The release workflow creates the tag and attaches assets only after the firmware compile, package validation and GitHub Pages deployment succeed. manifest.json records the exact source commit; SHA256SUMS covers the four binary images and the manifest. The Pages deployment is copied from that same CI package.
+
+## User-reported hardware smoke test
+
+- [x] User reports that v0.1.1-rc.2 flashed successfully and PocketOS starts and works on the target Waveshare N16R8 board.
+- [ ] Record detailed results for each peripheral and subsystem in [TESTING.md](TESTING.md).
+
+This is an initial smoke test only. It does not establish that every peripheral, long-running workload or recovery path is verified.
 
 ## Boot-loop investigation
 
@@ -40,11 +47,12 @@ This differs from the old user-supplied 4 MiB single-app/SPIFFS archive. Back up
 - [x] SHA256SUMS includes all four binary images and manifest.json.
 - [x] Web Flasher verifies manifest, checksum list, addresses, sizes and binary hashes before writing.
 - [x] Flash operation keeps eraseAll: false; no eFuse operation is present.
-- [ ] Physical flashing and hardware validation on the target board.
+- [x] CI build, package validation, release publication and Pages deployment passed for the published candidate.
+- [ ] Detailed physical validation of all hardware subsystems.
 
-## Hardware validation — not yet passed
+## Hardware validation — partial
 
-The following checks remain pending on the actual device:
+The user has confirmed a successful flash and basic operation. The following detailed checks remain to be recorded on the actual device:
 
 - [ ] Cold boot without a watchdog/reset loop; confirm ROM reaches the second-stage bootloader.
 - [ ] E-Ink initialization and refresh.
@@ -56,4 +64,4 @@ The following checks remain pending on the actual device:
 - [ ] Battery/charging and power-management behavior.
 - [ ] Application switching, memory headroom and repeated restarts.
 
-A successful CI build, matching package hashes and deployed Web Flasher are permission for a controlled test only; they are not proof of hardware compatibility. The physical device is not available to the assistant.
+A successful CI build, matching package hashes and deployed Web Flasher authorize a controlled test only; they are not proof of complete hardware compatibility. The physical device is tested by the user, not accessible to the assistant.
