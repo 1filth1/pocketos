@@ -130,7 +130,7 @@ jobs:
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref_name == 'release-candidate/v0.1.2-rc.1')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.1.2-rc.1' }}
         run: |
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
             echo "Refusing to reuse an existing $RELEASE_TAG release; publish a new version instead." >&2
