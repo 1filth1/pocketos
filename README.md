@@ -12,7 +12,7 @@
 [![Status](https://img.shields.io/badge/status-experimental-orange?style=for-the-badge)](#project-status)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-**[English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md) · [Release process](docs/RELEASE_PROCESS.md) · [Firmware archive audit](docs/FIRMWARE_ARCHIVE_AUDIT.md) · [Build guide](docs/BUILD.md) · [License](LICENSE)**
+**[Web Flasher / Прошивка из браузера](https://1filth1.github.io/pocketos/) · [English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md) · [Release process](docs/RELEASE_PROCESS.md) · [Firmware archive audit](docs/FIRMWARE_ARCHIVE_AUDIT.md) · [Build guide](docs/BUILD.md) · [License](LICENSE)**
 
 </div>
 
@@ -20,6 +20,12 @@
 
 > [!IMPORTANT]
 > PocketOS is an early-stage project. Features and hardware integrations are still being validated. Do not treat this development build as a stable release or flash it without understanding the risks.
+
+## ⚡ Install PocketOS from your browser
+
+Use the **[PocketOS Web Flasher](https://1filth1.github.io/pocketos/)** to install the firmware directly from a supported desktop browser—no separate flashing utility is required. Connect the ESP32-S3 board with a USB data cable, open the flasher in the latest Chrome or Edge, select the device's serial port, and follow the on-screen steps.
+
+The flasher loads the firmware package and flash addresses from the published build manifest and verifies each downloaded file with SHA-256 before writing. Use only a package that matches your exact board configuration. **Important:** flashing writes the bootloader, partition table and application; changing the partition layout can erase data stored in Flash. Back up anything important first, keep the USB connection stable, and do not disconnect the board while writing. The browser flasher requires Web Serial and HTTPS; it is not supported by Firefox or Safari.
 
 ## ✦ What is PocketOS?
 
@@ -129,6 +135,12 @@ For contribution workflow and coding expectations, see [CONTRIBUTING.md](CONTRIB
 # PocketOS v0.1 — Русский
 
 ### Карманный E-Ink-компьютер на базе ESP32-S3
+
+## ⚡ Прошивка PocketOS прямо из браузера
+
+Открой **[PocketOS Web Flasher](https://1filth1.github.io/pocketos/)** — он позволяет установить прошивку прямо из браузера, без отдельной программы для прошивки. Подключи плату ESP32-S3 USB-кабелем с передачей данных, открой страницу в актуальном Chrome или Edge на компьютере, выбери последовательный порт устройства и следуй инструкциям на экране.
+
+Флешер получает файлы прошивки и адреса записи из манифеста опубликованной сборки и проверяет SHA-256 каждого файла перед записью. Используй только комплект, соответствующий твоей аппаратной конфигурации. **Важно:** при прошивке записываются загрузчик, таблица разделов и приложение; изменение разметки Flash может привести к потере данных во Flash-памяти. Заранее сохрани важные данные, не допускай обрыва USB-соединения и не отключай плату во время записи. Для работы нужны Web Serial и HTTPS; Firefox и Safari не поддерживаются.
 
 **PocketOS** — экспериментальная встроенная операционная система для устройства на базе Waveshare ESP32-S3 с E-Ink-дисплеем 800 × 480. Проект объединяет графический интерфейс, встроенные приложения, хранение пользовательских данных на SD-карте, сетевые и мультимедийные функции.
 
