@@ -2,20 +2,24 @@
 
 **Target:** Waveshare ESP32-S3-ePaper-3.97 (N16R8)  
 **Profile:** 16 MB Flash / 8 MB OPI PSRAM / DIO 80 MHz / app3M_fat9M_16MB  
-**Status:** software candidate; full physical validation remains outstanding.
+**Status:** experimental firmware candidate; user hardware validation required.
 
 ## Added
-- Clearer bilingual repository documentation for the browser flasher and 3D-printable enclosure models.
+- A visible E-Ink boot diagnostics screen is shown after peripheral initialization and before the home screen.
+- The startup screen reports the main display, SD card, CardKB2 keyboard, RTC, audio initialization, PSRAM, Flash capacity, free heap and side OLED status.
+- Optional peripherals are reported as unavailable rather than treated as fatal boot errors.
+- The firmware version in the application registry is updated to 0.1.2-rc.1.
 
 ## Fixed
-- Corrected Web Flasher version-tag validation so valid versioned prereleases are accepted while development builds remain rejected.
-- Fixed README rendering on GitHub Pages by removing the unsupported centering wrapper and replacing literal escaped newline sequences with real Markdown line breaks.
+- No unrelated behavior or peripheral wiring changes are included in this candidate.
 
 ## Changed
-- No firmware feature changes are intended in this candidate; the firmware is rebuilt from the same source tree for a traceable, versioned package.
+- Startup now pauses briefly on the diagnostics screen before opening the desktop. This adds a short delay to boot by design.
+- The existing home screen, applications, storage layout, Wi-Fi behavior and Web Flasher write procedure are unchanged.
 
 ## Known issues
-- Full hardware validation of E-Ink, side OLED, SD_MMC, keyboard/I²C, RTC, sensors, audio, Wi-Fi, power and long-term stability remains outstanding.
+- The diagnostics screen reports initialization state; it is not a full functional test of each peripheral.
+- Full hardware validation of E-Ink refresh, side OLED, SD read/write, keyboard/I²C, RTC, sensors, audio, Wi-Fi, power and long-term stability remains outstanding.
 - The Web Flasher is supported only in desktop Chrome/Edge over HTTPS with Web Serial.
 
 ## Build & package
@@ -26,7 +30,7 @@
 ## Upgrade
 - Back up the SD card and important internal Flash data before flashing.
 - Keep USB and power connected until the flasher confirms completion.
-- After flashing, perform the controlled hardware checklist before relying on the device.
+- After flashing, check that the new diagnostics screen reports expected hardware states, then verify normal desktop operation. Report any unexpected NOT FOUND state.
 
 ---
 
@@ -34,20 +38,24 @@
 
 **Цель:** Waveshare ESP32-S3-ePaper-3.97 (N16R8)  
 **Профиль:** Flash 16 MB / OPI PSRAM 8 MB / DIO 80 MHz / app3M_fat9M_16MB  
-**Статус:** программный кандидат; полная аппаратная проверка ещё впереди.
+**Статус:** экспериментальная прошивка-кандидат; требуется проверка пользователем на устройстве.
 
 ## Добавлено
-- Уточнена двуязычная документация репозитория: описание веб-флешера и моделей корпуса для 3D-печати.
+- После инициализации периферии и перед главным экраном появляется диагностический экран загрузки на E-Ink.
+- На экране отображаются состояния основного дисплея, SD-карты, клавиатуры CardKB2, RTC, аудиосистемы, PSRAM, объём Flash, свободная heap-память и боковой OLED.
+- Отсутствие необязательной периферии отображается как NOT FOUND и само по себе не должно останавливать загрузку.
+- Версия прошивки в реестре приложений обновлена до 0.1.2-rc.1.
 
 ## Исправлено
-- Исправлена проверка версии в Web Flasher: корректные версионные пререлизы принимаются, development-сборки по-прежнему отклоняются.
-- Исправлено отображение README на GitHub Pages: удалена неподдерживаемая HTML-обёртка центрирования, буквальные последовательности переноса строк заменены настоящими переносами Markdown.
+- Посторонние функции и распиновка периферии в этом кандидате не менялись.
 
 ## Изменено
-- Изменения функциональности прошивки в этом кандидате не планируются; прошивка пересобирается из того же дерева исходников для получения воспроизводимого пакета с версионной меткой.
+- Перед переходом на рабочий стол система ненадолго задерживается на диагностическом экране. Это намеренная небольшая прибавка ко времени загрузки.
+- Главный экран, приложения, разметка хранилища, работа Wi-Fi и процедура записи Web Flasher не меняются.
 
 ## Известные ограничения
-- Полная аппаратная проверка E-Ink, бокового OLED, SD_MMC, клавиатуры/I²C, RTC, датчиков, аудио, Wi-Fi, питания и долговременной стабильности ещё не выполнена.
+- Диагностический экран показывает результат инициализации, но не является полной функциональной проверкой каждого устройства.
+- Полная аппаратная проверка обновления E-Ink, бокового OLED, чтения/записи SD, клавиатуры/I²C, RTC, датчиков, аудио, Wi-Fi, питания и длительной стабильности ещё впереди.
 - Web Flasher поддерживается только в настольных Chrome/Edge по HTTPS с Web Serial.
 
 ## Сборка и пакет
@@ -58,4 +66,4 @@
 ## Обновление
 - Перед прошивкой сделай резервную копию SD-карты и важных данных во внутренней Flash.
 - Не отключай USB и питание, пока флешер не подтвердит завершение.
-- После прошивки выполни контролируемую проверку аппаратуры, прежде чем полагаться на устройство.
+- После прошивки проверь диагностический экран: состояния должны соответствовать подключённой аппаратуре. Затем убедись, что открылся обычный рабочий стол. Сообщи, если какой-либо ожидаемый модуль отображается как NOT FOUND.
