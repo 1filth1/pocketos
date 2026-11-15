@@ -111,7 +111,7 @@ jobs:
                   "path": f"./releases/{tag}/",
                   "prerelease": bool(item["isPrerelease"])
               })
-          (root / "releases.json").write_text(json.dumps({"releases": releases}, ensure_ascii=False, indent=2) + "\\n")
+          (root / "releases.json").write_text(json.dumps({"releases": releases}, ensure_ascii=False, indent=2) + "\n")
           print(f"Published catalogue entries: {len(releases)}")
           PY
 
