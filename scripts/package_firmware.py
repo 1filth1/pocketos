@@ -42,10 +42,33 @@ for key, src, address, label in files:
                            "sha256": digest})
     checksums.append(f"{digest}  {dest.name}")
 
+# The user-tested reference archive uses DIO/80 MHz and this exact partition table.
+# Failing closed here prevents CI from publishing a package that silently drifts.
+REFERENCE_PARTITIONS_SHA256 = "aaae2888c5a6a348004b5b436f47abb25ae32e72d9003902955a998eda723edd"
+partition_hash = hashlib.sha256((out / "partitions.bin").read_bytes()).hexdigest()
+if partition_hash != REFERENCE_PARTITIONS_SHA256:
+    raise SystemExit(
+        "Generated partition table does not match the user-tested reference archive: "
+        f"{partition_hash}"
+    )
+
+for image_name in ("bootloader.bin", "application.bin"):
+    image = (out / image_name).read_bytes()
+    if len(image) < 4 or image[0] != 0xE9:
+        raise SystemExit(f"{image_name}: invalid ESP image header")
+    mode, size_freq = image[2], image[3]
+    if mode != 2 or (size_freq >> 4) != 4 or (size_freq & 0x0F) != 0x0F:
+        raise SystemExit(
+            f"{image_name}: expected DIO / 16MB / 80MHz image header; "
+            f"got mode={mode}, size_code={size_freq >> 4}, freq_code={size_freq & 0x0F}"
+        )
+
 manifest = {
     "version": os.environ.get("RELEASE_VERSION", "PocketOS CI build"),
     "commit": os.environ["GITHUB_SHA"],
     "core": "3.3.12", "flash": "16MB", "psram": "8MB OPI",
+    "flash_mode": "dio", "flash_freq": "80m",
+    "partition_layout": "firmware.zip reference (4 MiB mapped / 16 MiB physical)",
     "baudrate": 460800, "flash_files": manifest_files
 }
 (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
