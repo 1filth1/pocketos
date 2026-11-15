@@ -1,0 +1,82 @@
+name: Publish PocketOS pre-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release version, for example v0.1.2-rc.1"
+        required: true
+        type: string
+        default: "v0.1.2-rc.1"
+      confirm_publish:
+        description: "Confirm creation of this tag and pre-release"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pocketos-publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  create-release-tag:
+    name: Validate candidate and create release tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out selected branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate release candidate
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          CONFIRM_PUBLISH: ${{ inputs.confirm_publish }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [[ "$CONFIRM_PUBLISH" != "true" ]]; then
+            echo "Publication was not confirmed." >&2
+            exit 1
+          fi
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+[.][0-9]+[.][0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid release tag: $RELEASE_TAG" >&2
+            exit 1
+          fi
+          NOTES_FILE="RELEASE_NOTES_${RELEASE_TAG}.md"
+          CHANGELOG_VERSION="${RELEASE_TAG#v}"
+          test -s "$NOTES_FILE" || { echo "Missing bilingual release notes: $NOTES_FILE" >&2; exit 1; }
+          grep -Fq "## [${CHANGELOG_VERSION}]" CHANGELOG.md || {
+            echo "Missing CHANGELOG.md section for ${CHANGELOG_VERSION}" >&2
+            exit 1
+          }
+          for heading in "## Added" "## Fixed" "## Changed" "## Known issues" "## Build & package" "## Upgrade"; do
+            grep -Fq "$heading" "$NOTES_FILE" || {
+              echo "Missing release-notes section: $heading" >&2
+              exit 1
+            }
+          done
+          grep -Eiq '^#.*(Русский|Russian)' "$NOTES_FILE" || {
+            echo "Release notes must include Russian and English sections." >&2
+            exit 1
+          }
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Release $RELEASE_TAG already exists." >&2
+            exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Git tag $RELEASE_TAG already exists." >&2
+            exit 1
+          fi
+          echo "Validated $RELEASE_TAG at commit $GITHUB_SHA"
+
+      - name: Create tag to start the release pipeline
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
+            -f "ref=refs/tags/$RELEASE_TAG" \
+            -f "sha=$GITHUB_SHA"
