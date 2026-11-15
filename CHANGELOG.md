@@ -4,6 +4,9 @@ All notable changes to PocketOS are documented here. Every release and pre-relea
 
 ## [Unreleased] — В разработке
 
+### Fixed
+- Web Flasher теперь принимает любой корректный версионный тег PocketOS, а не только жёстко заданный rc.2; development-сборки по-прежнему отклоняются.
+
 ### Added
 - Mandatory release-note structure for every release and pre-release: new features, fixes, improvements, known issues, build/package details and upgrade instructions.
 - A bilingual release-notes template and CI checks that require version-specific notes before publishing a GitHub Release.
