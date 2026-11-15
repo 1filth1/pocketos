@@ -51,7 +51,7 @@ jobs:
 
       - name: Compile PocketOS
         env:
-          FQBN: esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi
+          FQBN: esp32:esp32:esp32s3:CDCOnBoot=cdc,FlashFreq=80,FlashMode=dio,FlashSize=16M,PartitionScheme=huge_app,PSRAM=opi
         run: |
           arduino-cli compile --fqbn "$FQBN" --warnings all --output-dir "$RUNNER_TEMP/pocketos-build" .
 
@@ -70,6 +70,7 @@ jobs:
       - name: Package firmware and generate checksums
         env:
           GITHUB_SHA: ${{ github.sha }}
+          RELEASE_VERSION: PocketOS-v0.1.1-rc.1
         run: |
           python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release" "${{ steps.boot-app0.outputs.path }}"
           mkdir -p "$RUNNER_TEMP/pocketos-pages"
@@ -109,10 +110,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if gh release view v0.1.0 >/dev/null 2>&1; then
-            echo "PocketOS v0.1.0 already exists; leaving the published release unchanged."
+          if gh release view v0.1.1-rc.1 >/dev/null 2>&1; then
+            echo "PocketOS v0.1.1-rc.1 already exists; leaving the candidate release unchanged."
           else
-            gh release create v0.1.0 \
+            gh release create v0.1.1-rc.1 \
               "$RUNNER_TEMP/pocketos-release/PocketOS-firmware.zip" \
               "$RUNNER_TEMP/pocketos-release/bootloader.bin" \
               "$RUNNER_TEMP/pocketos-release/partitions.bin" \
@@ -121,8 +122,8 @@ jobs:
               "$RUNNER_TEMP/pocketos-release/manifest.json" \
               "$RUNNER_TEMP/pocketos-release/SHA256SUMS" \
               --target "$GITHUB_SHA" \
-              --title "PocketOS v0.1" \
+              --title "PocketOS v0.1.1-rc.1 (DIO reference profile)" \
               --prerelease \
-              --notes-file docs/RELEASE_NOTES_v0.1.md
+              --notes "Candidate rebuilt against the user-tested firmware.zip reference: DIO, 80 MHz, 16 MB flash header and matching legacy partition table. Physical validation of this candidate is still required."
           fi
 
