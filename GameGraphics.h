@@ -61,9 +61,57 @@ void garage(){
  box(43,170,42,160);for(int i=0;i<5;i++)box(48,185+i*26,31,17);
  box(410,150,61,66);for(int i=0;i<4;i++)line(418,159+i*13,461,159+i*13);
  line(99,371,428,371);solid(104,363,8,16);solid(420,363,8,16);
- if(state.stage)carArt(state.car);else text("ENTER: ACCEPT A CLIENT",112,290,true);
- text(state.stage?cars[state.car]:"YOUR WORKSHOP",32,414);
- text("COMPLETED "+String(state.completed)+" / REP "+String(state.reputation),32,440);
+ if(state.stage)drawCarSprite(state.car,132,228);else{
+  text("YOUR WORKSHOP",112,260,true);
+  text("NO ACTIVE CLIENT",126,294);
+  text("ENTER: OPEN THE JOB BOARD",91,326);
+ }
+ text(state.stage?cars[state.car]:"GARAGE / DAY "+String(state.day),32,414);
+ text("JOBS "+String(state.completed)+" / REP "+String(state.reputation),32,440);
+}
+void infoPage(){
+ box(35,140,446,247);
+ text(pages[page]+" / WORKSHOP",54,174,true);
+ if(page==1){
+  text(state.stage?"ACTIVE CLIENT":"NO ACTIVE CLIENT",54,214,true);
+  text(state.stage?cars[state.car]:"ACCEPT A CLIENT FROM GARAGE",54,248);
+  text(state.stage?String("SYMPTOM: ")+symptoms[state.fault]:"CLIENTS ARRIVE EVERY DAY",54,282);
+  text(String("JOB VALUE: ")+String(payment()),54,316);
+  text(String("COMPLETED JOBS: ")+String(state.completed),54,350);
+ }else if(page==2){
+  text(state.stage>=2?"FAULT IDENTIFIED":"SELECT A NODE / ENTER TO TEST",54,210,true);
+  for(int i=0;i<4;i++){
+   int y=250+i*32;
+   if(i==repairNode){solid(50,y-20,410,26);inv(String(i+1)+". "+faults[i],60,y);}
+   else text(String(i+1)+". "+faults[i],60,y);
+   text(state.stage>=2?(i==state.fault?"FAULT":"PASSED"):"NOT TESTED",340,y);
+  }
+ }else if(page==4){
+  text("PARTS INVENTORY",54,214,true);
+  text(String("REPLACEMENT: ")+(state.stock?"IN STOCK":"NOT ORDERED"),54,254);
+  text(String("CURRENT PART COST: ")+String(partCost()),54,290);
+  text("PARTS ARE ORDERED PER JOB",54,326);
+  text("NO UNLIMITED STOCK / NO FREE REPAIRS",54,358);
+ }else if(page==5){
+  text("MECHANIC ROSTER",54,214,true);
+  text(state.staff?"MECHANIC 01 / HIRED":"NO MECHANIC HIRED",54,254);
+  text(String("HIRING COST: 500"),54,290);
+  text(String("DAILY WAGES: ")+(state.staff?"150":"0"),54,326);
+  text("PRESS H TO HIRE / M TO ASSIGN",54,358);
+ }else if(page==6){
+  text("WORKSHOP LEDGER",54,214,true);
+  text(String("CASH: ")+String(state.cash),54,250,true);
+  text(String("REVENUE: ")+String(state.revenue),54,282);
+  text(String("EXPENSES: ")+String(state.expenses),54,314);
+  text(String("NET RESULT: ")+String(state.revenue-state.expenses),54,346);
+  text(String("LAST JOBS: ")+String(state.completed),54,374);
+ }else{
+  text(String("SAVE SLOT: ")+String(slot),54,214,true);
+  text(String("SD CARD: ")+(cardOK?"MOUNTED":"NOT MOUNTED"),54,250);
+  text(clip(assetStatus,40),54,282);
+  text("TAB: CHANGE PAGE",54,326);
+  text("1-3: SELECT SAVE SLOT",54,358);
+ }
 }
 void repairScreen(){
  text(String("< ")+faults[repairNode]+" >",32,151,true);
@@ -106,9 +154,9 @@ String nextHint(){
 }
 String primaryLabel(){if(!active)return "START GARAGE";switch(state.stage){case 0:return "ACCEPT CLIENT";case 1:return "TEST SELECTED NODE";case 2:return state.stock?"START HAND REPAIR":"BUY PART "+String(partCost());case 3:return state.remaining>=10?"USE SELECTED TOOL":"NEXT WORKING DAY";case 4:return "QUALITY TEST";default:return "COLLECT "+String(payment());}}
 void draw(bool full=false){view=JDM_GAME;if(full)epd.forceClean();beginDraw();do{
- header("","JDM / WORKSHOP","ARROWS: SELECT   ENTER: USE   TAB: VIEW");
+ header("","JDM / "+String(pages[page]),"ARROWS: SELECT   ENTER: USE   TAB: PAGE");
  text("DAY "+String(state.day)+"   CASH "+String(state.cash),30,108,true);
- if(page==3&&state.stage)repairScreen();else garage();
+ if(page==3&&state.stage)repairScreen();else if(page==0)garage();else infoPage();
  line(500,120,500,444);
  String labels[]={primaryLabel(),"NEXT DAY (-"+String(100+state.staff*150)+")","SAVE SLOT","LOAD SLOT","NEW GARAGE"};
  for(int i=0;i<5;i++){int y=147+i*39;if(i==row){solid(512,y-23,283,34);inv(labels[i],520,y);}else text(labels[i],520,y);}
@@ -138,5 +186,5 @@ void draw(bool full=false){view=JDM_GAME;if(full)epd.forceClean();beginDraw();do
  }
  }
  }while(epd.nextPage());}
-void open(){popup=0;bolt=0;page=0;row=0;active=false;confirmNew=false;repairNode=tool=0;message="ENTER: NEW GARAGE / DOWN: LOAD SLOT";draw(true);}
+void open(){popup=0;bolt=0;page=0;row=0;active=false;confirmNew=false;repairNode=tool=0;prepareAssets();message="ENTER: NEW GARAGE / DOWN: LOAD SLOT";draw(true);}
 }

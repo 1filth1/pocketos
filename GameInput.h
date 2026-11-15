@@ -10,8 +10,14 @@ bool keyEvent(uint8_t k){
  if(active&&state.stage==3&&state.remaining>=10&&(k==0xB5||k==0xB6)){bolt=(bolt+(k==0xB5?2:1))%3;draw();return true;}
 
  if(k==27||k==8){if(confirmNew){confirmNew=false;message="NEW GAME CANCELLED";draw();return true;}if(active&&!save()){draw();return true;}games();return true;}
- if(k==9){page=page==0?3:0;draw();return true;}
- if(k==0xB4||k==0xB7){if((state.stage==3&&state.remaining>=10)||state.stage==4)tool=(tool+(k==0xB4?3:1))%4;else repairNode=(repairNode+(k==0xB4?3:1))%4;page=3;draw();return true;}
+ if(k==9){page=(page+1)%8;draw();return true;}
+ if(k==0xB4||k==0xB7){
+  if(page==2||page==3){
+   if(page==3&&((state.stage==3&&state.remaining>=10)||state.stage==4))tool=(tool+(k==0xB4?3:1))%4;
+   else repairNode=(repairNode+(k==0xB4?3:1))%4;
+   draw();return true;
+  }
+ }
  if(k==0xB5||k==0xB6){row=(row+(k==0xB5?4:1))%5;confirmNew=false;draw();return true;}
  if(k>='1'&&k<='3'){slot=k-'0';message="SLOT "+String(slot);draw();return true;}
  bool changed=false;

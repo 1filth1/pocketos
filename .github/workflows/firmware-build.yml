@@ -77,6 +77,12 @@ jobs:
           cp webflasher/index.html "$RUNNER_TEMP/pocketos-pages/index.html"
           cp "$RUNNER_TEMP/pocketos-release/"* "$RUNNER_TEMP/pocketos-pages/"
 
+      - name: Build JDM Garage Empire SD content pack
+        run: |
+          python3 scripts/package_jdm_sd_content.py CarSprites.h "$RUNNER_TEMP/jdm-sd-content" "$RUNNER_TEMP/pocketos-release/JDM-Garage-Empire-SD-Content.zip"
+          echo "SD content archive:"
+          unzip -l "$RUNNER_TEMP/pocketos-release/JDM-Garage-Empire-SD-Content.zip"
+
       - name: Report firmware artifact sizes
         run: |
           find "$RUNNER_TEMP/pocketos-release" -maxdepth 1 -type f -printf '%f %s bytes\n' | sort

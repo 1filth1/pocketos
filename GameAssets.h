@@ -6,12 +6,12 @@ uint8_t spriteCache[3120];
 int cachedModel=-1;
 bool cachedFromSD=false;
 String assetStatus="BUILT-IN ART";
-String spritePath(int model){return String(root)+"/assets/car_shaded_v2_"+String(model)+".mono";}
+String spritePath(int model){return String(root)+"/assets/cars/car_shaded_v2_"+String(model)+".mono";}
 void prepareAssets(){
  cachedModel=-1;cachedFromSD=false;
  if(!cardOK){assetStatus="BUILT-IN / TF NOT MOUNTED";return;}
  SD_MMC.mkdir("/Games");SD_MMC.mkdir(root);
- if(!SD_MMC.mkdir((String(root)+"/assets").c_str())&&!SD_MMC.exists(String(root)+"/assets")){assetStatus="BUILT-IN / ASSET FOLDER FAILED";return;}
+ SD_MMC.mkdir((String(root)+"/assets").c_str());\n if(!SD_MMC.mkdir((String(root)+"/assets/cars").c_str())&&!SD_MMC.exists(String(root)+"/assets/cars")){assetStatus="BUILT-IN / ASSET FOLDER FAILED";return;}
  bool ok=true;
  for(int i=0;i<10;i++){
   String path=spritePath(i);
