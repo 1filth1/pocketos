@@ -79,7 +79,7 @@ def verify_image_header(path):
 if boot_app0 is None or not boot_app0.is_file() or boot_app0.stat().st_size == 0:
     raise SystemExit("A non-empty boot_app0.bin from the installed Arduino-ESP32 3.3.12 core is required")
 
-github_sha = os.environ.get("GITHUB_SHA", "")
+github_sha = os.environ.get("POCKETOS_SOURCE_SHA") or os.environ.get("GITHUB_SHA", "")
 if not re.fullmatch(r"[0-9a-f]{40}", github_sha):
     raise SystemExit(f"GITHUB_SHA is missing or invalid: {github_sha!r}")
 
