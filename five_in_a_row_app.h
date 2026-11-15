@@ -263,7 +263,8 @@ void frMoveCursor(int dx, int dy) {
   if (x == fiveRow.cursorX && y == fiveRow.cursorY) return;
   fiveRow.cursorX = x;
   fiveRow.cursorY = y;
-  frSave();
+  // Cursor motion is transient: persist only after a move, restart or exit.
+  // This avoids a verified SD-card settings write for every arrow press.
   drawFiveRow();
 }
 
