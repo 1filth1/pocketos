@@ -4,6 +4,11 @@
 
 ## Target platform
 
+![PocketOS connection diagram](build.png)
+
+The connection diagram is maintained in this documentation folder. Treat it as a project reference and verify wiring against the exact physical board revision.
+
+
 - MCU family: ESP32-S3
 - Display target: 800 × 480 E-Ink
 - Display driver referenced in source: `GxEPD2_397_GDEM0397T81`
