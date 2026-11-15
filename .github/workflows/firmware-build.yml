@@ -75,6 +75,46 @@ jobs:
           cp webflasher/index.html "$RUNNER_TEMP/pocketos-pages/index.html"
           cp "$RUNNER_TEMP/pocketos-release/"* "$RUNNER_TEMP/pocketos-pages/"
 
+      - name: Build Web Flasher release catalogue
+        if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release list --limit 100 --json tagName,name,isPrerelease > "$RUNNER_TEMP/existing-releases.json"
+          python3 - "$RUNNER_TEMP/pocketos-pages" "$RUNNER_TEMP/existing-releases.json" <<'PY'
+          import json, pathlib, subprocess, sys
+          root = pathlib.Path(sys.argv[1])
+          existing = json.loads(pathlib.Path(sys.argv[2]).read_text())
+          current = json.loads((root / "manifest.json").read_text())
+          releases = [{
+              "name": current["version"] + " (текущая сборка)",
+              "tag": current["version"].removeprefix("PocketOS-"),
+              "path": "./",
+              "prerelease": True
+          }]
+          for item in existing:
+              tag = item["tagName"]
+              if tag == releases[0]["tag"]:
+                  continue
+              folder = root / "releases" / tag
+              folder.mkdir(parents=True, exist_ok=True)
+              subprocess.run([
+                  "gh", "release", "download", tag, "--dir", str(folder),
+                  "--pattern", "*.bin", "--pattern", "manifest.json", "--pattern", "SHA256SUMS"
+              ], check=True)
+              required = ["manifest.json", "SHA256SUMS", "bootloader.bin", "partitions.bin", "boot_app0.bin", "application.bin"]
+              if not all((folder / name).is_file() for name in required):
+                  raise SystemExit(f"Incomplete firmware assets for {tag}")
+              releases.append({
+                  "name": item["name"] or tag,
+                  "tag": tag,
+                  "path": f"./releases/{tag}/",
+                  "prerelease": bool(item["isPrerelease"])
+              })
+          (root / "releases.json").write_text(json.dumps({"releases": releases}, ensure_ascii=False, indent=2) + "\\n")
+          print(f"Published catalogue entries: {len(releases)}")
+          PY
+
       - name: Report firmware artifact sizes
         run: |
           find "$RUNNER_TEMP/pocketos-release" -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
