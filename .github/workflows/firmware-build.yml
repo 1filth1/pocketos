@@ -21,9 +21,6 @@ jobs:
   arduino-build:
     name: Compile ESP32-S3 firmware
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out source
         uses: actions/checkout@v4
@@ -91,6 +88,29 @@ jobs:
             ${{ runner.temp }}/pocketos-pages/index.html
           if-no-files-found: error
 
+      - name: Validate release notes and changelog entry
+        if: github.event_name == 'push' && github.ref_type == 'tag'
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          NOTES_FILE="RELEASE_NOTES_${RELEASE_TAG}.md"
+          CHANGELOG_VERSION="${RELEASE_TAG#v}"
+          test -s "$NOTES_FILE" || { echo "Missing bilingual release notes: $NOTES_FILE" >&2; exit 1; }
+          grep -Fq "## [${CHANGELOG_VERSION}]" CHANGELOG.md || {
+            echo "Missing CHANGELOG.md section: ## [${CHANGELOG_VERSION}]" >&2
+            exit 1
+          }
+          for heading in "## Added" "## Fixed" "## Changed" "## Known issues" "## Build & package" "## Upgrade"; do
+            grep -Fq "$heading" "$NOTES_FILE" || {
+              echo "Missing release-notes section: $heading" >&2
+              exit 1
+            }
+          done
+          grep -Eiq '^#.*(Русский|Russian)' "$NOTES_FILE" || {
+            echo "Release notes must contain a Russian section." >&2
+            exit 1
+          }
+
       - name: Configure GitHub Pages
         if: github.event_name == 'push' && github.ref_type == 'tag'
         uses: actions/configure-pages@v5
@@ -106,23 +126,6 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Validate release notes and changelog entry
-        if: github.event_name == 'push' && github.ref_type == 'tag'
-        env:
-          RELEASE_TAG: ${{ github.ref_name }}
-        run: |
-          NOTES_FILE="RELEASE_NOTES_${RELEASE_TAG}.md"
-          CHANGELOG_VERSION="${RELEASE_TAG#v}"
-          test -s "$NOTES_FILE" || { echo "Missing bilingual release notes: $NOTES_FILE" >&2; exit 1; }
-          grep -Fq "## [${CHANGELOG_VERSION}]" CHANGELOG.md || {
-            echo "Missing CHANGELOG.md section: ## [${CHANGELOG_VERSION}]" >&2
-            exit 1
-          }
-          grep -Eiq '^#.*(Русский|Russian)' "$NOTES_FILE" || {
-            echo "Release notes must contain both English and Russian sections." >&2
-            exit 1
-          }
-
       - name: Publish PocketOS release
         if: github.event_name == 'push' && github.ref_type == 'tag'
         env:
@@ -132,6 +135,10 @@ jobs:
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
             echo "Refusing to reuse an existing $RELEASE_TAG release; publish a new version instead." >&2
             exit 1
+          fi
+          RELEASE_ARGS=()
+          if [[ "$RELEASE_TAG" =~ (alpha|beta|rc|pre) ]]; then
+            RELEASE_ARGS+=(--prerelease)
           fi
           gh release create "$RELEASE_TAG" \
             "$RUNNER_TEMP/pocketos-release/PocketOS-firmware.zip" \
@@ -143,5 +150,5 @@ jobs:
             "$RUNNER_TEMP/pocketos-release/SHA256SUMS" \
             --target "$GITHUB_SHA" \
             --title "PocketOS $RELEASE_TAG — Waveshare N16R8 / DIO" \
-            --prerelease \
+            "${RELEASE_ARGS[@]}" \
             --notes-file "RELEASE_NOTES_${RELEASE_TAG}.md"
