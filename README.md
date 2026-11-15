@@ -12,7 +12,7 @@
 [![Status](https://img.shields.io/badge/status-experimental-orange?style=for-the-badge)](#project-status)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-**[Web Flasher / Прошивка из браузера](https://1filth1.github.io/pocketos/) · [English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.1-rc.2.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md) · [Release process](docs/RELEASE_PROCESS.md) · [Firmware archive audit](docs/FIRMWARE_ARCHIVE_AUDIT.md) · [Build guide](docs/BUILD.md) · [License](LICENSE)**
+**[Web Flasher / Прошивка из браузера](https://1filth1.github.io/pocketos/) · [English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.1-rc.2.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md) · [Release process](docs/RELEASE_PROCESS.md) · [Firmware archive audit](docs/FIRMWARE_ARCHIVE_AUDIT.md) · [Build guide](docs/BUILD.md) · [3D printing / 3D-печать](docs/3D_PRINTING.md) · [License](LICENSE)**
 
 </div>
 
@@ -71,7 +71,7 @@ The diagram is provided in the repository documentation. Confirm the exact board
 
 > Pin mapping, board revision, Flash/PSRAM configuration, partition layout and library versions must be confirmed against the actual Schematic.io project and hardware revision before producing release firmware.
 
-## ◈ Project architecture
+## 🧩 3D printing / 3D-печать\n\nPrintable STL files for the PocketOS enclosure and controls are listed in **[docs/3D_PRINTING.md](docs/3D_PRINTING.md)**. The page provides individual download links and pre-print fit-check guidance.\n\nSTL files: `KB.stl`, `backeink.stl`, `button_eink (1).stl`, `front_eink.stl`, `speaker.stl`.\n\n## ◈ Project architecture
 
 PocketOS v0.1 is implemented as a **single firmware image**. Built-in applications are compiled into the project and run in the same address space.
 
@@ -93,7 +93,7 @@ The SD card is intended for user files, application data, resources and saves.
 | `docs/HARDWARE.md` | Source-derived hardware reference (not a verified wiring guide) |
 | `docs/TESTING.md` | Hardware and software test plan |
 | `docs/RELEASE_PROCESS.md` | Release and verification process |
-| `docs/FIRMWARE_ARCHIVE_AUDIT.md` | Static audit of the supplied firmware ZIP |
+| `docs/FIRMWARE_ARCHIVE_AUDIT.md` | Static audit of the supplied firmware ZIP |\n| `docs/3D_PRINTING.md` | STL model catalogue and 3D-printing notes |
 | `LICENSE` | MIT License |
 
 The source tree is evolving; this map highlights the main entry points rather than every header.
