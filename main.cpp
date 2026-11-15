@@ -31,7 +31,7 @@ bool largeText=false;
 SdSettings prefs;
 struct Entry { String path,name; uint64_t size; bool dir; };
 Entry files[MAX_FILES]; String nets[MAX_NETS],netNames[MAX_NETS];
-enum View:uint8_t {HOME,FILES,VIEWER,INPUT_VIEW,NOTE_NAME,NOTE_EDIT,SYSTEM,AUDIO_TEST,NET_PASS,TIME_SET,WEB_EDIT,WEB_PAGE,GAMES,SNAKE,TETRIS,SOKOBAN,G2048,TAMAGOTCHI,INFO,CALENDAR,CAL_TASKS,CAL_ADD,CAL_DATE,TIMER_APP,TIMER_EDIT,PAPER_SETTINGS,FILE_EXCHANGE,RECORDER,SEQUENCER,JPEG_VIEW,GPS_APP,VIDEO_VIEW,NOTES_LIST,BOOK_LIBRARY,BOOK_READ,GROOVE_BOX,RAW_VIEW,BMP_VIEW,JDM_GAME};
+enum View:uint8_t {HOME,FILES,VIEWER,INPUT_VIEW,NOTE_NAME,NOTE_EDIT,SYSTEM,AUDIO_TEST,NET_PASS,TIME_SET,WEB_EDIT,WEB_PAGE,GAMES,SNAKE,TETRIS,SOKOBAN,G2048,FIVE_ROW,TAMAGOTCHI,INFO,CALENDAR,CAL_TASKS,CAL_ADD,CAL_DATE,TIMER_APP,TIMER_EDIT,PAPER_SETTINGS,FILE_EXCHANGE,RECORDER,SEQUENCER,JPEG_VIEW,GPS_APP,VIDEO_VIEW,NOTES_LIST,BOOK_LIBRARY,BOOK_READ,GROOVE_BOX,RAW_VIEW,BMP_VIEW,JDM_GAME};
 View view=HOME; bool cardOK=false,kbOK=false,rtcOK=false,deleting=false;
 int chosen=0,selected=0,first=0,count=0,textTop=0,netCount=0,netSelected=0,gameSelected=0;
 String folder="/",textFile,status="READY",typed="",pageText="",url="http://example.com",wifiName="",infoName="",notePath="",noteText="";
@@ -410,12 +410,13 @@ void enableSavedWifi(){
   else {WiFi.disconnect(false,false);status="WIFI CONNECTION FAILED";}
 }
 #include "web_reader.h"
-const char* gameNames[]={"SNAKE","TETRIS","SOKOBAN","2048","TAMAGOTCHI"}; void games(){menuScreen(GAMES);return;view=GAMES;beginDraw();do{header("GAMES","offline games - progress saved in ESP32","W/S: SELECT   ENTER: START   ESC/BACKSPACE: HOME");for(int i=0;i<5;i++){int y=91+i*62;bool on=i==gameSelected;epd.fillRect(35,y,500,48,on?GxEPD_BLACK:GxEPD_WHITE);epd.drawRect(35,y,500,48,GxEPD_BLACK);String s=String(i+1)+". "+gameNames[i];if(on)inv(s,55,y+30);else text(s,55,y+30,true);}text("ESC RETURNS TO THIS LIST; IT DOES NOT RESTART A GAME.",35,423);}while(epd.nextPage());}
+const char* gameNames[]={"SNAKE","TETRIS","SOKOBAN","2048","TAMAGOTCHI","5 IN A ROW"}; void games(){menuScreen(GAMES);return;view=GAMES;beginDraw();do{header("GAMES","offline games - progress saved in ESP32","W/S: SELECT   ENTER: START   ESC/BACKSPACE: HOME");for(int i=0;i<6;i++){int y=91+i*62;bool on=i==gameSelected;epd.fillRect(35,y,500,48,on?GxEPD_BLACK:GxEPD_WHITE);epd.drawRect(35,y,500,48,GxEPD_BLACK);String s=String(i+1)+". "+gameNames[i];if(on)inv(s,55,y+30);else text(s,55,y+30,true);}text("ESC RETURNS TO THIS LIST; IT DOES NOT RESTART A GAME.",35,423);}while(epd.nextPage());}
 void saveScore(const char*k,int score){int old=prefs.getInt(k,0);if(score>old)prefs.putInt(k,score);} void startSnake(){snakeLen=4;snakeDX=1;snakeDY=0;snakeScore=0;for(int i=0;i<snakeLen;i++){snakeX[i]=8-i;snakeY[i]=7;}snakeFoodX=14;snakeFoodY=7;lastTick=millis();view=SNAKE;}
 void drawSnake(){epd.gameUpdates=true;beginDraw();do{header("SNAKE","score "+String(snakeScore)+"  best "+String(prefs.getInt("snake",0)),"ARROWS: MOVE   ESC/BACKSPACE: GAMES");for(int y=0;y<18;y++)for(int x=0;x<30;x++)epd.drawRect(80+x*20,90+y*19,20,19,GxEPD_BLACK);epd.fillRect(80+snakeFoodX*20+3,90+snakeFoodY*19+3,14,13,GxEPD_BLACK);for(int i=0;i<snakeLen;i++)epd.fillRect(80+snakeX[i]*20+3,90+snakeY[i]*19+3,14,13,GxEPD_BLACK);}while(epd.nextPage());epd.gameUpdates=false;}
 void snakeTick(){if(millis()-lastTick<300)return;lastTick=millis();int nx=snakeX[0]+snakeDX,ny=snakeY[0]+snakeDY;bool hit=nx<0||nx>=30||ny<0||ny>=18;for(int i=0;i<snakeLen;i++)if(snakeX[i]==nx&&snakeY[i]==ny)hit=true;if(hit){saveScore("snake",snakeScore);games();return;}for(int i=snakeLen;i>0;i--){snakeX[i]=snakeX[i-1];snakeY[i]=snakeY[i-1];}snakeX[0]=nx;snakeY[0]=ny;if(nx==snakeFoodX&&ny==snakeFoodY){if(snakeLen<79)snakeLen++;snakeScore+=10;snakeFoodX=random(30);snakeFoodY=random(18);}drawSnake();}
 #include "tetris_app.h"
 #include "sokoban_app.h"
+#include "five_in_a_row_app.h"
 bool won2048=false, continued2048=false, over2048=false;
 bool movesAvailable2048(){
   for(int y=0;y<4;y++)for(int x=0;x<4;x++)
@@ -512,7 +513,7 @@ uint8_t key(){
   uint8_t value=Wire.read();
   if(value)deviceActivity=millis();
   return value;
-} void appendText(uint8_t k,String&dst){if(k>=32&&k<=126&&dst.length()<80)dst+=(char)k;else if(k==8&&dst.length())dst.remove(dst.length()-1);} void startGame(){rememberActivity("game","",gameSelected);if(gameSelected==0)startSnake();else if(gameSelected==1)startTetris();else if(gameSelected==2)startSokoban();else if(gameSelected==3)start2048();else startTama();}
+} void appendText(uint8_t k,String&dst){if(k>=32&&k<=126&&dst.length()<80)dst+=(char)k;else if(k==8&&dst.length())dst.remove(dst.length()-1);} void startGame(){rememberActivity("game","",gameSelected);if(gameSelected==0)startSnake();else if(gameSelected==1)startTetris();else if(gameSelected==2)startSokoban();else if(gameSelected==3)start2048();else if(gameSelected==4)startTama();else startFiveRow();}
 void home();
 void timeSetView();
 #include "calendar_app.h"
@@ -725,11 +726,11 @@ void resumeLast(){
   if(kind=="book"){textFile=path;textTop=max(0,pos);viewer();return;}
   if(openNote(path)){noteText=prefs.getString("resumeDraft",noteText);noteEditView();}else home();return;
  }
- if(kind=="game"){gameSelected=constrain(pos,0,4);startGame();ResumeGame g;const char *key=view==SNAKE?"resumeSnake":"resume2048";
+ if(kind=="game"){gameSelected=constrain(pos,0,5);startGame();if(view==FIVE_ROW){drawFiveRow();return;}ResumeGame g;const char *key=view==SNAKE?"resumeSnake":"resume2048";
  if((view==SNAKE||view==G2048)&&prefs.getBytesLength(key)==sizeof(g)&&prefs.getBytes(key,&g,sizeof(g))==sizeof(g)){
  if(view==SNAKE&&g.len>=4&&g.len<=80){memcpy(snakeX,g.x,sizeof(snakeX));memcpy(snakeY,g.y,sizeof(snakeY));snakeLen=g.len;snakeDX=g.dx;snakeDY=g.dy;snakeFoodX=g.fx;snakeFoodY=g.fy;snakeScore=g.score;}
  if(view==G2048){memcpy(b2048,g.board,sizeof(b2048));score2048=g.points;won2048=g.won;continued2048=g.continued;over2048=g.over;}}
- if(view==SNAKE)drawSnake();else if(view==TETRIS)drawTetris();else if(view==SOKOBAN)drawSokoban();else if(view==G2048)draw2048();else petDraw();return;}
+ if(view==SNAKE)drawSnake();else if(view==TETRIS)drawTetris();else if(view==SOKOBAN)drawSokoban();else if(view==G2048)draw2048();else if(view==FIVE_ROW)drawFiveRow();else petDraw();return;}
  home();
 }
 static bool reminderSoundPending=false,reminderWake=false;
@@ -819,6 +820,7 @@ void shutdownDevice(){
   if(view==TAMAGOTCHI)saveTama();
   if(view==SNAKE)saveScore("snake",snakeScore);
   if(view==TETRIS)tetSave();
+  if(view==FIVE_ROW)frSave();
   if(view==G2048)saveScore("2048",score2048);
   exchangeStop();
   WiFi.disconnect();WiFi.mode(WIFI_OFF);
