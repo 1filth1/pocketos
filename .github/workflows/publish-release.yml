@@ -107,7 +107,7 @@ jobs:
 
       - name: Package firmware and Web Flasher
         env:
-          GITHUB_SHA: ${{ steps.source.outputs.sha }}
+          POCKETOS_SOURCE_SHA: ${{ steps.source.outputs.sha }}
           RELEASE_VERSION: PocketOS-${{ inputs.release_tag }}
         run: |
           python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release" "${{ steps.boot-app0.outputs.path }}"
