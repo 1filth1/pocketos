@@ -154,6 +154,8 @@ jobs:
       - name: Configure GitHub Pages
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Upload Web Flasher site
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
