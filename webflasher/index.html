@@ -19,8 +19,16 @@ main{max-width:820px;margin:0 auto;padding:32px 20px 60px}.brand{color:var(--ora
     <p>Установка PocketOS прямо из браузера. Нужен Chrome или Edge на компьютере, Web Serial и USB-кабель с передачей данных.</p>
   </header>
   <section class="panel">
-    <h2>Проверенный комплект</h2>
-    <pre id="build">Загружаю manifest.json и SHA256SUMS…</pre>
+    <h2>Выбор версии PocketOS</h2>
+    <label for="releaseSelect">Доступные релизы</label>
+    <div class="row" style="margin-top:8px">
+      <select id="releaseSelect" disabled style="flex:1;min-width:220px;padding:12px;border-radius:10px;background:#111317;color:var(--text);border:1px solid var(--line)">
+        <option>Загружаю список релизов…</option>
+      </select>
+    </div>
+    <p class="small">Выбери существующий релиз или prerelease. Перед прошивкой комплект выбранной версии будет проверен по SHA-256.</p>
+    <h3>Проверенный комплект</h3>
+    <pre id="build">Загружаю список релизов…</pre>
     <p class="small">Флешер разрешит подключение только после проверки целевой платы, разметки, адресов, размеров и SHA-256 комплекта.</p>
   </section>
   <section class="panel">
@@ -51,7 +59,7 @@ main{max-width:820px;margin:0 auto;padding:32px 20px 60px}.brand{color:var(--ora
 <script type="module">
 import { ESPLoader, Transport } from 'https://unpkg.com/esptool-js@0.6.1/bundle.js';
 const $ = id => document.getElementById(id);
-let manifest = null, port = null, transport = null, loader = null;
+let manifest = null, port = null, transport = null, loader = null, selectedBase = './', releases = [];
 let connected = false, manifestReady = false;
 function status(message, kind = '') {
   $('status').textContent = message;
@@ -64,11 +72,15 @@ async function sha256(bytes) {
   const digest = await crypto.subtle.digest('SHA-256', bytes);
   return Array.from(new Uint8Array(digest)).map(x => x.toString(16).padStart(2, '0')).join('');
 }
-async function loadManifest() {
+async function loadManifest(base = './') {
+  selectedBase = base;
+  manifestReady = false;
+  $('connect').disabled = true;
+  $('flash').disabled = true;
   try {
     const [manifestResponse, sumsResponse] = await Promise.all([
-      fetch('./manifest.json', { cache: 'no-store' }),
-      fetch('./SHA256SUMS', { cache: 'no-store' })
+      fetch(base + 'manifest.json', { cache: 'no-store' }),
+      fetch(base + 'SHA256SUMS', { cache: 'no-store' })
     ]);
     if (!manifestResponse.ok || !sumsResponse.ok) throw new Error('manifest.json или SHA256SUMS ещё не опубликован');
     const manifestBytes = new Uint8Array(await manifestResponse.arrayBuffer());
@@ -136,7 +148,30 @@ async function loadManifest() {
 }
 if (!supported()) status('Web Serial недоступен. Открой страницу в Chrome или Edge на компьютере по HTTPS.', 'error');
 else status('Браузер поддерживает Web Serial. Проверяю комплект…');
-await loadManifest();
+async function loadReleaseList() {
+  try {
+    const response = await fetch('./releases.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error('Не удалось загрузить список релизов');
+    const data = await response.json();
+    if (!Array.isArray(data.releases) || data.releases.length === 0) throw new Error('Нет опубликованных комплектов');
+    releases = data.releases;
+    const select = $('releaseSelect');
+    select.replaceChildren();
+    for (const release of releases) {
+      const option = document.createElement('option');
+      option.value = release.path;
+      option.textContent = release.name + (release.prerelease ? ' · prerelease' : '');
+      select.append(option);
+    }
+    select.disabled = false;
+    select.onchange = () => loadManifest(select.value);
+    await loadManifest(select.value);
+  } catch (error) {
+    $('build').textContent = 'Список релизов недоступен: ' + error.message;
+    status('Не удалось загрузить список версий: ' + error.message, 'error');
+  }
+}
+await loadReleaseList();
 $('connect').onclick = async () => {
   try {
     if (!manifestReady) throw new Error('Комплект не прошёл проверку');
@@ -162,7 +197,7 @@ $('flash').onclick = async () => {
     status('Загружаю и повторно проверяю бинарники…');
     const fileArray = [];
     for (const file of manifest.flash_files) {
-      const response = await fetch(file.file, { cache: 'no-store' });
+      const response = await fetch(selectedBase + file.file, { cache: 'no-store' });
       if (!response.ok) throw new Error('Не удалось загрузить ' + file.file);
       const bytes = new Uint8Array(await response.arrayBuffer());
       if (bytes.byteLength !== file.size) throw new Error('Размер не совпадает с манифестом: ' + file.file);
