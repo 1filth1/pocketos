@@ -11,7 +11,7 @@ source = pathlib.Path(sys.argv[1])
 out = pathlib.Path(sys.argv[2])
 archive = pathlib.Path(sys.argv[3])
 text = source.read_text(encoding="utf-8")
-match = re.search(r"carSprites\\s*\\[10\\]\\s*\\[3120\\]\\s*PROGMEM\\s*=\\s*\\{", text)
+match = re.search(r"carSprites\s*\[10\]\s*\[3120\]\s*PROGMEM\s*=\s*\{", text)
 if not match:
     raise SystemExit("Could not find canonical carSprites[10][3120] PROGMEM array")
 
@@ -41,7 +41,7 @@ assets = root / "assets"
 assets.mkdir(parents=True, exist_ok=True)
 files = []
 for index, group in enumerate(groups):
-    values = [int(v) for v in re.findall(r"\\b\\d+\\b", group)]
+    values = [int(v) for v in re.findall(r"\b\d+\b", group)]
     if len(values) != 3120 or any(v < 0 or v > 255 for v in values):
         raise SystemExit(f"Sprite {index}: expected 3120 bytes, got {len(values)}")
     data = bytes(values)
@@ -67,16 +67,16 @@ manifest = {
     "install_to": "/",
     "assets": files,
 }
-(root / "assets-manifest.json").write_text(json.dumps(manifest, indent=2) + "\\n", encoding="utf-8")
+(root / "assets-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 (out / "README.txt").write_text(
-    "JDM GARAGE EMPIRE — SD CONTENT PACK 1.0.0\\n"
-    "==========================================\\n\\n"
-    "Copy the included Games folder to the root of the PocketOS SD card.\\n"
-    "The resulting game artwork paths are:\\n"
-    "/Games/JDM_Garage_Empire/assets/car_shaded_v2_0.mono ... car_shaded_v2_9.mono\\n\\n"
-    "Each car image is a 240x104, 1-bit, MSB-first bitmap (3,120 bytes).\\n"
-    "The game can also seed these files from built-in firmware artwork when no SD pack is present.\\n"
-    "Existing files are never overwritten automatically. Back up the SD card before installing.\\n",
+    "JDM GARAGE EMPIRE — SD CONTENT PACK 1.0.0\n"
+    "==========================================\n\n"
+    "Copy the included Games folder to the root of the PocketOS SD card.\n"
+    "The resulting game artwork paths are:\n"
+    "/Games/JDM_Garage_Empire/assets/car_shaded_v2_0.mono ... car_shaded_v2_9.mono\n\n"
+    "Each car image is a 240x104, 1-bit, MSB-first bitmap (3,120 bytes).\n"
+    "The game can also seed these files from built-in firmware artwork when no SD pack is present.\n"
+    "Existing files are never overwritten automatically. Back up the SD card before installing.\n",
     encoding="utf-8",
 )
 archive.parent.mkdir(parents=True, exist_ok=True)
