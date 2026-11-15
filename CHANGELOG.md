@@ -1,19 +1,38 @@
 # Changelog
 
-All notable changes to PocketOS are documented in this file.
+All notable changes to PocketOS are documented here. Every release and pre-release must have a matching, bilingual GitHub Release description and a version-specific release-notes file.
 
-The project is currently in experimental pre-release development. Entries describe repository/source milestones; they do not imply that a firmware image has been built or validated on hardware.
-
-## [Unreleased]
+## [Unreleased] — В разработке
 
 ### Added
-- Repository maintenance and release-preparation documentation.
+- Mandatory release-note structure for every release and pre-release: new features, fixes, improvements, known issues, build/package details and upgrade instructions.
+- A bilingual release-notes template and CI checks that require version-specific notes before publishing a GitHub Release.
+
+### Validated
+- User-reported smoke test of v0.1.1-rc.2 on Waveshare ESP32-S3-ePaper-3.97 (N16R8): firmware flashed successfully and PocketOS starts and works on the device. This is an initial smoke test, not full peripheral validation.
 
 ### Changed
-- None recorded yet.
+- Release preparation now uses version tags; ordinary branch pushes build and validate artifacts without silently reusing or overwriting an existing release.
+
+## [0.1.1-rc.2] — 2026-11-15 — Experimental pre-release
+
+### Added
+- Explicit Waveshare N16R8 profile: 16 MB Flash, 8 MB OPI PSRAM, DIO / 80 MHz.
+- `app3M_fat9M_16MB` partition layout with two 3 MiB OTA app slots and a 9.875 MiB FATFS partition.
+- Package validation for the partition table, ESP image headers, flash-region bounds, manifest and SHA-256 checksum list.
+- Web Flasher validation of the board profile, source commit, partition map, addresses, file sizes and SHA-256 hashes.
 
 ### Fixed
-- None recorded yet.
+- Switched boot images from QIO to DIO / 80 MHz based on the user's known-good firmware configuration, addressing the earlier ROM-stage boot failure before Arduino `setup()`.
+- Included `SHA256SUMS` inside `PocketOS-firmware.zip` and verified every ZIP entry byte-for-byte.
+
+### Safety
+- The flasher keeps `eraseAll: false` and performs no eFuse operations.
+- Flashing instructions warn about partition-layout/data compatibility, SD/internal Flash backups and keeping USB/power connected until completion.
+
+### Validation
+- GitHub Actions firmware build, package validation, release publication and GitHub Pages deployment completed successfully for commit `418e2b1eb55004bbdc65e15980d3b29a1c69e016`.
+- The user's later report confirms a successful flash and basic device operation. Full peripheral validation remains outstanding.
 
 ## [0.1] — Experimental development baseline
 
@@ -25,27 +44,45 @@ The project is currently in experimental pre-release development. Entries descri
 - Preliminary architecture, hardware, testing and release documentation.
 
 ### Status
-- Pre-release draft only; not a verified stable firmware release.
-- Reproducible build configuration, pinned toolchain/dependencies and hardware validation remain open.
+- Experimental baseline; feature presence in source code does not imply full hardware validation.
 
 ---
 
 # Журнал изменений
 
-Здесь фиксируются значимые изменения PocketOS по версиям.
-
-Сейчас проект находится на экспериментальной стадии подготовки предварительного релиза. Записи описывают этапы развития исходников и репозитория, но сами по себе не подтверждают сборку прошивки или проверку на реальном устройстве.
+Здесь фиксируются значимые изменения PocketOS. Для каждого релиза и пререлиза обязательны отдельный файл Release Notes и двуязычное описание GitHub Release.
 
 ## [Unreleased] — В разработке
 
 ### Добавлено
-- Документация для обслуживания репозитория и подготовки релизов.
+- Обязательная структура Release Notes для каждого релиза и пререлиза: новые функции, исправления, улучшения, известные проблемы, сведения о сборке/пакете и инструкция обновления.
+- Двуязычный шаблон Release Notes и проверки CI, не позволяющие опубликовать GitHub Release без версионного описания.
+ 
+### Проверено
+- По сообщению пользователя, v0.1.1-rc.2 успешно прошилась на Waveshare ESP32-S3-ePaper-3.97 (N16R8), PocketOS запускается и работает. Это первичная проверка запуска, а не полная проверка всей периферии.
 
 ### Изменено
-- Пока нет записей.
+- Подготовка релизов переведена на версионные Git-теги: обычные push в ветку собирают и проверяют артефакты, но не переиспользуют существующий релиз и не перезаписывают его.
+
+## [0.1.1-rc.2] — 2026-11-15 — Экспериментальный пререлиз
+
+### Добавлено
+- Явный профиль Waveshare N16R8: Flash 16 MB, OPI PSRAM 8 MB, DIO / 80 MHz.
+- Разметка `app3M_fat9M_16MB`: два OTA-раздела приложения по 3 MiB и FATFS 9.875 MiB.
+- Проверка таблицы разделов, заголовков ESP-образов, границ flash-разделов, манифеста и списка SHA-256.
+- Проверка Web Flasher профиля платы, исходного commit, разметки, адресов, размеров файлов и SHA-256.
 
 ### Исправлено
-- Пока нет записей.
+- Режим загрузочных образов переключён с QIO на DIO / 80 MHz на основании рабочей конфигурации прошивки пользователя. Это устраняет прежнюю ошибку загрузки на стадии ROM до Arduino `setup()`.
+- В `PocketOS-firmware.zip` добавлен `SHA256SUMS`; каждый файл архива проверяется на побайтовое совпадение.
+
+### Безопасность
+- Флешер использует `eraseAll: false` и не выполняет операций с eFuse.
+- Инструкция предупреждает о смене разметки, резервном копировании SD/Flash и запрете отключать USB/питание до завершения прошивки.
+
+### Проверка
+- Сборка GitHub Actions, проверка пакета, публикация пререлиза и развёртывание GitHub Pages успешно завершились для commit `418e2b1eb55004bbdc65e15980d3b29a1c69e016`.
+- Последующее сообщение пользователя подтверждает успешную прошивку и базовую работу устройства. Полная проверка периферии ещё впереди.
 
 ## [0.1] — Экспериментальная исходная версия
 
@@ -57,5 +94,4 @@ The project is currently in experimental pre-release development. Entries descri
 - Предварительная документация по архитектуре, аппаратной части, тестированию и выпуску.
 
 ### Статус
-- Только черновик предварительного релиза; это не проверенная стабильная прошивка.
-- Воспроизводимая сборка, зафиксированные версии инструментов/зависимостей и аппаратная проверка ещё не завершены.
+- Экспериментальная исходная версия; наличие функции в исходниках не означает её полной проверки на реальном устройстве.
