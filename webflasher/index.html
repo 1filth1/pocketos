@@ -87,7 +87,7 @@ async function loadManifest() {
       ['application', 'application.bin', 0x10000]
     ];
     const expectedSumNames = new Set([...expectedFiles.map(x => x[1]), 'manifest.json']);
-    if (manifest.version !== 'PocketOS-v0.1.1-rc.2') throw new Error('Неожиданная версия комплекта');
+    if (!/^PocketOS-v\\d+\\.\\d+\\.\\d+(?:-(?:alpha|beta|rc)\\.\\d+)?$/.test(manifest.version || '')) throw new Error('Некорректная версия комплекта; требуется версионный релиз PocketOS');
     if (!/^[0-9a-f]{40}$/.test(manifest.commit || '')) throw new Error('Некорректный commit SHA в манифесте');
     if (manifest.board !== 'Waveshare ESP32-S3-ePaper-3.97 (N16R8)' ||
         manifest.flash !== '16MB' || manifest.psram !== '8MB OPI' ||
