@@ -1,8 +1,7 @@
 #pragma once
 
 // Five in a Row (Gomoku), human vs. computer. The 15x15 board and current
-// position are persisted in Preferences; no SD card or board configuration
-// changes are required.
+// position are persisted through PocketOS SD-backed settings.
 static constexpr uint8_t FR_SIZE = 15;
 static constexpr int32_t FR_WIN_SCORE = 10000000L;
 
@@ -14,13 +13,15 @@ struct FiveRowState {
   uint8_t winner; // 0 none, 1 human, 2 computer, 3 draw
   uint8_t finished;
 } fiveRow;
+bool frSaveOK = false;
 
 bool frInside(int x, int y) {
   return x >= 0 && x < FR_SIZE && y >= 0 && y < FR_SIZE;
 }
 
-void frSave() {
-  prefs.putBytes("fiveRow", &fiveRow, sizeof(fiveRow));
+bool frSave() {
+  frSaveOK = prefs.putBytes("fiveRow", &fiveRow, sizeof(fiveRow)) == sizeof(fiveRow);
+  return frSaveOK;
 }
 
 void frNewGame() {
@@ -186,6 +187,7 @@ void drawFiveRow() {
     text("CPU: WHITE", 470, 193);
     text("MOVES: " + String(fiveRow.moves), 470, 245);
     text("BOARD: 15 x 15", 470, 282);
+    text(frSaveOK ? "SAVE: SD OK" : "SAVE: FAILED", 470, 315);
     if (fiveRow.finished) {
       text("N: PLAY AGAIN", 470, 350, true);
       text("ESC: RETURN", 470, 386);
@@ -235,6 +237,7 @@ void startFiveRow() {
   bool valid = prefs.getBytesLength("fiveRow") == sizeof(fiveRow) &&
                prefs.getBytes("fiveRow", &fiveRow, sizeof(fiveRow)) == sizeof(fiveRow) &&
                frStateValid();
+  frSaveOK = valid;
   if (!valid) frNewGame();
   view = FIVE_ROW;
 }
