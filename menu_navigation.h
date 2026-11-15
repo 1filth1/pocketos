@@ -194,6 +194,7 @@ void route(uint8_t k){
  if(view==GROOVE_BOX){gbKey(k);return;}
  if(view==SEQUENCER){seqKey(k);return;}
  if(view==CALENDAR&&!menuActive){calendarKey(k);return;}
+ if(view==FIVE_ROW&&!menuActive){if(k==27||k==8){frSave();games();return;}fiveRowKey(k);return;}
  if(view==TAMAGOTCHI){menuActive=false;petKey(k);return;}
  if(view==TETRIS&&!menuActive){if(k==10||k==13){tetPaused=true;tetSave();showMenu(219,TETRIS);}else if(k==27||k==8){tetSave();games();}else tetrisKey(k);return;}
  if(view==RECORDER){if((k==27||k==8)&&!recBusy)showMenu(331,HOME);else recorderKey(k);return;}
