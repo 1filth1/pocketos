@@ -45,7 +45,7 @@ static bool sdAppReadManifest(const String &dirPath, const String &dirName, SdAp
   uint8_t seen = 0;
   int start = 0;
   while (start < (int)raw.length()) {
-    int end = raw.indexOf('\\n', start);
+    int end = raw.indexOf('\n', start);
     if (end < 0) end = raw.length();
     String line = raw.substring(start, end);
     line.trim();
