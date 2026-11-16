@@ -26,7 +26,8 @@ This grouping is a documentation aid. Exact ownership boundaries and call relati
 ## 3. Application model
 
 - Applications are compiled into the firmware.
-- The static registry in `os_core.h` provides identifiers, labels and action IDs for launcher entries. `app_runtime.h` observes transitions between UI views and logs entry/exit duration to Serial. This is diagnostic telemetry, not an application scheduler or process manager.
+- The static registry in `os_core.h` provides identifiers, labels and action IDs for launcher entries. The desktop launcher displays the built-in registry as a four-column grid; App Manager is a built-in entry that opens the read-only SD content catalogue. Its launch origin is tracked only to preserve the expected return destination.
+- `app_runtime.h` observes transitions between UI views and logs entry/exit duration and memory snapshots to Serial. This is diagnostic telemetry, not an application scheduler or process manager.
 - Application views and state are routed by the central firmware code.
 - Applications are not isolated processes.
 - Installing arbitrary executable applications from the SD card is not implemented by the registry.
