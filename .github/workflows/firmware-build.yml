@@ -65,6 +65,9 @@ jobs:
           echo "path=${BOOT_APP0_FILES[0]}" >> "$GITHUB_OUTPUT"
           echo "Using ${BOOT_APP0_FILES[0]}"
 
+      - name: Validate JDM Garage Empire SD content
+        run: python3 scripts/validate_jdm_content.py sdcard/root
+
       - name: Package and validate firmware bundle
         env:
           GITHUB_SHA: ${{ github.sha }}
