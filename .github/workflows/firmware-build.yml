@@ -46,6 +46,7 @@ jobs:
           arduino-cli lib install "JPEGDEC@1.8.5"
           arduino-cli lib install "bb_spi_lcd@2.9.10"
           arduino-cli lib install "TinyGPSPlus@1.0.3"
+          arduino-cli lib install "ArduinoJson@7.4.2"
 
       - name: Compile PocketOS for Waveshare N16R8
         env:
