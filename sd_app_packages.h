@@ -288,6 +288,10 @@ static void sdAppTextDraw() {
 
 void sdAppsDraw() {
   view = sdAppInfoOpen ? SD_APP_INFO : SD_APPS;
+  if (sdAppTextOpen) {
+    sdAppTextDraw();
+    return;
+  }
   beginDraw();
   do {
     if (!sdAppInfoOpen) {
@@ -303,8 +307,6 @@ void sdAppsDraw() {
       }
       if (!sdAppPackageCount) text(cardOK ? "NO VALID PACKAGES FOUND" : "TF CARD NOT MOUNTED", 32, 180, true);
       text("PAGE: " + String(sdAppFirst / 6 + 1) + "/" + String(max(1, (sdAppPackageCount + 5) / 6)) + "   VALID: " + String(sdAppPackageCount) + "   INVALID: " + String(sdAppInvalidCount), 24, 430);
-    } else if (sdAppTextOpen) {
-      sdAppTextDraw();
     } else if (sdAppResourcesOpen) {
       SdAppPackage &p = sdAppPackages[sdAppSelected];
       header("PACKAGE RESOURCES", p.name, "UP/DOWN: SELECT   ENTER: OPEN   ESC: DETAILS   R: REFRESH");
