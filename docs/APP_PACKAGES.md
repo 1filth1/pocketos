@@ -40,7 +40,7 @@ description=Example resource package
 ## Safety and current scope
 
 - The catalogue and resource browser are read-only; they never interpret files as executable code.
-- The resource browser lists up to 24 regular files in the package's top-level `resources/` directory. It does not recurse into subdirectories.
+- The resource browser lists up to 24 regular files in the package's top-level `resources/` directory, inspecting at most 64 directory entries per scan. It does not recurse into subdirectories.
 - Text preview supports `.txt`, `.md` and `.ini` files up to 4096 bytes. Longer files and other formats remain listed but are not opened.
 - Text is displayed in bounded pages of eight lines; each rendered line is capped before display.
 - Hidden names, path separators and unsafe path components are rejected. Missing SD media or a missing `resources/` directory is reported without changing package data.
