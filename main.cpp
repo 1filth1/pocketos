@@ -257,7 +257,7 @@ int evalSimple(const String &s,bool &ok){
 }
 void terminalRun(){
   String c=typed; c.trim(); String u=c;u.toUpperCase(); appResult="";
-  if(u=="DIR"){if(!cardOK)appResult="TF CARD NOT MOUNTED";else{File d=SD_MMC.open(folder.c_str());int n=0;while(d&&n<7){File f=d.openNextFile();if(!f)break;appResult+=(f.isDirectory()?"<DIR> ":"      ")+leaf(String(f.name()))+"\n";f.close();n++;}if(d)d.close();if(!appResult.length())appResult="EMPTY";}}
+  if(u=="DIR"){if(!cardOK)appResult="TF CARD NOT MOUNTED";else{File d=SD_MMC.open(folder.c_str());int n=0;while(d&&n<7){File f=d.openNextFile();if(!f)break;appResult+=(f.isDirectory()?"<DIR> ":"      ")+leaf(String(f.name()))+"\\n";f.close();n++;}if(d)d.close();if(!appResult.length())appResult="EMPTY";}}
   else if(u=="CD .."){if(cardOK){folder=parent(folder);appResult="NOW "+folder;}}
   else if(u.startsWith("CD ")){String p=c.substring(3);if(!p.startsWith("/"))p=folder+(folder=="/"?"":"/")+p;File d=cardOK?SD_MMC.open(p.c_str()):File();if(d&&d.isDirectory()){folder=p;appResult="NOW "+folder;d.close();}else{if(d)d.close();appResult="FOLDER NOT FOUND";}}
   else if(u.startsWith("TYPE ")){String p=c.substring(5);if(!p.startsWith("/"))p=folder+(folder=="/"?"":"/")+p;File f=cardOK?SD_MMC.open(p.c_str()):File();if(f&&!f.isDirectory()){appResult=clip(f.readStringUntil('\n'),78);f.close();}else{if(f)f.close();appResult="FILE NOT FOUND";}}
@@ -968,7 +968,7 @@ void setup(){
   Serial.println("[PocketOS] init SD_MMC");
   SD_MMC.setPins(SD_CLK, SD_CMD, SD_D0, SD_D1, SD_D2, SD_D3);
   cardOK = SD_MMC.begin("/sdcard", true) && SD_MMC.cardType() != CARD_NONE;
-  Serial.printf("[PocketOS] SD_MMC: %s\n", cardOK ? "ready" : "unavailable");
+  Serial.printf("[PocketOS] SD_MMC: %s\\n", cardOK ? "ready" : "unavailable");
 
   Serial.println("[PocketOS] init preferences");
   prefs.begin("epaperpc", false);
