@@ -20,7 +20,7 @@ static void appRuntimeLogMemory(const char *phase) {
   const uint32_t psramFree = hasPsram ? heap_caps_get_free_size(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) : 0;
   const uint32_t psramMin = hasPsram ? heap_caps_get_minimum_free_size(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) : 0;
   const uint32_t psramLargest = hasPsram ? heap_caps_get_largest_free_block(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) : 0;
-  Serial.printf("[MEM] %s internal_total=%lu internal_free=%lu internal_min=%lu internal_largest=%lu psram_total=%lu psram_free=%lu psram_min=%lu psram_largest=%lu\\n",
+  Serial.printf("[MEM] %s internal_total=%lu internal_free=%lu internal_min=%lu internal_largest=%lu psram_total=%lu psram_free=%lu psram_min=%lu psram_largest=%lu\n",
     phase, (unsigned long)internalTotal, (unsigned long)internalFree,
     (unsigned long)internalMin, (unsigned long)internalLargest,
     (unsigned long)psramTotal, (unsigned long)psramFree,
