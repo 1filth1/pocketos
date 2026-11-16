@@ -11,8 +11,9 @@ static constexpr Application apps[] = {
  {"recorder","RECORDER",295}, {"music","MUSIC",334},
  {"web","WEB",312}, {"exchange","EXCHANGE",314},
  {"games","GAMES",313}, {"gps","GPS",322},
- {"settings","SETTINGS",1900}, {"quick","QUICK",1901}
+ {"settings","SETTINGS",1900}, {"quick","QUICK",1901},
+ {"app-manager","APP MGR",326}
 };
 static constexpr size_t appCount = sizeof(apps)/sizeof(apps[0]);
-static_assert(appCount == 12, "Launcher requires a 3 by 4 grid");
+static_assert(appCount == 13, "Launcher supports a 4 by 4 grid");
 }
