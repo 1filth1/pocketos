@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.1.2-rc.8] — 2026-11-16 — Experimental pre-release
+
+### Added
+- Memory snapshots at every application-view entry and exit in Serial diagnostics.
+- Separate internal-heap and PSRAM metrics: free bytes, minimum free bytes for internal heap, and largest free contiguous block.
+
+### Changed
+- Diagnostics are observational and allocation-free; application behavior, screen rendering, storage and peripheral configuration are unchanged.
+- RC7 HTTPS certificate validation was confirmed working by the user on hardware.
+
+### Validation
+- CI compilation and firmware package validation are required before publication.
+- On-device diagnostic test: navigate between several applications and confirm [MEM] enter / [MEM] leave lines report internal heap and PSRAM values.
+- For a stability run, repeat app switching and compare memory snapshots; investigate a persistent downward trend or shrinking largest block.
+
+### Known limitations
+- Snapshots are taken only at UI-view transitions; they do not identify the exact allocation responsible for a leak.
+- This release adds measurement, not automatic reclamation or application isolation.
+
+### Build & package
+- Target: Waveshare ESP32-S3-ePaper-3.97 (N16R8), 16 MB Flash, 8 MB OPI PSRAM.
+- Arduino-ESP32 3.3.12; DIO / 80 MHz; app3M_fat9M_16MB.
+
+### Upgrade
+- Back up the SD card and important internal Flash data before flashing.
+- After flashing, navigate between applications and inspect Serial output for [MEM] lines. Existing user-facing behavior should remain unchanged.
+
 ## [0.1.2-rc.7] — 2026-11-16 — Experimental pre-release
 
 ### Security
