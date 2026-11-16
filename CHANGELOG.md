@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.1.2-rc.3] — 2026-11-16 — Experimental pre-release
+
+### Added
+- No new user-facing firmware features; this candidate focuses on reliable release publication from the maintained release branch.
+
+### Fixed
+- Release workflow now creates the version tag and publishes the pre-release in the same branch-triggered run, avoiding the previous dependency on a separately-created tag event.
+- The complete firmware bundle, manifest, SHA-256 checksums and bilingual release notes are attached by the workflow.
+- The Web Flasher catalogue continues to omit releases without a complete firmware bundle.
+
+### Changed
+- Candidate version: v0.1.2-rc.3.
+- Firmware source, hardware profile, partition layout and runtime behavior are unchanged from the release-branch source used for this candidate.
+
+### Known issues
+- Full hardware validation of E-Ink, side OLED, SD read/write, keyboard/I²C, RTC, sensors, audio, Wi-Fi, power and long-term stability remains outstanding.
+- The Web Flasher is supported only in desktop Chrome/Edge over HTTPS with Web Serial.
+
+### Build & package
+- Target: Waveshare ESP32-S3-ePaper-3.97 (N16R8), 16 MB Flash, 8 MB OPI PSRAM.
+- Arduino-ESP32 3.3.12; DIO / 80 MHz; app3M_fat9M_16MB.
+- Release-branch workflow builds and validates the firmware, creates the Git tag and GitHub pre-release, uploads the firmware bundle and deploys the matching Web Flasher.
+
+### Upgrade
+- Back up the SD card and important internal Flash data before flashing.
+- Keep USB and power connected until the flasher confirms completion.
+- After flashing, perform a controlled smoke test of the diagnostics screen, desktop, SD and peripherals.
+
 All notable changes to PocketOS are documented here. Every release and pre-release must have a matching, bilingual GitHub Release description and a version-specific release-notes file.
 
 ## [0.1.2-rc.2] — 2026-11-16 — Experimental pre-release
