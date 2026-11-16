@@ -28,7 +28,7 @@ No physical test is marked PASS without an actual result, board revision, date a
 | HW-06 | Audio | ES8311 output and recording functions behave correctly | NOT RUN |
 | HW-07 | Wi-Fi | Station connection, HTTP/TLS and file exchange behave correctly | NOT RUN |
 | HW-08 | Power | Battery/charging values are plausible; no unexpected shutdown | NOT RUN |
-| HW-09 | Stability | App switching, memory headroom and repeated restarts work | NOT RUN |
+| HW-09 | Stability | App switching, memory headroom and repeated restarts work | PARTIAL — user confirmed RC4 basic operation; RC5 app-view telemetry still needs on-device review |
 
 ## Controlled first-flash precautions
 
