@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "chapters": [
+    {"id":"first_customer","title":"First customer","body":"Accept a small job, inspect the car and identify the fault before ordering parts."},
+    {"id":"first_profit","title":"Make it profitable","body":"Parts, wages and rent all matter. Check the ledger before accepting a job with a tight budget."},
+    {"id":"delegate","title":"Build your crew","body":"Hire a mechanic to free your own time. Match job complexity to staff skill."},
+    {"id":"reputation","title":"Earn trust","body":"Finish on time, pass quality control and avoid promising work you cannot deliver."},
+    {"id":"grow","title":"Expand the workshop","body":"Invest in lifts, diagnostics and specialist equipment to unlock higher-value projects."}
+  ]
+}
