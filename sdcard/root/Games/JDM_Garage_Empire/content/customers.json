@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "customers": [
+    {"id":"kenji","name":"Kenji Sato","archetype":"REGULAR","patience_days":5,"budget":1800,"tip_chance":20,"prefers":["brakes","inspection"]},
+    {"id":"mika","name":"Mika Tanaka","archetype":"ENTHUSIAST","patience_days":4,"budget":4200,"tip_chance":35,"prefers":["suspension","engine"]},
+    {"id":"daichi","name":"Daichi Mori","archetype":"DRIFTER","patience_days":3,"budget":2600,"tip_chance":15,"prefers":["suspension","fuel"]},
+    {"id":"yui","name":"Yui Nakamura","archetype":"COLLECTOR","patience_days":8,"budget":9000,"tip_chance":45,"prefers":["restoration","inspection"]},
+    {"id":"ren","name":"Ren Kobayashi","archetype":"TIME_ATTACK","patience_days":2,"budget":6500,"tip_chance":25,"prefers":["engine","cooling"]},
+    {"id":"akira","name":"Akira Fujita","archetype":"WHOLESALE","patience_days":6,"budget":3200,"tip_chance":10,"prefers":["fleet","brakes"]}
+  ]
+}
