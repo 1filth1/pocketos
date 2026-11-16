@@ -1,3 +1,33 @@
+## [0.2.0-rc.1] — 2026-11-16 — Experimental pre-release
+
+### Added
+- Introduced explicit app runtime states STOPPED / RUNNING and enter/leave transition boundaries around the existing view-based UI.
+- Added allocation-free per-view launch counters, last-session and accumulated runtime measurements.
+- Added internal RAM and PSRAM snapshots at application entry and exit, including total, free, minimum-free and largest contiguous block.
+- Added bilingual app lifecycle architecture and hardware validation documentation.
+
+### Changed
+- Legacy navigation is preserved; the runtime bridge observes view changes from the main loop.
+- Firmware and release workflow fallback version are synchronized to v0.2.0-rc.1.
+
+### Validation
+- CI firmware compilation and firmware/SD package validation are required before publication.
+- Hardware smoke test must verify boot, desktop navigation, repeated app switching, matching [APP] enter/leave events and stable internal RAM / PSRAM trends.
+
+### Known limitations
+- Applications still share one address space; these boundaries are lifecycle telemetry, not process isolation.
+- No dynamic SD executable loading, automatic heap reclamation, or automatic shutdown of Wi-Fi, GPS, audio, recorder or sequencer services is introduced.
+- Existing blocking screens remain unchanged; cooperative start / handle / draw / stop app hooks are a later migration step.
+
+### Build & package
+- Target: Waveshare ESP32-S3-ePaper-3.97 (N16R8), 16 MB Flash, 8 MB OPI PSRAM.
+- Arduino-ESP32 3.3.12; DIO / 80 MHz; app3M_fat9M_16MB.
+
+### Upgrade
+- Back up the SD card and important internal Flash data before flashing.
+- Flash using the Web Flasher and keep USB/power connected until completion.
+- After boot, switch between several applications repeatedly and capture Serial output containing [APP] and [MEM] lines.
+
 # Changelog
 
 ## [0.1.2-rc.12] — 2026-11-16 — Experimental pre-release
