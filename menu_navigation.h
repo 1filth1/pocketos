@@ -80,7 +80,7 @@ void buildMenu(int c){
  if(c==FILES){addMenu("NEW / EDIT NOTE",'n');addMenu("COMMAND LINE",'t');addMenu("REFRESH",'r');for(int i=0;i<count;i++)addMenu(String(files[i].dir?"[DIR] ":"")+files[i].name,1000+i);}
  if(c==300){for(const auto &app:PocketOS::apps)addMenu(app.label,app.action);}
  if(c==330){addMenu("CALENDAR / TASKS",210);addMenu("TIMER / POMODORO",211);}
- if(c==331){addMenu("BOOKS",323);addMenu("NEW NOTE",311);addMenu("VOICE RECORDER",295);}
+ if(c==331){addMenu("BOOKS",323);addMenu("NEW NOTE",311);addMenu("VOICE RECORDER",295);addMenu("SD APP LIBRARY",325);}
  if(c==332){addMenu("WEB READER",312);addMenu("FILE EXCHANGE",314);}
  if(c==334){addMenu("GROOVE BOX",324);addMenu("SEQUENCER / PIANO",321);}
  if(c==333){addMenu("GROOVE BOX",324);addMenu("MUSIC SEQUENCER",321);addMenu("CALCULATOR",315);addMenu("COMMAND LINE",316);}
@@ -174,7 +174,9 @@ void showMenu(int c,View v){
 }
 void menuScreen(View v){showMenu(v==HOME?300:int(v),v);}
 #include "file_manager.h"
+#include "sd_app_packages.h"
 void route(uint8_t k){
+ if(view==SD_APPS||view==SD_APP_INFO){sdAppsKey(k);return;}
  if(view==JDM_GAME){JDM::keyEvent(k);return;}
  if(view==BOOK_LIBRARY||view==BOOK_READ){bookKeyEvent(k);return;}
  if(view==GPS_APP){if(gpsSettingsOpen){gpsKey(k);return;}if(k==27||k==8){gpsStop();showMenu(300,HOME);}else gpsKey(k);return;}
@@ -246,6 +248,7 @@ void route(uint8_t k){
   }
   if(a>=330&&a<=334){appGroup=a;showMenu(a,HOME);return;}
   if(a==301){showMenu(301,SYSTEM);return;}
+  if(a==325){sdAppsOpen();return;}
   if(a==310){appGroup=300;if(cardOK)manager();else{status="TF CARD NOT MOUNTED";showMenu(300,HOME);}return;}
   if(a==311){if(cardOK){notesOpen();}else{status="TF CARD NOT MOUNTED";showMenu(appGroup,HOME);}return;}
   if(a==312){url="";webEdit();return;}

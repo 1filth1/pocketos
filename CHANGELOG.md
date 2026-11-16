@@ -141,6 +141,24 @@ All notable changes to PocketOS are documented here. Every release and pre-relea
 - Keep USB and power connected until the flasher confirms completion.
 - After flashing, perform the controlled hardware checklist before relying on the device.
 
+## [0.1.2-rc.6] — 2026-11-16 — Experimental pre-release
+
+### Added
+- Read-only SD App Library catalogue for bounded content/resource package manifests under `/apps/<id>/app.ini`.
+- Package detail view and invalid-manifest reporting.
+
+### Fixed
+- Invalid and oversized manifests are rejected; duplicate and unknown fields do not silently pass validation.
+
+### Changed
+- Documents menu gains SD App Library. No SD code execution or changes to built-in app behavior.
+
+### Known issues
+- Resource browsing, installation/removal and runtime integration remain future work; only `type=content` is supported.
+
+### Validation
+- CI compilation and package checks are required before publication; on-device SD catalogue behavior still requires user testing.
+
 ## [Unreleased] — В разработке
 
 ### Fixed
@@ -219,6 +237,25 @@ All notable changes to PocketOS are documented here. Every release and pre-relea
 - После прошивки выполни контролируемую проверку аппаратуры, прежде чем полагаться на устройство.
 
 # Журнал изменений
+
+## [0.1.2-rc.6] — 2026-11-16 — Экспериментальный пререлиз
+
+### Добавлено
+- Каталог SD App Library для пакетов контента и ресурсов с манифестами `/apps/<id>/app.ini`.
+- Экран сведений о пакете и счётчик некорректных манифестов.
+
+### Исправлено
+- Некорректные и слишком большие манифесты отклоняются; повторяющиеся и неизвестные поля не принимаются.
+
+### Изменено
+- В раздел «Документы» добавлен каталог SD App Library. Запуск кода с SD и поведение встроенных приложений не меняются.
+
+### Известные ограничения
+- Просмотр ресурсов, установка/удаление пакетов и интеграция с runtime пока не реализованы; поддерживается только `type=content`.
+
+### Проверка
+- Перед публикацией обязательны успешные CI-сборка и проверки пакета; работу каталога на устройстве должен проверить пользователь.
+
 
 ## [0.1.2-rc.4] — 2026-11-16 — Экспериментальный пререлиз
 

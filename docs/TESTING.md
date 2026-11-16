@@ -16,6 +16,20 @@ No physical test is marked PASS without an actual result, board revision, date a
 | SW-08 | Web Flasher | Deployed from the same CI package; checks manifest and binary hashes before write |
 | SW-09 | Flash safety | Uses eraseAll: false; no full-chip erase or eFuse write |
 
+## RC6 SD package catalogue tests
+
+| ID | Test | Expected result |
+|---|---|---|
+| SDAPP-01 | No SD card or no `/apps` directory | Clear empty/unavailable status; no crash |
+| SDAPP-02 | Valid content manifest | Package appears with correct name and version |
+| SDAPP-03 | Missing required field / malformed line | Package is rejected and counted invalid |
+| SDAPP-04 | Duplicate or unknown key | Package is rejected |
+| SDAPP-05 | Folder name differs from manifest ID | Package is rejected |
+| SDAPP-06 | Manifest larger than 768 bytes | Package is rejected without unbounded allocation |
+| SDAPP-07 | More than 32 package folders | Scan inspects no more than 32 package directories and accepts at most 16 valid packages |
+| SDAPP-08 | Unsupported `type` or executable file present | No code is loaded or executed; unsupported package is rejected |
+| SDAPP-09 | Rescan and detail navigation | List refreshes and details return correctly |
+
 ## Physical hardware tests
 
 | ID | Test | Expected result | Status |

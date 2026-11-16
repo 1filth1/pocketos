@@ -25,7 +25,10 @@
 
 These are ideas for evaluation, not commitments or implemented features:
 
-- Modular application packaging and installation workflow.
+- [ ] Add a bounded, read-only SD content-package metadata catalogue (RC6).
+- [ ] Add safe resource browsing and package integrity checks.
+- [ ] Add explicit install/remove lifecycle for data-only packages.
+- [ ] Map approved package IDs to firmware-compiled app modules; never execute arbitrary SD binaries.
 - More capable network and file-transfer services.
 - System update and recovery workflow.
 - Expanded peripheral support.
@@ -57,7 +60,10 @@ These are ideas for evaluation, not commitments or implemented features:
 
 Это направления для исследования, а не обещание реализации:
 
-- Модульная упаковка и установка приложений.
+- [ ] Каталог метаданных пакетов контента на SD (RC6).
+- Безопасный просмотр ресурсов и проверка целостности пакетов.
+- Явная установка/удаление пакетов данных.
+- Связь разрешённых ID пакетов со встроенными в прошивку модулями; без запуска произвольных бинарников с SD.
 - Развитие сетевых служб и обмена файлами.
 - Обновление системы и сценарий восстановления.
 - Поддержка дополнительных периферийных модулей.
