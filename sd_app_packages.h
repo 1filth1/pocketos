@@ -2,6 +2,7 @@
 
 // SD package catalogue v1. Reads metadata only; never loads or executes code.
 static constexpr uint8_t SD_APP_MAX_PACKAGES = 16;
+static constexpr uint8_t SD_APP_MAX_SCAN_DIRS = 32;
 static constexpr size_t SD_APP_MANIFEST_MAX_BYTES = 768;
 
 struct SdAppPackage {
@@ -93,13 +94,15 @@ void sdAppScan() {
     status = "NO /apps DIRECTORY ON SD";
     return;
   }
-  while (sdAppPackageCount < SD_APP_MAX_PACKAGES) {
+  uint8_t inspectedDirectories = 0;
+  while (sdAppPackageCount < SD_APP_MAX_PACKAGES && inspectedDirectories < SD_APP_MAX_SCAN_DIRS) {
     File entry = root.openNextFile();
     if (!entry) break;
     bool isDirectory = entry.isDirectory();
     String name = leaf(String(entry.name()));
     entry.close();
     if (!isDirectory || name.startsWith(".")) continue;
+    ++inspectedDirectories;
     String path = String("/apps/") + name;
     SdAppPackage package;
     if (sdAppReadManifest(path, name, package)) {
