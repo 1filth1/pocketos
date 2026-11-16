@@ -37,7 +37,7 @@ This grouping is a documentation aid. Exact ownership boundaries and call relati
 - Each package must contain an `app.ini` manifest no larger than 768 bytes.
 - RC6 accepts only `type=content`; package metadata is displayed but no files are installed, extracted, deleted or executed.
 - The manifest parser rejects duplicate/unknown keys, malformed lines, invalid IDs and folder/ID mismatches.
-- Resource browsing and runtime integration are not implemented. See [APP_PACKAGES.md](APP_PACKAGES.md).
+- A bounded read-only resource browser lists up to 24 regular files from a package's top-level `resources/` directory. It previews `.txt`, `.md` and `.ini` files up to 4 KiB in eight-line pages; it does not recurse, write, delete, extract or execute files. See [APP_PACKAGES.md](APP_PACKAGES.md).
 
 ## 5. Hardware and services
 
@@ -96,7 +96,7 @@ PocketOS — прошивка для устройства на базе ESP32-S3
 - В каждом пакете нужен `app.ini` размером не более 768 байт.
 - RC6 принимает только `type=content`: метаданные отображаются, но файлы не устанавливаются, не распаковываются, не удаляются и не исполняются.
 - Парсер отклоняет повторяющиеся/неизвестные ключи, некорректные строки, недопустимые ID и несовпадение ID с именем папки.
-- Просмотр ресурсов и интеграция с runtime пока не реализованы. См. [APP_PACKAGES.md](APP_PACKAGES.md).
+- Добавлен ограниченный просмотр ресурсов только для чтения: до 24 обычных файлов из корневой папки `resources/`; предварительный просмотр `.txt`, `.md` и `.ini` до 4 КБ постранично. Рекурсивный обход, запись, удаление, распаковка и запуск кода не выполняются. См. [APP_PACKAGES.md](APP_PACKAGES.md).
 
 ### 6. Аппаратная часть и службы
 
