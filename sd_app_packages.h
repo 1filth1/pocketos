@@ -325,7 +325,8 @@ void sdAppsDraw() {
         text(sdAppResources[index].name, 32, y, selected);
         text(String(sdAppResources[index].size) + " B", 650, y);
       }
-      if (!sdAppResourceCount) text(status == "NO RESOURCES DIRECTORY" ? status : "NO FILE RESOURCES FOUND", 28, 180, true);
+      if (!sdAppResourceCount) text(status.length() ? status : "NO FILE RESOURCES FOUND", 28, 180, true);
+      else text(status, 24, 395);
       text("FILES: " + String(sdAppResourceCount) + " / LIMIT: " + String(SD_APP_MAX_RESOURCES) +
         (sdAppResourceOverflow ? " / EXTRA FILES OMITTED" : ""), 24, 430);
     } else {
