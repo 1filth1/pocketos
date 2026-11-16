@@ -59,17 +59,17 @@ static void appRuntimeTick(View current) {
     appRuntimeInitialized = true;
     appRuntimeActiveView = current;
     appRuntimeEnteredAt = now;
-    Serial.printf("[APP] enter %s (view=%u)\\n", appRuntimeViewName(current), unsigned(current));
+    Serial.printf("[APP] enter %s (view=%u)\n", appRuntimeViewName(current), unsigned(current));
     return;
   }
   if (current == appRuntimeActiveView) return;
 
   const uint32_t duration = now - appRuntimeEnteredAt;
-  Serial.printf("[APP] leave %s after %lu ms\\n",
+  Serial.printf("[APP] leave %s after %lu ms\n",
     appRuntimeViewName(appRuntimeActiveView), (unsigned long)duration);
   appRuntimeActiveView = current;
   appRuntimeEnteredAt = now;
   ++appRuntimeTransitionCount;
-  Serial.printf("[APP] enter %s (view=%u, transitions=%lu)\\n",
+  Serial.printf("[APP] enter %s (view=%u, transitions=%lu)\n",
     appRuntimeViewName(current), unsigned(current), (unsigned long)appRuntimeTransitionCount);
 }
