@@ -162,16 +162,12 @@ jobs:
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
         uses: actions/upload-pages-artifact@v3
         with:
-          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/pocketos-pages
 
       - name: Deploy Web Flasher
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
-        continue-on-error: true
 
       - name: Publish PocketOS release
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
