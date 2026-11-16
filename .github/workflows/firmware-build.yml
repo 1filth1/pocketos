@@ -99,11 +99,15 @@ jobs:
           existing = json.loads(pathlib.Path(sys.argv[2]).read_text())
           current = json.loads((root / "manifest.json").read_text())
           current_tag = current["version"].removeprefix("PocketOS-")
+          current_notes = pathlib.Path(f"RELEASE_NOTES_{current_tag}.md")
+          current_description = current_notes.read_text(encoding="utf-8") if current_notes.is_file() else "Описание для текущей сборки пока не добавлено."
           releases = [{
               "name": current["version"] + " (текущая сборка)",
               "tag": current_tag,
               "path": "./",
               "prerelease": True,
+              "description": current_description,
+              "url": f"https://github.com/1filth1/pocketos/releases/tag/{current_tag}",
               "sdCardUrl": f"https://github.com/1filth1/pocketos/releases/download/{current_tag}/PocketOS-SD-card-{current_tag}.zip",
               "sdCardChecksumUrl": f"https://github.com/1filth1/pocketos/releases/download/{current_tag}/PocketOS-SD-card-{current_tag}.zip.sha256"
           }]
@@ -122,11 +126,21 @@ jobs:
               if not all((folder / name).is_file() for name in required):
                   print(f"Skipping {tag}: release has no complete firmware bundle")
                   continue
+              release_info = subprocess.run(
+                  ["gh", "release", "view", tag, "--json", "body", "--jq", ".body"],
+                  capture_output=True, text=True, check=False
+              )
+              description = release_info.stdout.strip()
+              if not description:
+                  notes_file = pathlib.Path(f"RELEASE_NOTES_{tag}.md")
+                  description = notes_file.read_text(encoding="utf-8") if notes_file.is_file() else "Описание этого релиза пока недоступно."
               releases.append({
                   "name": item["name"] or tag,
                   "tag": tag,
                   "path": f"./releases/{tag}/",
                   "prerelease": bool(item["isPrerelease"]),
+                  "description": description,
+                  "url": f"https://github.com/1filth1/pocketos/releases/tag/{tag}",
                   "sdCardUrl": f"https://github.com/1filth1/pocketos/releases/download/{tag}/PocketOS-SD-card-{tag}.zip" if (folder / f"PocketOS-SD-card-{tag}.zip").is_file() else None,
                   "sdCardChecksumUrl": f"https://github.com/1filth1/pocketos/releases/download/{tag}/PocketOS-SD-card-{tag}.zip.sha256" if (folder / f"PocketOS-SD-card-{tag}.zip.sha256").is_file() else None
               })
