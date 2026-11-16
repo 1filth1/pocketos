@@ -80,7 +80,7 @@ void buildMenu(int c){
  if(c==FILES){addMenu("NEW / EDIT NOTE",'n');addMenu("COMMAND LINE",'t');addMenu("REFRESH",'r');for(int i=0;i<count;i++)addMenu(String(files[i].dir?"[DIR] ":"")+files[i].name,1000+i);}
  if(c==300){for(const auto &app:PocketOS::apps)addMenu(app.label,app.action);}
  if(c==330){addMenu("CALENDAR / TASKS",210);addMenu("TIMER / POMODORO",211);}
- if(c==331){addMenu("BOOKS",323);addMenu("NEW NOTE",311);addMenu("VOICE RECORDER",295);}
+ if(c==331){addMenu("BOOKS",323);addMenu("NEW NOTE",311);addMenu("VOICE RECORDER",295);addMenu("SD APP LIBRARY",325);}
  if(c==332){addMenu("WEB READER",312);addMenu("FILE EXCHANGE",314);}
  if(c==334){addMenu("GROOVE BOX",324);addMenu("SEQUENCER / PIANO",321);}
  if(c==333){addMenu("GROOVE BOX",324);addMenu("MUSIC SEQUENCER",321);addMenu("CALCULATOR",315);addMenu("COMMAND LINE",316);}
