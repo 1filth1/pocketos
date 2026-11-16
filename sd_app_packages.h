@@ -36,6 +36,8 @@ uint8_t sdAppSelected = 0;
 uint8_t sdAppFirst = 0;
 bool sdAppInfoOpen = false;
 bool sdAppResourcesOpen = false;
+// Preserve the caller so App Manager returns to its own desktop icon when launched there.
+bool sdAppReturnToDesktop = false;
 bool sdAppTextOpen = false;
 uint8_t sdAppInvalidCount = 0;
 uint8_t sdAppResourceCount = 0;
@@ -421,7 +423,8 @@ void sdAppsDraw() {
   } while (epd.nextPage());
 }
 
-void sdAppsOpen() {
+void sdAppsOpen(bool returnToDesktop = false) {
+  sdAppReturnToDesktop = returnToDesktop;
   sdAppInfoOpen = false;
   sdAppResourcesOpen = false;
   sdAppTextOpen = false;
@@ -441,7 +444,9 @@ void sdAppsKey(uint8_t key) {
       sdAppInfoOpen = false;
       sdAppsDraw();
     } else {
-      showMenu(331, HOME);
+      bool returnToDesktop = sdAppReturnToDesktop;
+      sdAppReturnToDesktop = false;
+      showMenu(returnToDesktop ? 300 : 331, HOME);
     }
     return;
   }

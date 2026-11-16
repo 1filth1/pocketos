@@ -68,8 +68,8 @@ static const char *appRuntimeViewName(View v) {
     case RAW_VIEW: return "RAW_VIEW";
     case BMP_VIEW: return "BMP_VIEW";
     case JDM_GAME: return "JDM_GAME";
-    case SD_APPS: return "SD_APPS";
-    case SD_APP_INFO: return "SD_APP_INFO";
+    case SD_APPS: return "APP_MANAGER";
+    case SD_APP_INFO: return "APP_MANAGER_DETAILS";
     default: return "UNKNOWN";
   }
 }

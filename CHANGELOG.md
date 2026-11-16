@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.1.2-rc.12] — 2026-11-16 — Experimental pre-release
+
+### Added
+- App Manager is now a dedicated application icon on the desktop launcher, separate from the general file browser.
+- Expanded the launcher to a four-column grid and added a dedicated monochrome App Manager icon.
+- App Manager remembers its launch origin and returns to the desktop when launched from its desktop icon; the existing Documents / SD App Library entry keeps its previous return path.
+- Runtime diagnostics identify the SD catalogue views as `APP_MANAGER` and `APP_MANAGER_DETAILS` for clearer lifecycle and memory-log analysis.
+
+### Changed
+- Launcher navigation now handles a partially filled final row without selecting empty cells.
+- Firmware version and branch-build release fallback are synchronized to v0.1.2-rc.12.
+
+### Validation
+- CI firmware compilation and package validation are required before publication.
+- Hardware validation must confirm all 13 launcher entries, four-way navigation, App Manager launch, package browsing and return-to-desktop behavior.
+- Repeat app switching and capture `[APP]` / `[MEM]` Serial logs; memory diagnostics remain observational and do not imply process isolation or automatic cleanup.
+
+### Known limitations
+- Built-in apps still share one address space; explicit per-app start/stop resource ownership is not introduced in this candidate.
+- App Manager remains a bounded, read-only catalogue; SD packages are data-only and no SD executable is loaded or run.
+
 ## [0.1.2-rc.11] — 2026-11-16 — Experimental pre-release
 
 ### Added

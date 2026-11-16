@@ -119,15 +119,17 @@ void drawAppGrid(){
   epd.setCursor(34,43);epd.print("TODAY");
   drawToday();
   epd.drawRect(414,18,368,444,GxEPD_BLACK);
-  for(int i=0;i<12;i++){
-   int x=419+(i%3)*120,y=23+(i/3)*110;
-   if(i==menuRow){epd.drawRect(x,y,118,108,GxEPD_BLACK);epd.drawRect(x+2,y+2,114,104,GxEPD_BLACK);}
-   drawAppIcon(i,x+31,y+5);
-   // 56px artwork with clear space before the caption.
+  // Four columns keep the complete built-in launcher on one screen.
+  // The final row may be partial; navigation ignores empty cells.
+  for(int i=0;i<(int)PocketOS::appCount;i++){
+   int col=i%4,row=i/4;
+   int x=416+col*91,y=22+row*110;
+   if(i==menuRow){epd.drawRect(x,y,89,108,GxEPD_BLACK);epd.drawRect(x+2,y+2,85,104,GxEPD_BLACK);}
+   drawAppIcon(i,x+16,y+5);
    epd.setFont(&FreeMonoBold9pt7b);
    int16_t bx,by;uint16_t bw,bh;
    epd.getTextBounds(menuItems[i].label,0,0,&bx,&by,&bw,&bh);
-   epd.setCursor(x+(118-bw)/2-bx,y+83);epd.print(menuItems[i].label);
+   epd.setCursor(x+(89-bw)/2-bx,y+83);epd.print(menuItems[i].label);
   }
  }while(epd.nextPage());
 }
@@ -202,12 +204,14 @@ void route(uint8_t k){
  bool enter=k==10||k==13,back=k==27||k==8;
  if(menuActive){int c=menuContext;View v=menuView;
   if(c==300&&(k==0xB4||k==0xB7||k==0xB5||k==0xB6)){
-   int row=menuRow/3,col=menuRow%3;
-   if(k==0xB4)col=(col+2)%3;
-   if(k==0xB7)col=(col+1)%3;
+   int row=menuRow/4,col=menuRow%4;
+   if(k==0xB4)col=(col+3)%4;
+   if(k==0xB7)col=(col+1)%4;
    if(k==0xB5)row=(row+3)%4;
    if(k==0xB6)row=(row+1)%4;
-   menuRow=row*3+col;showMenu(c,v);return;
+   int next=row*4+col;
+   if(next<menuCount)menuRow=next;
+   showMenu(c,v);return;
   }
   if(k==0xB5||k==0xB6){if(menuCount<2)return;menuRow=(menuRow+menuCount+(k==0xB5?-1:1))%menuCount;showMenu(c,v);return;}
   if(c==340&&menuCount&&menuItems[menuRow].action==1800&&(k==0xB4||k==0xB7)){
@@ -249,6 +253,7 @@ void route(uint8_t k){
   if(a>=330&&a<=334){appGroup=a;showMenu(a,HOME);return;}
   if(a==301){showMenu(301,SYSTEM);return;}
   if(a==325){sdAppsOpen();return;}
+  if(a==326){sdAppsOpen(true);return;}
   if(a==310){appGroup=300;if(cardOK)manager();else{status="TF CARD NOT MOUNTED";showMenu(300,HOME);}return;}
   if(a==311){if(cardOK){notesOpen();}else{status="TF CARD NOT MOUNTED";showMenu(appGroup,HOME);}return;}
   if(a==312){url="";webEdit();return;}

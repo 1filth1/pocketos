@@ -17,6 +17,18 @@ No physical test is marked PASS without an actual result, board revision, date a
 | SW-09 | Flash safety | Uses eraseAll: false; no full-chip erase or eFuse write |
 | SW-10 | SD content archive | Same release version and source commit as firmware; embedded file hashes and external archive SHA-256 verify |
 
+## RC12 desktop App Manager tests
+
+| ID | Test | Expected result |
+|---|---|---|
+| LAUNCH-01 | Open desktop launcher | All 13 built-in entries fit on the 4×4 grid; no clipping or overlap |
+| LAUNCH-02 | Navigate left/right/up/down | Selection moves between populated cells; empty cells in the last row are skipped |
+| LAUNCH-03 | Open APP MGR desktop icon | The existing SD App Manager opens and scans the catalogue |
+| LAUNCH-04 | Exit App Manager from catalogue root | Returns to the desktop launcher, not the Documents submenu |
+| LAUNCH-05 | Open SD APP LIBRARY from Documents | Existing entry remains available and returns to Documents as before |
+| LAUNCH-06 | No SD card / empty `/apps` | Clear unavailable/empty state; no crash |
+| LAUNCH-07 | Serial runtime telemetry | App Manager views are logged as APP_MANAGER and APP_MANAGER_DETAILS with memory snapshots |
+
 ## RC6 SD package catalogue tests
 
 | ID | Test | Expected result |
