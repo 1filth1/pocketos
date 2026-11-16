@@ -6,11 +6,14 @@
 - App Manager returns to the desktop when opened from its desktop icon. The existing Documents / SD App Library entry remains available and keeps its previous navigation behavior.
 - Runtime logs use the clearer names `APP_MANAGER` and `APP_MANAGER_DETAILS` for SD catalogue views.
 
+## Fixed
+- Corrected launcher navigation for the partially populated final row so empty cells cannot be selected.
+
 ## Changed
-- Four-way launcher navigation safely handles the partially populated final row.
+- Four-way launcher navigation uses a four-column layout.
 - Firmware version and branch-build release fallback are synchronized to v0.1.2-rc.12.
 
-## Known limitations
+## Known issues
 - Built-in applications still share one address space. This release does not add process isolation, automatic memory reclamation or full per-app resource ownership.
 - App Manager remains read-only. SD packages contain data only; arbitrary code from the SD card is never loaded or executed.
 - Memory diagnostics report view-boundary snapshots. Hardware log analysis is still required to establish leak/fragmentation trends.
@@ -20,7 +23,7 @@
 - Arduino-ESP32 3.3.12; DIO / 80 MHz; app3M_fat9M_16MB.
 - Firmware and SD-card content remain version-matched through the release workflow.
 
-## Upgrade and test
+## Upgrade
 - Back up the SD card and important internal Flash data before flashing.
 - Select v0.1.2-rc.12 in the Web Flasher.
 - Confirm all 13 desktop icons are visible and navigate the 4×4 grid in all directions.
@@ -36,8 +39,10 @@
 - При запуске с рабочего стола App Manager возвращается на рабочий стол. Существующий пункт SD App Library в разделе Documents сохранён и продолжает возвращаться в Documents.
 - Для экранов каталога SD в Serial-логах используются понятные имена `APP_MANAGER` и `APP_MANAGER_DETAILS`.
 
+## Исправлено
+- Навигация по сетке корректно обрабатывает незаполненные ячейки последней строки.
+
 ## Изменено
-- Навигация по сетке из четырёх колонок корректно обрабатывает незаполненные ячейки последней строки.
 - Версия прошивки и резервная версия для сборок ветки синхронизированы с v0.1.2-rc.12.
 
 ## Известные ограничения
