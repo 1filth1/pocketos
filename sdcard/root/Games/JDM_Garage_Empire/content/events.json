@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "events": [
+    {"id":"rainy_week","title":"Rainy week","weight":3,"duration_days":3,"effect":{"customer_flow_percent":-10,"suspension_jobs_percent":20}},
+    {"id":"street_meet","title":"Midnight street meet","weight":4,"duration_days":1,"effect":{"customer_flow_percent":30,"reputation_bonus":2}},
+    {"id":"supplier_sale","title":"Supplier warehouse sale","weight":2,"duration_days":2,"effect":{"parts_cost_percent":-15}},
+    {"id":"inspection_rush","title":"Inspection rush","weight":3,"duration_days":2,"effect":{"inspection_jobs_percent":40}},
+    {"id":"rival_promo","title":"Rival garage promotion","weight":2,"duration_days":3,"effect":{"customer_flow_percent":-20}},
+    {"id":"track_day","title":"Local track day","weight":3,"duration_days":1,"effect":{"performance_jobs_percent":35,"reputation_bonus":1}}
+  ]
+}
