@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "cars": [
+    {"id":"hachi_86","name":"Hachi 86","year":1985,"class":"CLASSIC","condition":62,"value":6800,"difficulty":1,"style":"lightweight coupe"},
+    {"id":"kage_r32","name":"Kage R32","year":1990,"class":"GT-R","condition":48,"value":18500,"difficulty":3,"style":"awd turbo coupe"},
+    {"id":"hayate_s13","name":"Hayate S13","year":1991,"class":"DRIFT","condition":55,"value":9200,"difficulty":2,"style":"silvia-style coupe"},
+    {"id":"ryu_a80","name":"Ryu A80","year":1994,"class":"GT","condition":41,"value":22500,"difficulty":4,"style":"grand touring coupe"},
+    {"id":"rotary_fd","name":"Rotary FD","year":1993,"class":"ROTARY","condition":38,"value":21000,"difficulty":4,"style":"rotary sports coupe"},
+    {"id":"midori_ns","name":"Midori NS","year":1992,"class":"SPORT","condition":67,"value":12500,"difficulty":2,"style":"mid-engine targa"},
+    {"id":"raid_evo","name":"Raid Evo","year":2001,"class":"RALLY","condition":51,"value":17200,"difficulty":3,"style":"rally sedan"},
+    {"id":"hoshi_sti","name":"Hoshi STI","year":2004,"class":"RALLY","condition":59,"value":16400,"difficulty":3,"style":"awd turbo sedan"},
+    {"id":"city_ek","name":"City EK","year":1998,"class":"HOT_HATCH","condition":72,"value":7400,"difficulty":1,"style":"lightweight hatchback"},
+    {"id":"road_na","name":"Road NA","year":1990,"class":"ROADSTER","condition":76,"value":8300,"difficulty":1,"style":"open-top roadster"}
+  ]
+}
