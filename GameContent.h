@@ -91,7 +91,7 @@ enum JdmRecordKind : uint8_t {
 
 static bool jdmRecordValid(JsonObjectConst item, JdmRecordKind kind) {
   const char *idValue = item["id"] | "";
-  const char *nameValue = item["name"] | "";
+  const char *nameValue = item["name"].is<const char*>() ? item["name"].as<const char*>() : (item["title"] | "");
   String id(idValue), name(nameValue);
   if (!jdmSafeId(id) || !name.length() || name.length() > 64) return false;
 
@@ -151,7 +151,7 @@ static bool jdmLoadRecords(const char *filename, const char *arrayKey,
       }
     }
     ids[index] = id;
-    if (index == 0) firstName = item["name"].as<const char*>();
+    if (index == 0) firstName = item["name"].is<const char*>() ? item["name"].as<const char*>() : item["title"].as<const char*>();
     if (kind == JDM_CAR) cars[index] = item["name"].as<const char*>();
     ++index;
   }
