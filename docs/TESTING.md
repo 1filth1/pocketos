@@ -37,7 +37,12 @@ No physical test is marked PASS without an actual result, board revision, date a
 | SDAPP-14 | Unsupported or oversized resource | File remains listed; preview is refused with a clear status |
 | SDAPP-15 | Unsafe filename / path separators | Entry is skipped; no path traversal outside the package resource directory |
 | SDAPP-16 | Remove SD card while browsing | Further open/refresh reports unavailable media without a crash |
-| SDAPP-17 | More than 64 resource-directory entries | Scanner stops after 64 entries and reports that additional content was omitted |\n| SDAPP-18 | Valid package with a populated resources directory | Details show INTEGRITY: OK, file count and aggregate byte size |\n| SDAPP-19 | Missing or empty resources directory | Package remains visible; details show a clear integrity warning |\n| SDAPP-20 | Unsafe resource filename | Unsafe entry is excluded from the valid-file count and integrity warning is shown |\n| SDAPP-21 | Nested directory or more than 64 entries | Audit remains bounded, does not recurse and reports an incomplete scan |\n| SDAPP-22 | Manifest value with ASCII control characters | Package manifest is rejected |
+| SDAPP-17 | More than 64 resource-directory entries | Scanner stops after 64 entries and reports that additional content was omitted |
+| SDAPP-18 | Valid package with a populated resources directory | Details show INTEGRITY: OK, file count and aggregate byte size |
+| SDAPP-19 | Missing or empty resources directory | Package remains visible; details show a clear integrity warning |
+| SDAPP-20 | Unsafe resource filename | Unsafe entry is excluded from the valid-file count and integrity warning is shown |
+| SDAPP-21 | Nested directory or more than 64 entries | Audit remains bounded, does not recurse and reports an incomplete scan |
+| SDAPP-22 | Manifest value with ASCII control characters | Package manifest is rejected |
 
 ## Physical hardware tests
 
