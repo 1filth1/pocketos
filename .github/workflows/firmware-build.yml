@@ -190,8 +190,8 @@ jobs:
             "$RUNNER_TEMP/pocketos-release/application.bin"
             "$RUNNER_TEMP/pocketos-release/manifest.json"
             "$RUNNER_TEMP/pocketos-release/SHA256SUMS"
-            "$RUNNER_TEMP/pocketos-release/PocketOS-SD-card-${RELEASE_TAG#v}.zip"
-            "$RUNNER_TEMP/pocketos-release/PocketOS-SD-card-${RELEASE_TAG#v}.zip.sha256"
+            "$RUNNER_TEMP/pocketos-release/PocketOS-SD-card-${RELEASE_TAG}.zip"
+            "$RUNNER_TEMP/pocketos-release/PocketOS-SD-card-${RELEASE_TAG}.zip.sha256"
           )
           RELEASE_ARGS=()
           if [[ "$RELEASE_TAG" =~ (alpha|beta|rc|pre) ]]; then
