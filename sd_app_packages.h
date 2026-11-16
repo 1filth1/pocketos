@@ -17,6 +17,10 @@ struct SdAppPackage {
   String description;
   String type;
   String path;
+  uint8_t integrityFlags = 0;
+  uint8_t integrityFiles = 0;
+  uint8_t integrityUnsafe = 0;
+  uint32_t integrityBytes = 0;
 };
 
 struct SdAppResource {
@@ -48,6 +52,14 @@ static bool sdAppSafeToken(const String &value, size_t maxLength) {
   for (size_t i = 0; i < value.length(); ++i) {
     char c = value[i];
     if (!((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-' || c == '_')) return false;
+  }
+  return true;
+}
+
+static bool sdAppSafeManifestValue(const String &value) {
+  for (size_t i = 0; i < value.length(); ++i) {
+    uint8_t c = (uint8_t)value[i];
+    if (c < 32 || c == 127) return false;
   }
   return true;
 }
@@ -108,6 +120,7 @@ static bool sdAppReadManifest(const String &dirPath, const String &dirName, SdAp
   if (!sdAppSafeToken(id, 24) || id != dirName) return false;
   if (!name.length() || name.length() > 32 || !version.length() || version.length() > 16) return false;
   if (description.length() > 96 || type != "content") return false;
+  if (!sdAppSafeManifestValue(name) || !sdAppSafeManifestValue(version) || !sdAppSafeManifestValue(description)) return false;
   out.id = id;
   out.name = name;
   out.version = version;
@@ -115,6 +128,68 @@ static bool sdAppReadManifest(const String &dirPath, const String &dirName, SdAp
   out.type = type;
   out.path = dirPath;
   return true;
+}
+
+// Integrity flags are warnings, not package rejection: the catalogue remains
+// available so users can inspect and repair incomplete data-only packages.
+static constexpr uint8_t SD_APP_INTEGRITY_RESOURCES_MISSING = 1;
+static constexpr uint8_t SD_APP_INTEGRITY_RESOURCES_EMPTY = 2;
+static constexpr uint8_t SD_APP_INTEGRITY_UNSAFE_ENTRY = 4;
+static constexpr uint8_t SD_APP_INTEGRITY_SCAN_INCOMPLETE = 8;
+
+static void sdAppAuditPackage(SdAppPackage &package) {
+  package.integrityFlags = 0;
+  package.integrityFiles = 0;
+  package.integrityUnsafe = 0;
+  package.integrityBytes = 0;
+  String path = package.path + "/resources";
+  File dir = SD_MMC.open(path.c_str(), FILE_READ);
+  if (!dir || !dir.isDirectory()) {
+    if (dir) dir.close();
+    package.integrityFlags |= SD_APP_INTEGRITY_RESOURCES_MISSING;
+    return;
+  }
+  uint8_t inspected = 0;
+  while (inspected < SD_APP_MAX_RESOURCE_SCAN) {
+    File entry = dir.openNextFile();
+    if (!entry) break;
+    ++inspected;
+    bool isDirectory = entry.isDirectory();
+    String name = leaf(String(entry.name()));
+    uint32_t size = entry.size();
+    entry.close();
+    if (isDirectory) {
+      package.integrityFlags |= SD_APP_INTEGRITY_SCAN_INCOMPLETE;
+      continue;
+    }
+    if (!sdAppSafeResourceName(name)) {
+      if (package.integrityUnsafe < 255) ++package.integrityUnsafe;
+      package.integrityFlags |= SD_APP_INTEGRITY_UNSAFE_ENTRY;
+      continue;
+    }
+    if (package.integrityFiles < 255) ++package.integrityFiles;
+    if (UINT32_MAX - package.integrityBytes < size) package.integrityBytes = UINT32_MAX;
+    else package.integrityBytes += size;
+  }
+  if (inspected == SD_APP_MAX_RESOURCE_SCAN) {
+    File probe = dir.openNextFile();
+    if (probe) {
+      package.integrityFlags |= SD_APP_INTEGRITY_SCAN_INCOMPLETE;
+      probe.close();
+    }
+  }
+  dir.close();
+  if (!package.integrityFiles) package.integrityFlags |= SD_APP_INTEGRITY_RESOURCES_EMPTY;
+}
+
+static String sdAppIntegrityLabel(const SdAppPackage &package) {
+  if (!package.integrityFlags) return "INTEGRITY: OK";
+  String result = "INTEGRITY: WARN /";
+  if (package.integrityFlags & SD_APP_INTEGRITY_RESOURCES_MISSING) result += " NO RESOURCES DIR";
+  if (package.integrityFlags & SD_APP_INTEGRITY_RESOURCES_EMPTY) result += " EMPTY";
+  if (package.integrityFlags & SD_APP_INTEGRITY_UNSAFE_ENTRY) result += " UNSAFE NAMES";
+  if (package.integrityFlags & SD_APP_INTEGRITY_SCAN_INCOMPLETE) result += " SCAN LIMITED";
+  return result;
 }
 
 void sdAppScan() {
@@ -142,6 +217,7 @@ void sdAppScan() {
     String path = String("/apps/") + name;
     SdAppPackage package;
     if (sdAppReadManifest(path, name, package)) {
+      sdAppAuditPackage(package);
       sdAppPackages[sdAppPackageCount++] = package;
     } else {
       ++sdAppInvalidCount;
@@ -336,9 +412,11 @@ void sdAppsDraw() {
       text("VERSION: " + p.version, 34, 170);
       text("TYPE: CONTENT / RESOURCE PACK", 34, 215);
       text("PATH: " + p.path, 34, 260);
-      text("DESCRIPTION:", 34, 315, true);
-      text(p.description.length() ? clip(p.description, 78) : "NO DESCRIPTION", 34, 355);
-      text("ENTER TO OPEN /resources", 34, 415);
+      text("DESCRIPTION:", 34, 300, true);
+      text(p.description.length() ? clip(p.description, 78) : "NO DESCRIPTION", 34, 335);
+      text(sdAppIntegrityLabel(p), 34, 380, p.integrityFlags != 0);
+      text("FILES: " + String(p.integrityFiles) + "  /  DATA: " + String(p.integrityBytes) + " B", 34, 415);
+      text("ENTER: BROWSE RESOURCES", 520, 415);
     }
   } while (epd.nextPage());
 }

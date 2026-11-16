@@ -15,6 +15,7 @@ No physical test is marked PASS without an actual result, board revision, date a
 | SW-07 | ZIP archive | Contains byte-identical files from the verified package |
 | SW-08 | Web Flasher | Deployed from the same CI package; checks manifest and binary hashes before write |
 | SW-09 | Flash safety | Uses eraseAll: false; no full-chip erase or eFuse write |
+| SW-10 | SD content archive | Same release version and source commit as firmware; embedded file hashes and external archive SHA-256 verify |
 
 ## RC6 SD package catalogue tests
 
@@ -37,6 +38,11 @@ No physical test is marked PASS without an actual result, board revision, date a
 | SDAPP-15 | Unsafe filename / path separators | Entry is skipped; no path traversal outside the package resource directory |
 | SDAPP-16 | Remove SD card while browsing | Further open/refresh reports unavailable media without a crash |
 | SDAPP-17 | More than 64 resource-directory entries | Scanner stops after 64 entries and reports that additional content was omitted |
+| SDAPP-18 | Valid package with a populated resources directory | Details show INTEGRITY: OK, file count and aggregate byte size |
+| SDAPP-19 | Missing or empty resources directory | Package remains visible; details show a clear integrity warning |
+| SDAPP-20 | Unsafe resource filename | Unsafe entry is excluded from the valid-file count and integrity warning is shown |
+| SDAPP-21 | Nested directory or more than 64 entries | Audit remains bounded, does not recurse and reports an incomplete scan |
+| SDAPP-22 | Manifest value with ASCII control characters | Package manifest is rejected |
 
 ## Physical hardware tests
 
@@ -71,3 +77,13 @@ The partition map changes from the old 4 MiB single-app/SPIFFS reference archive
 - Date:
 - Steps and observed result:
 - Serial log, photo or other evidence:
+
+## Versioned SD-card content tests
+
+| ID | Test | Expected result |
+|---|---|---|
+| SDPKG-01 | Build SD content archive from the release commit | Archive version and source commit match the firmware release; all embedded file hashes verify |
+| SDPKG-02 | Extract SD content archive | Files are laid out relative to the SD-card root and include the PocketOS Guide package |
+| SDPKG-03 | Web Flasher release selection | SD-card download and checksum links match the selected firmware release; older releases without an archive show no link |
+| SDPKG-04 | Merge archive onto a card containing personal files | Default files are added/updated; unrelated user files remain untouched |
+| SDPKG-05 | Inspect bundled PocketOS Guide | App Manager lists the package and previews its README and SD layout resource |

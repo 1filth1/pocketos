@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.1.2-rc.11] — 2026-11-16 — Experimental pre-release
+
+### Added
+- Versioned default SD-card content source under `sdcard/root/`, packaged as a release-matched ZIP with an embedded file manifest and SHA-256 sidecar.
+- PocketOS Guide data-only package on the SD card, providing a ready-made App Manager/resource-preview example.
+- Web Flasher now offers the SD-card content archive and checksum for the selected release.
+- Bounded SD package integrity audit when the App Manager catalogue is scanned.
+- Package details now report resource-directory presence, valid file count, aggregate data size and warnings for empty folders, unsafe filenames or incomplete scans.
+- Manifest values containing control characters are rejected.
+
+### Changed
+- SD-card release archives are mergeable defaults only; user files, saves, settings and other runtime data are excluded and must be preserved.
+- Integrity warnings do not hide otherwise valid packages; users can still open the package and inspect available resources.
+- The audit is read-only, scans at most 64 resource entries per package and never executes SD content.
+
+### Validation
+- CI firmware compilation and repository integrity checks are required before publication.
+- On-device validation must cover clean, missing, empty, unsafe-name and over-limit resource directories.
+
 ## [0.1.2-rc.10] — 2026-11-16 — Experimental pre-release
 
 ### Added

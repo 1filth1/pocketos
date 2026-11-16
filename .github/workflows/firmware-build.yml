@@ -68,9 +68,10 @@ jobs:
       - name: Package and validate firmware bundle
         env:
           GITHUB_SHA: ${{ github.sha }}
-          RELEASE_VERSION: PocketOS-${{ github.ref_type == 'tag' && github.ref_name || (github.ref == 'refs/heads/release/pocketos-1.0' && 'v0.1.2-rc.10' || 'development') }}
+          RELEASE_VERSION: PocketOS-${{ github.ref_type == 'tag' && github.ref_name || (github.ref == 'refs/heads/release/pocketos-1.0' && 'v0.1.2-rc.11' || 'development') }}
         run: |
           python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release" "${{ steps.boot-app0.outputs.path }}"
+          python3 scripts/package_sdcard.py sdcard/root "$RUNNER_TEMP/pocketos-release" "$RELEASE_VERSION" "$GITHUB_SHA"
           mkdir -p "$RUNNER_TEMP/pocketos-pages"
           cp webflasher/index.html "$RUNNER_TEMP/pocketos-pages/index.html"
           cp "$RUNNER_TEMP/pocketos-release/"* "$RUNNER_TEMP/pocketos-pages/"
@@ -86,11 +87,14 @@ jobs:
           root = pathlib.Path(sys.argv[1])
           existing = json.loads(pathlib.Path(sys.argv[2]).read_text())
           current = json.loads((root / "manifest.json").read_text())
+          current_tag = current["version"].removeprefix("PocketOS-")
           releases = [{
               "name": current["version"] + " (текущая сборка)",
-              "tag": current["version"].removeprefix("PocketOS-"),
+              "tag": current_tag,
               "path": "./",
-              "prerelease": True
+              "prerelease": True,
+              "sdCardUrl": f"https://github.com/1filth1/pocketos/releases/download/{current_tag}/PocketOS-SD-card-{current_tag}.zip",
+              "sdCardChecksumUrl": f"https://github.com/1filth1/pocketos/releases/download/{current_tag}/PocketOS-SD-card-{current_tag}.zip.sha256"
           }]
           for item in existing:
               tag = item["tagName"]
@@ -100,7 +104,8 @@ jobs:
               folder.mkdir(parents=True, exist_ok=True)
               subprocess.run([
                   "gh", "release", "download", tag, "--dir", str(folder),
-                  "--pattern", "*.bin", "--pattern", "manifest.json", "--pattern", "SHA256SUMS"
+                  "--pattern", "*.bin", "--pattern", "manifest.json", "--pattern", "SHA256SUMS",
+                  "--pattern", "PocketOS-SD-card-*.zip", "--pattern", "PocketOS-SD-card-*.zip.sha256"
               ], check=False)
               required = ["manifest.json", "SHA256SUMS", "bootloader.bin", "partitions.bin", "boot_app0.bin", "application.bin"]
               if not all((folder / name).is_file() for name in required):
@@ -110,7 +115,9 @@ jobs:
                   "name": item["name"] or tag,
                   "tag": tag,
                   "path": f"./releases/{tag}/",
-                  "prerelease": bool(item["isPrerelease"])
+                  "prerelease": bool(item["isPrerelease"]),
+                  "sdCardUrl": f"https://github.com/1filth1/pocketos/releases/download/{tag}/PocketOS-SD-card-{tag}.zip" if (folder / f"PocketOS-SD-card-{tag}.zip").is_file() else None,
+                  "sdCardChecksumUrl": f"https://github.com/1filth1/pocketos/releases/download/{tag}/PocketOS-SD-card-{tag}.zip.sha256" if (folder / f"PocketOS-SD-card-{tag}.zip.sha256").is_file() else None
               })
           (root / "releases.json").write_text(json.dumps({"releases": releases}, ensure_ascii=False, indent=2) + "\n")
           print(f"Published catalogue entries: {len(releases)}")
@@ -132,7 +139,7 @@ jobs:
       - name: Validate release notes and changelog entry
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
         env:
-          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.1.2-rc.10' }}
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.1.2-rc.11' }}
         run: |
           NOTES_FILE="RELEASE_NOTES_${RELEASE_TAG}.md"
           CHANGELOG_VERSION="${RELEASE_TAG#v}"
@@ -173,7 +180,7 @@ jobs:
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.1.2-rc.10' }}
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.1.2-rc.11' }}
         run: |
           RELEASE_FILES=(
             "$RUNNER_TEMP/pocketos-release/PocketOS-firmware.zip"
@@ -183,6 +190,8 @@ jobs:
             "$RUNNER_TEMP/pocketos-release/application.bin"
             "$RUNNER_TEMP/pocketos-release/manifest.json"
             "$RUNNER_TEMP/pocketos-release/SHA256SUMS"
+            "$RUNNER_TEMP/pocketos-release/PocketOS-SD-card-${RELEASE_TAG#v}.zip"
+            "$RUNNER_TEMP/pocketos-release/PocketOS-SD-card-${RELEASE_TAG#v}.zip.sha256"
           )
           RELEASE_ARGS=()
           if [[ "$RELEASE_TAG" =~ (alpha|beta|rc|pre) ]]; then

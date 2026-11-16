@@ -27,6 +27,7 @@ main{max-width:820px;margin:0 auto;padding:32px 20px 60px}.brand{color:var(--ora
       </select>
     </div>
     <p class="small">Выбери существующий релиз или prerelease. Перед прошивкой комплект выбранной версии будет проверен по SHA-256.</p>
+    <p class="small" id="sdCardInfo">Загружаю SD-контент для выбранной версии…</p>
     <h3>Проверенный комплект</h3>
     <pre id="build">Загружаю список релизов…</pre>
     <p class="small">Флешер разрешит подключение только после проверки целевой платы, разметки, адресов, размеров и SHA-256 комплекта.</p>
@@ -148,6 +149,27 @@ async function loadManifest(base = './') {
 }
 if (!supported()) status('Web Serial недоступен. Открой страницу в Chrome или Edge на компьютере по HTTPS.', 'error');
 else status('Браузер поддерживает Web Serial. Проверяю комплект…');
+function updateSdCardLink(release) {
+  const info = $('sdCardInfo');
+  info.replaceChildren();
+  if (!release || !release.sdCardUrl) {
+    info.textContent = 'Для этой версии отдельный архив SD-карты не опубликован.';
+    return;
+  }
+  const link = document.createElement('a');
+  link.href = release.sdCardUrl;
+  link.textContent = 'Скачать SD-контент ' + release.tag;
+  link.rel = 'noopener';
+  info.append(link);
+  if (release.sdCardChecksumUrl) {
+    info.append(document.createTextNode(' · '));
+    const checksum = document.createElement('a');
+    checksum.href = release.sdCardChecksumUrl;
+    checksum.textContent = 'SHA-256';
+    checksum.rel = 'noopener';
+    info.append(checksum);
+  }
+}
 async function loadReleaseList() {
   try {
     const response = await fetch('./releases.json', { cache: 'no-store' });
@@ -164,7 +186,11 @@ async function loadReleaseList() {
       select.append(option);
     }
     select.disabled = false;
-    select.onchange = () => loadManifest(select.value);
+    select.onchange = () => {
+      updateSdCardLink(releases.find(item => item.path === select.value));
+      loadManifest(select.value);
+    };
+    updateSdCardLink(releases.find(item => item.path === select.value));
     await loadManifest(select.value);
   } catch (error) {
     $('build').textContent = 'Список релизов недоступен: ' + error.message;

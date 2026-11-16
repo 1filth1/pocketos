@@ -23,3 +23,9 @@ jobs:
           python-version: "3.12"
       - name: Validate checked-in firmware archive
         run: python scripts/validate_firmware_archive.py firmware.zip
+      - name: Build and verify versioned SD-card content
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          python scripts/package_sdcard.py sdcard/root "$RUNNER_TEMP/pocketos-sdcard-test" "v0.0.0-ci" "$GITHUB_SHA"
+          unzip -t "$RUNNER_TEMP/pocketos-sdcard-test/PocketOS-SD-card-v0.0.0-ci.zip"
