@@ -142,12 +142,17 @@ bool powerMask(uint8_t reg,uint8_t mask,uint8_t value){
   return old>=0 && powerWrite(reg,(uint8_t(old)&~mask)|(value&mask));
 }
 void initPowerKey(){
-  if(powerReg(0x03)!=0x4A)return;
+  int chip=powerReg(0x03);
+  if(chip!=0x4A){Serial.printf("[POWER] AXP2101 not ready: chip=0x%02X\n",chip);return;}
   // 2 s long-press IRQ; 10 s hardware fallback allows the screen to finish.
   // Preserve power-on timing, rails, charging settings and other IRQs.
-  pwrKeyReady=powerMask(0x27,0x3C,0x2C)
+  int pendingBefore=powerReg(0x49);
+  bool configured=powerMask(0x27,0x3C,0x2C)
     && powerMask(0x22,0x03,0x02)
     && powerWrite(0x49,0x04) && powerMask(0x41,0x04,0x04);
+  pwrKeyReady=configured;
+  Serial.printf("[POWER] key init ready=%u pending_before=0x%02X irq_en=0x%02X key_cfg=0x%02X hw_cfg=0x%02X\n",
+    unsigned(pwrKeyReady),pendingBefore,powerReg(0x41),powerReg(0x27),powerReg(0x22));
 }
 void pollPowerKey();
 // Fail closed: an I2C error or any valid VBUS prevents automatic shutdown.
@@ -817,7 +822,13 @@ static void drawPowerText(const char *label){
   epd.setCursor((W-int(w))/2-x,(H-int(h))/2-y);
   epd.print(label);
 }
-void shutdownDevice(){
+void logPowerState(const char *reason){
+  Serial.printf("[POWER] shutdown source=%s uptime_ms=%lu status=0x%02X irq=0x%02X irq_en=0x%02X key_cfg=0x%02X hw_cfg=0x%02X common=0x%02X\n",
+    reason,millis(),powerReg(0x00),powerReg(0x49),powerReg(0x41),
+    powerReg(0x27),powerReg(0x22),powerReg(0x10));
+}
+void shutdownDevice(const char *reason){
+  logPowerState(reason);
   gpsStop();
   if(view==TAMAGOTCHI)saveTama();
   if(view==SNAKE)saveScore("snake",snakeScore);
@@ -844,7 +855,9 @@ void pollPowerKey(){
   if(!pwrKeyReady)return;
   int irq=powerReg(0x49);
   if(irq>=0 && (irq&0x04)){
-    powerWrite(0x49,0x04);shutdownDevice();
+    Serial.printf("[POWER] long-press IRQ observed uptime_ms=%lu irq=0x%02X\n",millis(),irq);
+    powerWrite(0x49,0x04);
+    shutdownDevice("PWR_LONG_PRESS_IRQ");
   }
 }
 // CardKB2 has no wired key interrupt: retain its power and poll between
@@ -887,7 +900,7 @@ void idleSleep(){
     if(kbOK){wakeKey=key();if(wakeKey)break;}
     if(offChoice && millis()-sleepStarted>=(unsigned long)powerMinutes[offChoice]*60000UL && millis()-autoOffChecked>=SLEEP_POWER_CHECK_MS){
       autoOffChecked=millis();
-      if(batteryOnlyPower())shutdownDevice();
+      if(batteryOnlyPower())shutdownDevice("IDLE_AUTO_OFF");
     }
     esp_sleep_enable_timer_wakeup(50000);
     esp_err_t result=esp_light_sleep_start();
