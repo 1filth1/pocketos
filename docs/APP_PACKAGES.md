@@ -35,7 +35,7 @@ description=Example resource package
 - `type`: required; RC6 accepts only `content`.
 - `description`: optional, up to 96 characters.
 - Duplicate keys, unknown keys, malformed lines, oversized files and unsupported types invalidate the manifest.
-- Maximum catalogue size: 16 packages. Additional folders are not scanned after the limit.
+- Maximum catalogue size: 16 valid packages. The scanner inspects at most 32 package directories per scan; additional directories are left for a later firmware version.
 
 ## Safety and current scope
 
