@@ -105,12 +105,23 @@ String nextHint(){
  switch(state.stage){case 0:return "ACCEPT A CAR / BUILD REPUTATION";case 1:return "MATCH SYMPTOM TO NODE / TEST IT";case 2:return state.stock?"REPAIR YOURSELF OR M: DELEGATE":"BUY PART: "+String(partCost());case 3:return state.remaining>=10?"LEFT/RIGHT: TOOL / ENTER: USE":"NEXT DAY / WAIT FOR MECHANIC";case 4:return "RUN QUALITY TEST BEFORE PAYMENT";default:return "COLLECT "+String(payment())+" / NEXT CLIENT";}
 }
 String primaryLabel(){if(!active)return "START GARAGE";switch(state.stage){case 0:return "ACCEPT CLIENT";case 1:return "TEST SELECTED NODE";case 2:return state.stock?"START HAND REPAIR":"BUY PART "+String(partCost());case 3:return state.remaining>=10?"USE SELECTED TOOL":"NEXT WORKING DAY";case 4:return "QUALITY TEST";default:return "COLLECT "+String(payment());}}
+void contentScreen(){
+ text(contentTitle,30,128,true);
+ text("CONTENT VERSION: "+contentVersion+"  /  SOURCE: "+String(contentLoaded?"SD CARD":"BUILT-IN"),30,164);
+ text("CARS "+String(contentCars)+"   SERVICES "+String(contentServices)+"   PARTS "+String(contentParts),30,212,true);
+ text("CUSTOMERS "+String(contentCustomers)+"   UPGRADES "+String(contentUpgrades),30,250);
+ text("EVENTS "+String(contentEvents)+"   TUTORIAL CHAPTERS "+String(contentTutorial),30,288);
+ text("FIRST CAR: "+clip(firstCar,42)+"  /  SERVICE: "+clip(firstService,28),30,332);
+ text("FIRST PART: "+clip(firstPart,42),30,364);
+ text("START CASH "+String(contentStartingCash)+" CR  /  DAILY RENT "+String(contentDailyRent),30,408);
+ text(clip(contentStatus,72),30,440,true);
+}
 void draw(bool full=false){view=JDM_GAME;if(full)epd.forceClean();beginDraw();do{
- header("","JDM / WORKSHOP","ARROWS: SELECT   ENTER: USE   TAB: VIEW");
+ header("","JDM / WORKSHOP","ARROWS: SELECT   ENTER: USE   TAB: REPAIR   C: CONTENT");
  text("DAY "+String(state.day)+"   CASH "+String(state.cash),30,108,true);
- if(page==3&&state.stage)repairScreen();else garage();
+ if(page==7)contentScreen();else if(page==3&&state.stage)repairScreen();else garage();
  line(500,120,500,444);
- String labels[]={primaryLabel(),"NEXT DAY (-"+String(100+state.staff*150)+")","SAVE SLOT","LOAD SLOT","NEW GARAGE"};
+ String labels[]={primaryLabel(),"NEXT DAY (-"+String(contentDailyRent+(state.staff?contentMechanicWage:0))+")","SAVE SLOT","LOAD SLOT","NEW GARAGE"};
  for(int i=0;i<5;i++){int y=147+i*39;if(i==row){solid(512,y-23,283,34);inv(labels[i],520,y);}else text(labels[i],520,y);}
  text("TOOLS",515,350,true);
  for(int i=0;i<4;i++){
@@ -138,5 +149,5 @@ void draw(bool full=false){view=JDM_GAME;if(full)epd.forceClean();beginDraw();do
  }
  }
  }while(epd.nextPage());}
-void open(){popup=0;bolt=0;page=0;row=0;active=false;confirmNew=false;repairNode=tool=0;message="ENTER: NEW GARAGE / DOWN: LOAD SLOT";draw(true);}
+void open(){popup=0;bolt=0;page=0;row=0;active=false;confirmNew=false;repairNode=tool=0;loadContent();message=contentLoaded?"SD CONTENT READY / ENTER: NEW GARAGE":"BUILT-IN DATA / C: CONTENT INFO";draw(true);}
 }

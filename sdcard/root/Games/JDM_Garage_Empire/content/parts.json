@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "parts": [
+    {"id":"brake_pads","name":"Street brake pads","category":"BRAKES","cost":180,"quality":1,"stock":4},
+    {"id":"brake_rotors","name":"Vented brake rotors","category":"BRAKES","cost":320,"quality":2,"stock":2},
+    {"id":"fuel_pump","name":"High-flow fuel pump","category":"FUEL","cost":260,"quality":1,"stock":3},
+    {"id":"fuel_filter","name":"Performance fuel filter","category":"FUEL","cost":75,"quality":1,"stock":5},
+    {"id":"radiator","name":"Aluminium radiator","category":"COOLING","cost":390,"quality":2,"stock":2},
+    {"id":"water_pump","name":"Water pump kit","category":"COOLING","cost":210,"quality":1,"stock":3},
+    {"id":"coilover_kit","name":"Street coilover kit","category":"SUSPENSION","cost":780,"quality":2,"stock":1},
+    {"id":"bushing_set","name":"Poly bushing set","category":"SUSPENSION","cost":240,"quality":1,"stock":3},
+    {"id":"turbo_kit","name":"Bolt-on turbo kit","category":"ENGINE","cost":2450,"quality":3,"stock":1},
+    {"id":"forged_internals","name":"Forged engine internals","category":"ENGINE","cost":3100,"quality":4,"stock":0}
+  ]
+}

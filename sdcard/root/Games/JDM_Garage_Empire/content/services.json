@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "services": [
+    {"id":"inspection","name":"Full inspection","base_price":180,"base_cost":35,"duration_days":1,"skill":1,"rep":1},
+    {"id":"brake_service","name":"Brake overhaul","base_price":950,"base_cost":280,"duration_days":2,"skill":1,"rep":2},
+    {"id":"fuel_system","name":"Fuel system repair","base_price":1250,"base_cost":420,"duration_days":2,"skill":2,"rep":3},
+    {"id":"cooling_system","name":"Cooling system rebuild","base_price":1450,"base_cost":510,"duration_days":3,"skill":2,"rep":3},
+    {"id":"suspension","name":"Suspension refresh","base_price":1750,"base_cost":620,"duration_days":3,"skill":2,"rep":4},
+    {"id":"engine_tune","name":"Street engine tune","base_price":3200,"base_cost":1450,"duration_days":4,"skill":3,"rep":6},
+    {"id":"turbo_build","name":"Turbo conversion","base_price":6800,"base_cost":3350,"duration_days":6,"skill":4,"rep":10},
+    {"id":"full_restoration","name":"Full restoration","base_price":12000,"base_cost":6100,"duration_days":10,"skill":5,"rep":18}
+  ]
+}

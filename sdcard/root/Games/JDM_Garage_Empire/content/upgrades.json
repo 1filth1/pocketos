@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "upgrades": [
+    {"id":"second_lift","name":"Second hydraulic lift","cost":4200,"rep_required":15,"effect":{"work_slots":1,"job_speed_percent":0}},
+    {"id":"parts_shelf","name":"Parts shelving","cost":1800,"rep_required":10,"effect":{"inventory_capacity":6,"supplier_discount_percent":0}},
+    {"id":"diagnostic_tablet","name":"Advanced diagnostic tablet","cost":3600,"rep_required":25,"effect":{"diagnosis_accuracy":15,"unlock_services":["engine_tune"]}},
+    {"id":"paint_booth","name":"Paint and body booth","cost":8200,"rep_required":55,"effect":{"unlock_services":["bodywork","full_restoration"]}},
+    {"id":"dyno_room","name":"In-house dyno room","cost":14500,"rep_required":100,"effect":{"unlock_services":["turbo_build"],"quality_bonus_percent":8}},
+    {"id":"brand_wall","name":"Local racing team sponsorship","cost":5200,"rep_required":40,"effect":{"daily_reputation":1,"customer_flow_percent":10}}
+  ]
+}

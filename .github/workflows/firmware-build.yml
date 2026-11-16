@@ -46,6 +46,7 @@ jobs:
           arduino-cli lib install "JPEGDEC@1.8.5"
           arduino-cli lib install "bb_spi_lcd@2.9.10"
           arduino-cli lib install "TinyGPSPlus@1.0.3"
+          arduino-cli lib install "ArduinoJson@7.4.2"
 
       - name: Compile PocketOS for Waveshare N16R8
         env:
@@ -65,11 +66,20 @@ jobs:
           echo "path=${BOOT_APP0_FILES[0]}" >> "$GITHUB_OUTPUT"
           echo "Using ${BOOT_APP0_FILES[0]}"
 
+      - name: Validate JDM Garage Empire SD content
+        run: python3 scripts/validate_jdm_content.py sdcard/root
+
       - name: Package and validate firmware bundle
         env:
           GITHUB_SHA: ${{ github.sha }}
-          RELEASE_VERSION: PocketOS-${{ github.ref_type == 'tag' && github.ref_name || (github.ref == 'refs/heads/release/pocketos-1.0' && 'v0.2.0-rc.1' || 'development') }}
         run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            RELEASE_VERSION="PocketOS-${GITHUB_REF_NAME}"
+          else
+            FIRMWARE_VERSION=$(sed -n 's/^#define POCKETOS_VERSION "\(.*\)"/\1/p' version.h)
+            test -n "$FIRMWARE_VERSION" || { echo "Unable to read POCKETOS_VERSION from version.h" >&2; exit 1; }
+            RELEASE_VERSION="PocketOS-v${FIRMWARE_VERSION}"
+          fi
           python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release" "${{ steps.boot-app0.outputs.path }}"
           python3 scripts/package_sdcard.py sdcard/root "$RUNNER_TEMP/pocketos-release" "$RELEASE_VERSION" "$GITHUB_SHA"
           mkdir -p "$RUNNER_TEMP/pocketos-pages"
@@ -139,8 +149,13 @@ jobs:
       - name: Validate release notes and changelog entry
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
         env:
-          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.2.0-rc.1' }}
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
         run: |
+          if [[ -z "$RELEASE_TAG" ]]; then
+            FIRMWARE_VERSION=$(sed -n 's/^#define POCKETOS_VERSION "\(.*\)"/\1/p' version.h)
+            test -n "$FIRMWARE_VERSION" || { echo "Unable to read POCKETOS_VERSION from version.h" >&2; exit 1; }
+            RELEASE_TAG="v${FIRMWARE_VERSION}"
+          fi
           NOTES_FILE="RELEASE_NOTES_${RELEASE_TAG}.md"
           CHANGELOG_VERSION="${RELEASE_TAG#v}"
           test -s "$NOTES_FILE" || { echo "Missing bilingual release notes: $NOTES_FILE" >&2; exit 1; }
@@ -180,8 +195,13 @@ jobs:
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.2.0-rc.1' }}
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
         run: |
+          if [[ -z "$RELEASE_TAG" ]]; then
+            FIRMWARE_VERSION=$(sed -n 's/^#define POCKETOS_VERSION "\(.*\)"/\1/p' version.h)
+            test -n "$FIRMWARE_VERSION" || { echo "Unable to read POCKETOS_VERSION from version.h" >&2; exit 1; }
+            RELEASE_TAG="v${FIRMWARE_VERSION}"
+          fi
           RELEASE_FILES=(
             "$RUNNER_TEMP/pocketos-release/PocketOS-firmware.zip"
             "$RUNNER_TEMP/pocketos-release/bootloader.bin"
