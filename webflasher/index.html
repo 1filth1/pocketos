@@ -242,6 +242,19 @@ $('connect').onclick = async () => {
 };
 $('flash').onclick = async () => {
   if (!connected || !manifestReady) return;
+  if ($('eraseFlash').checked) {
+    const release = releases.find(item => item.path === selectedBase);
+    const label = release ? release.name : manifest.version;
+    const approved = window.confirm(
+      'ВНИМАНИЕ: будет полностью стёрта внутренняя Flash ESP32 перед прошивкой ' + label + '.\\n\\n' +
+      'Будут удалены настройки NVS и все данные во внутренних разделах. SD-карта не затрагивается.\\n\\n' +
+      'Продолжить полное стирание?'
+    );
+    if (!approved) {
+      status('Прошивка отменена. Внутренняя Flash не изменена.');
+      return;
+    }
+  }
   try {
     $('flash').disabled = true;
     $('connect').disabled = true;
