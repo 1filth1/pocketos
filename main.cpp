@@ -11,6 +11,7 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
+#include <time.h>
 #include "sd_settings.h"
 #include "audio_app.h"
 #include "app_notifications.h"
