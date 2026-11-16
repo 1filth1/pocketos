@@ -28,6 +28,9 @@ main{max-width:820px;margin:0 auto;padding:32px 20px 60px}.brand{color:var(--ora
     </div>
     <p class="small">Выбери существующий релиз или prerelease. Перед прошивкой комплект выбранной версии будет проверен по SHA-256.</p>
     <p class="small" id="sdCardInfo">Загружаю SD-контент для выбранной версии…</p>
+    <h3>Описание выбранного релиза</h3>
+    <pre id="releaseDescription" class="status" style="white-space:pre-wrap">Загружаю описание релиза…</pre>
+    <p class="small" id="releaseLink"></p>
     <h3>Проверенный комплект</h3>
     <pre id="build">Загружаю список релизов…</pre>
     <p class="small">Флешер разрешит подключение только после проверки целевой платы, разметки, адресов, размеров и SHA-256 комплекта.</p>
@@ -42,7 +45,11 @@ main{max-width:820px;margin:0 auto;padding:32px 20px 60px}.brand{color:var(--ora
     <div class="warning small" style="margin:18px 0">
       Перед прошивкой сделай резервную копию SD-карты и всех важных данных во внутренней Flash. Новая разметка app3M_fat9M_16MB заменяет прежнюю карту разделов; старые данные SPIFFS могут стать недоступны. Не отключай USB и питание до сообщения о завершении прошивки.
     </div>
-    <p class="small">Полное стирание Flash не запускается (eraseAll=false); eFuse не изменяются. Записываются только четыре образа, перечисленные в проверенном манифесте.</p>
+    <label class="warning" style="display:flex;gap:10px;align-items:flex-start;margin:16px 0;color:var(--text)">
+      <input id="eraseFlash" type="checkbox" style="margin-top:5px;accent-color:var(--orange);width:18px;height:18px">
+      <span><b>Стереть внутреннюю Flash перед прошивкой</b><br><span class="small">Полное стирание всех разделов внутренней Flash перед записью. Удалит настройки PocketOS (NVS), сохранённые данные и содержимое внутренних разделов. SD-карту не форматирует. По умолчанию выключено.</span></span>
+    </label>
+    <p class="small">Без этой галочки обновление сохраняет существующие данные и настройки. eFuse не изменяются.</p>
     <div class="row">
       <button class="btn" id="connect" disabled>Подключить ESP32</button>
       <button class="btn" id="flash" disabled>Прошить PocketOS</button>
@@ -149,6 +156,21 @@ async function loadManifest(base = './') {
 }
 if (!supported()) status('Web Serial недоступен. Открой страницу в Chrome или Edge на компьютере по HTTPS.', 'error');
 else status('Браузер поддерживает Web Serial. Проверяю комплект…');
+function updateReleaseDescription(release) {
+  const description = $('releaseDescription');
+  const link = $('releaseLink');
+  description.textContent = release && release.description
+    ? release.description
+    : 'Для этой версии описание релиза не опубликовано.';
+  link.replaceChildren();
+  if (release && release.url) {
+    const a = document.createElement('a');
+    a.href = release.url;
+    a.textContent = 'Открыть страницу релиза на GitHub';
+    a.rel = 'noopener';
+    link.append(a);
+  }
+}
 function updateSdCardLink(release) {
   const info = $('sdCardInfo');
   info.replaceChildren();
@@ -187,10 +209,14 @@ async function loadReleaseList() {
     }
     select.disabled = false;
     select.onchange = () => {
-      updateSdCardLink(releases.find(item => item.path === select.value));
+      const chosen = releases.find(item => item.path === select.value);
+      updateSdCardLink(chosen);
+      updateReleaseDescription(chosen);
       loadManifest(select.value);
     };
-    updateSdCardLink(releases.find(item => item.path === select.value));
+    const chosen = releases.find(item => item.path === select.value);
+    updateSdCardLink(chosen);
+    updateReleaseDescription(chosen);
     await loadManifest(select.value);
   } catch (error) {
     $('build').textContent = 'Список релизов недоступен: ' + error.message;
@@ -216,6 +242,19 @@ $('connect').onclick = async () => {
 };
 $('flash').onclick = async () => {
   if (!connected || !manifestReady) return;
+  if ($('eraseFlash').checked) {
+    const release = releases.find(item => item.path === selectedBase);
+    const label = release ? release.name : manifest.version;
+    const approved = window.confirm(
+      'ВНИМАНИЕ: будет полностью стёрта внутренняя Flash ESP32 перед прошивкой ' + label + '.\\n\\n' +
+      'Будут удалены настройки NVS и все данные во внутренних разделах. SD-карта не затрагивается.\\n\\n' +
+      'Продолжить полное стирание?'
+    );
+    if (!approved) {
+      status('Прошивка отменена. Внутренняя Flash не изменена.');
+      return;
+    }
+  }
   try {
     $('flash').disabled = true;
     $('connect').disabled = true;
@@ -236,7 +275,7 @@ $('flash').onclick = async () => {
       flashMode: manifest.flash_mode,
       flashFreq: manifest.flash_freq,
       flashSize: manifest.flash,
-      eraseAll: false,
+      eraseAll: $('eraseFlash').checked,
       compress: true,
       reportProgress(file, written, total) {
         const percent = total ? Math.min(100, Math.round(written / total * 100)) : 0;
