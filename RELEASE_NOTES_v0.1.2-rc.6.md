@@ -7,7 +7,7 @@
 
 ## Fixed
 - Invalid, oversized, incomplete or unsupported manifests are skipped instead of being treated as valid packages.
-- Directory scanning is limited to 16 packages and 768-byte manifests to keep memory use bounded.
+- Directory scanning inspects at most 32 package folders, accepts at most 16 packages and reads manifests up to 768 bytes.
 
 ## Changed
 - The Documents group now contains an SD App Library entry.
@@ -37,7 +37,7 @@
 
 ## Исправлено
 - Неполные, слишком большие, некорректные манифесты и неподдерживаемые типы пакетов пропускаются.
-- Сканирование ограничено 16 пакетами и манифестами до 768 байт, чтобы не расходовать память без ограничений.
+- Сканирование ограничено 32 папками, 16 принятыми пакетами и манифестами до 768 байт.
 
 ## Изменено
 - В раздел «Документы» добавлен пункт «SD APP LIBRARY».
