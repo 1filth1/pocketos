@@ -149,5 +149,5 @@ void draw(bool full=false){view=JDM_GAME;if(full)epd.forceClean();beginDraw();do
  }
  }
  }while(epd.nextPage());}
-void open(){popup=0;bolt=0;page=0;row=0;active=false;confirmNew=false;repairNode=tool=0;message="ENTER: NEW GARAGE / DOWN: LOAD SLOT";draw(true);}
+void open(){popup=0;bolt=0;page=0;row=0;active=false;confirmNew=false;repairNode=tool=0;loadContent();message=contentLoaded?"SD CONTENT READY / ENTER: NEW GARAGE":"BUILT-IN DATA / C: CONTENT INFO";draw(true);}
 }
