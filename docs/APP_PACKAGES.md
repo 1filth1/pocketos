@@ -46,3 +46,16 @@ description=Example resource package
 - Hidden names, path separators and unsafe path components are rejected. Missing SD media or a missing `resources/` directory is reported without changing package data.
 - No file writes, deletes, extraction, installation or SD formatting occur.
 - A future built-in app integration must resolve to firmware-compiled code; SD packages remain data-only.
+
+## RC11 package integrity audit
+
+When App Manager scans `/apps`, each package with a valid manifest receives a bounded, read-only resource audit:
+
+- `resources/` must be a directory for a clean integrity result. A missing directory is reported as a warning; the package remains visible so the user can inspect or repair it.
+- The audit inspects at most 64 directory entries and never recurses. A directory entry or additional entries beyond the scan bound mark the result as incomplete.
+- Safe regular-file names are counted; hidden names, path separators, control characters and unsafe components are excluded and reported as a warning.
+- The details screen reports the integrity state, accepted file count and aggregate byte size. The aggregate is saturated at the 32-bit unsigned maximum rather than wrapping.
+- An empty resource directory is reported as a warning, not silently treated as a complete package.
+- Manifest values reject ASCII control characters. Existing required keys, duplicate/unknown-key rejection, folder-ID matching, length limits and `type=content` restriction remain in force.
+
+Warnings are diagnostic, not destructive: RC11 does not modify package files, delete entries, install packages or execute code from the SD card.
