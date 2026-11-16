@@ -69,7 +69,6 @@ jobs:
         env:
           GITHUB_SHA: ${{ github.sha }}
           RELEASE_VERSION: PocketOS-${{ github.ref_type == 'tag' && github.ref_name || (github.ref == 'refs/heads/release/pocketos-1.0' && 'v0.1.2-rc.11' || 'development') }}
-          GITHUB_SHA: ${{ github.sha }}
         run: |
           python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release" "${{ steps.boot-app0.outputs.path }}"
           python3 scripts/package_sdcard.py sdcard/root "$RUNNER_TEMP/pocketos-release" "$RELEASE_VERSION" "$GITHUB_SHA"
