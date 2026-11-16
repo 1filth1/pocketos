@@ -14,10 +14,14 @@
 
 ## v0.x — Improve system foundations
 
-- [x] Document the current firmware architecture and shared-address-space application model.\n- [x] Add initial UI-view lifecycle telemetry to help trace navigation.\n- [ ] Add explicit app start/stop hooks and resource ownership only after the current routes are mapped and tested.
+- [x] Document the current firmware architecture and shared-address-space application model.
+- [x] Add initial UI-view lifecycle telemetry to help trace navigation.
+- [ ] Add explicit app start/stop hooks and resource ownership only after the current routes are mapped and tested.
 - [ ] Define clear interfaces between system services and built-in applications.
 - [ ] Improve error reporting, diagnostics and recovery behavior.
-- [x] Add internal-heap and PSRAM snapshots at application-view transitions (RC8; long-session trend analysis remains).
+- [x] Add internal-heap and PSRAM snapshots at application-view transitions (RC8; user confirmed RC8 boots and works; log-based trend analysis remains).
+- [x] Extend memory snapshots with total capacity and low-water marks for internal heap and PSRAM (RC9).
+- [ ] Analyze repeated-navigation Serial logs from RC9 for memory leaks and fragmentation.
 - [ ] Measure memory use and stability during long sessions and application switching.
 - [ ] Review SD-card data layout and safe handling of interrupted writes.
 - [ ] Add automated checks that can run without target hardware.
@@ -54,6 +58,8 @@ These are ideas for evaluation, not commitments or implemented features:
 - [ ] Описать архитектуру прошивки и жизненный цикл приложений.
 - [ ] Определить интерфейсы системных служб и встроенных приложений.
 - [ ] Улучшить диагностику, обработку ошибок и восстановление.
+- [x] Расширить снимки памяти: общий объём и минимальный остаток внутренней heap-памяти и PSRAM (RC9).
+- [ ] По Serial-логам RC9 проверить утечки и фрагментацию при многократном переключении приложений.
 - [ ] Измерить потребление памяти и стабильность при длительной работе.
 - [ ] Проверить структуру данных SD-карты и безопасность прерванной записи.
 - [ ] Добавить автоматические проверки, не требующие целевого устройства.
