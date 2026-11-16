@@ -168,6 +168,7 @@ jobs:
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
         id: deployment
         uses: actions/deploy-pages@v4
+        continue-on-error: true
 
       - name: Publish PocketOS release
         if: github.event_name == 'push' && github.ref_type == 'tag'
