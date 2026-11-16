@@ -824,7 +824,7 @@ static void drawPowerText(const char *label){
 }
 void logPowerState(const char *reason){
   Serial.printf("[POWER] shutdown source=%s uptime_ms=%lu status=0x%02X irq=0x%02X irq_en=0x%02X key_cfg=0x%02X hw_cfg=0x%02X common=0x%02X\\n",
-    reason,unsigned long(millis()),powerReg(0x00),powerReg(0x49),powerReg(0x41),
+    reason,millis(),powerReg(0x00),powerReg(0x49),powerReg(0x41),
     powerReg(0x27),powerReg(0x22),powerReg(0x10));
 }
 void shutdownDevice(const char *reason){
@@ -855,7 +855,7 @@ void pollPowerKey(){
   if(!pwrKeyReady)return;
   int irq=powerReg(0x49);
   if(irq>=0 && (irq&0x04)){
-    Serial.printf("[POWER] long-press IRQ observed uptime_ms=%lu irq=0x%02X\\n",unsigned long(millis()),irq);
+    Serial.printf("[POWER] long-press IRQ observed uptime_ms=%lu irq=0x%02X\\n",millis(),irq);
     powerWrite(0x49,0x04);
     shutdownDevice("PWR_LONG_PRESS_IRQ");
   }
