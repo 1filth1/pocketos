@@ -141,6 +141,24 @@ All notable changes to PocketOS are documented here. Every release and pre-relea
 - Keep USB and power connected until the flasher confirms completion.
 - After flashing, perform the controlled hardware checklist before relying on the device.
 
+## [0.1.2-rc.6] — 2026-11-16 — Experimental pre-release
+
+### Added
+- Read-only SD App Library catalogue for bounded content/resource package manifests under `/apps/<id>/app.ini`.
+- Package detail view and invalid-manifest reporting.
+
+### Fixed
+- Invalid and oversized manifests are rejected; duplicate and unknown fields do not silently pass validation.
+
+### Changed
+- Documents menu gains SD App Library. No SD code execution or changes to built-in app behavior.
+
+### Known issues
+- Resource browsing, installation/removal and runtime integration remain future work; only `type=content` is supported.
+
+### Validation
+- CI compilation and package checks are required before publication; on-device SD catalogue behavior still requires user testing.
+
 ## [Unreleased] — В разработке
 
 ### Fixed
