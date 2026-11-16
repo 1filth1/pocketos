@@ -15,7 +15,7 @@ struct SdAppPackage {
 
 SdAppPackage sdAppPackages[SD_APP_MAX_PACKAGES];
 uint8_t sdAppPackageCount = 0;
-uint8_t sdAppSelected = 0;
+uint8_t sdAppSelected = 0;\nuint8_t sdAppFirst = 0;
 bool sdAppInfoOpen = false;
 uint8_t sdAppInvalidCount = 0;
 
@@ -117,7 +117,7 @@ void sdAppScan() {
     }
     sdAppPackages[j] = item;
   }
-  sdAppSelected = constrain(sdAppSelected, 0, max(0, (int)sdAppPackageCount - 1));
+  sdAppSelected = constrain(sdAppSelected, 0, max(0, (int)sdAppPackageCount - 1));\n  sdAppFirst = (sdAppSelected / 6) * 6;
   status = String(sdAppPackageCount) + " PACKAGE(S), " + String(sdAppInvalidCount) + " INVALID";
 }
 
@@ -137,7 +137,7 @@ void sdAppsDraw() {
         text("v" + sdAppPackages[index].version, 540, y);
       }
       if (!sdAppPackageCount) text(cardOK ? "NO VALID PACKAGES FOUND" : "TF CARD NOT MOUNTED", 32, 180, true);
-      text("VALID: " + String(sdAppPackageCount) + "   INVALID: " + String(sdAppInvalidCount), 24, 430);
+      text("PAGE: " + String(sdAppFirst / 6 + 1) + "/" + String(max(1, (sdAppPackageCount + 5) / 6)) + "   VALID: " + String(sdAppPackageCount) + "   INVALID: " + String(sdAppInvalidCount), 24, 430);
     } else {
       SdAppPackage &p = sdAppPackages[sdAppSelected];
       header("PACKAGE DETAILS", p.name, "ESC: BACK TO CATALOG");
