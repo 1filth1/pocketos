@@ -11,17 +11,20 @@ static uint32_t appRuntimeTransitionCount = 0;
 
 // Snapshot memory pools at view boundaries; this function does not allocate.
 static void appRuntimeLogMemory(const char *phase) {
+  const uint32_t internalTotal = heap_caps_get_total_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
   const uint32_t internalFree = heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
   const uint32_t internalMin = heap_caps_get_minimum_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
   const uint32_t internalLargest = heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
-  const uint32_t psramFree = psramFound()
-    ? heap_caps_get_free_size(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) : 0;
-  const uint32_t psramLargest = psramFound()
-    ? heap_caps_get_largest_free_block(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) : 0;
-  Serial.printf("[MEM] %s internal_free=%lu internal_min=%lu internal_largest=%lu psram_free=%lu psram_largest=%lu\n",
-    phase, (unsigned long)internalFree, (unsigned long)internalMin,
-    (unsigned long)internalLargest, (unsigned long)psramFree,
-    (unsigned long)psramLargest);
+  const bool hasPsram = psramFound();
+  const uint32_t psramTotal = hasPsram ? heap_caps_get_total_size(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) : 0;
+  const uint32_t psramFree = hasPsram ? heap_caps_get_free_size(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) : 0;
+  const uint32_t psramMin = hasPsram ? heap_caps_get_minimum_free_size(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) : 0;
+  const uint32_t psramLargest = hasPsram ? heap_caps_get_largest_free_block(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) : 0;
+  Serial.printf("[MEM] %s internal_total=%lu internal_free=%lu internal_min=%lu internal_largest=%lu psram_total=%lu psram_free=%lu psram_min=%lu psram_largest=%lu\\n",
+    phase, (unsigned long)internalTotal, (unsigned long)internalFree,
+    (unsigned long)internalMin, (unsigned long)internalLargest,
+    (unsigned long)psramTotal, (unsigned long)psramFree,
+    (unsigned long)psramMin, (unsigned long)psramLargest);
 }
 
 static const char *appRuntimeViewName(View v) {
