@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 ### Added
-- Read-only SD package resource browser: lists up to 24 top-level files from a package's `resources/` directory.
+- Read-only SD package resource browser: lists up to 24 top-level files from a package's `resources/` directory, with a 64-entry scan limit.
 - Paginated preview for `.txt`, `.md` and `.ini` files up to 4 KiB, with bounded line rendering and safe filename filtering.
 
 ### Safety and limitations
