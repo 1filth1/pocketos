@@ -143,7 +143,7 @@ bool powerMask(uint8_t reg,uint8_t mask,uint8_t value){
 }
 void initPowerKey(){
   int chip=powerReg(0x03);
-  if(chip!=0x4A){Serial.printf("[POWER] AXP2101 not ready: chip=0x%02X\\n",chip);return;}
+  if(chip!=0x4A){Serial.printf("[POWER] AXP2101 not ready: chip=0x%02X\n",chip);return;}
   // 2 s long-press IRQ; 10 s hardware fallback allows the screen to finish.
   // Preserve power-on timing, rails, charging settings and other IRQs.
   int pendingBefore=powerReg(0x49);
@@ -151,7 +151,7 @@ void initPowerKey(){
     && powerMask(0x22,0x03,0x02)
     && powerWrite(0x49,0x04) && powerMask(0x41,0x04,0x04);
   pwrKeyReady=configured;
-  Serial.printf("[POWER] key init ready=%u pending_before=0x%02X irq_en=0x%02X key_cfg=0x%02X hw_cfg=0x%02X\\n",
+  Serial.printf("[POWER] key init ready=%u pending_before=0x%02X irq_en=0x%02X key_cfg=0x%02X hw_cfg=0x%02X\n",
     unsigned(pwrKeyReady),pendingBefore,powerReg(0x41),powerReg(0x27),powerReg(0x22));
 }
 void pollPowerKey();
@@ -257,7 +257,7 @@ int evalSimple(const String &s,bool &ok){
 }
 void terminalRun(){
   String c=typed; c.trim(); String u=c;u.toUpperCase(); appResult="";
-  if(u=="DIR"){if(!cardOK)appResult="TF CARD NOT MOUNTED";else{File d=SD_MMC.open(folder.c_str());int n=0;while(d&&n<7){File f=d.openNextFile();if(!f)break;appResult+=(f.isDirectory()?"<DIR> ":"      ")+leaf(String(f.name()))+"\\n";f.close();n++;}if(d)d.close();if(!appResult.length())appResult="EMPTY";}}
+  if(u=="DIR"){if(!cardOK)appResult="TF CARD NOT MOUNTED";else{File d=SD_MMC.open(folder.c_str());int n=0;while(d&&n<7){File f=d.openNextFile();if(!f)break;appResult+=(f.isDirectory()?"<DIR> ":"      ")+leaf(String(f.name()))+"\n";f.close();n++;}if(d)d.close();if(!appResult.length())appResult="EMPTY";}}
   else if(u=="CD .."){if(cardOK){folder=parent(folder);appResult="NOW "+folder;}}
   else if(u.startsWith("CD ")){String p=c.substring(3);if(!p.startsWith("/"))p=folder+(folder=="/"?"":"/")+p;File d=cardOK?SD_MMC.open(p.c_str()):File();if(d&&d.isDirectory()){folder=p;appResult="NOW "+folder;d.close();}else{if(d)d.close();appResult="FOLDER NOT FOUND";}}
   else if(u.startsWith("TYPE ")){String p=c.substring(5);if(!p.startsWith("/"))p=folder+(folder=="/"?"":"/")+p;File f=cardOK?SD_MMC.open(p.c_str()):File();if(f&&!f.isDirectory()){appResult=clip(f.readStringUntil('\n'),78);f.close();}else{if(f)f.close();appResult="FILE NOT FOUND";}}
@@ -823,7 +823,7 @@ static void drawPowerText(const char *label){
   epd.print(label);
 }
 void logPowerState(const char *reason){
-  Serial.printf("[POWER] shutdown source=%s uptime_ms=%lu status=0x%02X irq=0x%02X irq_en=0x%02X key_cfg=0x%02X hw_cfg=0x%02X common=0x%02X\\n",
+  Serial.printf("[POWER] shutdown source=%s uptime_ms=%lu status=0x%02X irq=0x%02X irq_en=0x%02X key_cfg=0x%02X hw_cfg=0x%02X common=0x%02X\n",
     reason,millis(),powerReg(0x00),powerReg(0x49),powerReg(0x41),
     powerReg(0x27),powerReg(0x22),powerReg(0x10));
 }
@@ -855,7 +855,7 @@ void pollPowerKey(){
   if(!pwrKeyReady)return;
   int irq=powerReg(0x49);
   if(irq>=0 && (irq&0x04)){
-    Serial.printf("[POWER] long-press IRQ observed uptime_ms=%lu irq=0x%02X\\n",millis(),irq);
+    Serial.printf("[POWER] long-press IRQ observed uptime_ms=%lu irq=0x%02X\n",millis(),irq);
     powerWrite(0x49,0x04);
     shutdownDevice("PWR_LONG_PRESS_IRQ");
   }
@@ -968,7 +968,7 @@ void setup(){
   Serial.println("[PocketOS] init SD_MMC");
   SD_MMC.setPins(SD_CLK, SD_CMD, SD_D0, SD_D1, SD_D2, SD_D3);
   cardOK = SD_MMC.begin("/sdcard", true) && SD_MMC.cardType() != CARD_NONE;
-  Serial.printf("[PocketOS] SD_MMC: %s\\n", cardOK ? "ready" : "unavailable");
+  Serial.printf("[PocketOS] SD_MMC: %s\n", cardOK ? "ready" : "unavailable");
 
   Serial.println("[PocketOS] init preferences");
   prefs.begin("epaperpc", false);
