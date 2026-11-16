@@ -13,6 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
+  actions: write
   contents: write
   pages: write
   id-token: write
@@ -194,6 +195,27 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
+
+      - name: Remove stale Pages artifacts from previous attempts
+        if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner,
+              repo,
+              run_id: context.runId,
+              name: 'github-pages',
+            });
+            for (const artifact of data.artifacts) {
+              core.info(`Deleting stale Pages artifact ${artifact.id} from this workflow run`);
+              await github.rest.actions.deleteArtifact({
+                owner,
+                repo,
+                artifact_id: artifact.id,
+              });
+            }
 
       - name: Upload Web Flasher site
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
