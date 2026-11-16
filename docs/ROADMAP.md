@@ -25,7 +25,7 @@
 
 These are ideas for evaluation, not commitments or implemented features:
 
-- [x] Add a bounded, read-only SD content-package metadata catalogue (RC6).
+- [ ] Add a bounded, read-only SD content-package metadata catalogue (RC6).
 - [ ] Add safe resource browsing and package integrity checks.
 - [ ] Add explicit install/remove lifecycle for data-only packages.
 - [ ] Map approved package IDs to firmware-compiled app modules; never execute arbitrary SD binaries.
@@ -60,7 +60,7 @@ These are ideas for evaluation, not commitments or implemented features:
 
 Это направления для исследования, а не обещание реализации:
 
-- Каталог метаданных пакетов контента на SD (RC6).
+- [ ] Каталог метаданных пакетов контента на SD (RC6).
 - Безопасный просмотр ресурсов и проверка целостности пакетов.
 - Явная установка/удаление пакетов данных.
 - Связь разрешённых ID пакетов со встроенными в прошивку модулями; без запуска произвольных бинарников с SD.
