@@ -33,7 +33,7 @@ This grouping is a documentation aid. Exact ownership boundaries and call relati
 
 ## 4. SD package catalogue (RC6)
 
-- The read-only catalogue scans at most 16 directories under `/apps`.
+- The read-only catalogue inspects at most 32 package directories under `/apps` and accepts at most 16 valid packages.
 - Each package must contain an `app.ini` manifest no larger than 768 bytes.
 - RC6 accepts only `type=content`; package metadata is displayed but no files are installed, extracted, deleted or executed.
 - The manifest parser rejects duplicate/unknown keys, malformed lines, invalid IDs and folder/ID mismatches.
@@ -92,7 +92,7 @@ PocketOS — прошивка для устройства на базе ESP32-S3
 
 ### 5. Каталог пакетов SD (RC6)
 
-- Каталог просматривает не более 16 папок внутри `/apps`.
+- Каталог просматривает не более 32 папок внутри `/apps` и принимает не более 16 корректных пакетов.
 - В каждом пакете нужен `app.ini` размером не более 768 байт.
 - RC6 принимает только `type=content`: метаданные отображаются, но файлы не устанавливаются, не распаковываются, не удаляются и не исполняются.
 - Парсер отклоняет повторяющиеся/неизвестные ключи, некорректные строки, недопустимые ID и несовпадение ID с именем папки.
