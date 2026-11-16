@@ -9,7 +9,7 @@ static View appRuntimeActiveView = HOME;
 static uint32_t appRuntimeEnteredAt = 0;
 static uint32_t appRuntimeTransitionCount = 0;
 
- // Snapshot memory pools at view boundaries; this function does not allocate.
+// Snapshot memory pools at view boundaries; this function does not allocate.
 static void appRuntimeLogMemory(const char *phase) {
   const uint32_t internalFree = heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
   const uint32_t internalMin = heap_caps_get_minimum_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
