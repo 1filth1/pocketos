@@ -1,3 +1,34 @@
+## [0.2.0-rc.2] — 2026-11-16 — JDM Garage Empire content loader (experimental)
+
+### Added
+- Added the versioned JDM Garage Empire SD content pack and a bounded JSON loader for game settings and seven catalogues.
+- Added schema, size, nesting, record-count, required-field, duplicate-ID and numeric validation.
+- Added the in-game Content panel (C) with content source, version, catalogue counts and sample entries.
+- SD content now controls car names, starting conditions, daily rent and mechanic wages.
+
+### Fixed
+- Daily rent and mechanic wages now use the configured content values.
+
+### Changed
+- Firmware version synchronized to v0.2.0-rc.2; CI validates the JDM content pack before packaging.
+
+### Validation
+- CI firmware compilation and repository/content/package validation are required before publication.
+- Hardware smoke test on Waveshare N16R8 remains pending.
+
+### Known limitations
+- Services, parts, customers, upgrades, events and tutorial are loaded and validated but do not yet drive their full gameplay systems.
+- This is an experimental content-loader milestone, not a complete playable game.
+
+### Build & package
+- Waveshare ESP32-S3-ePaper-3.97 (N16R8), 16 MB Flash, 8 MB OPI PSRAM.
+- Arduino-ESP32 3.3.12; DIO / 80 MHz; app3M_fat9M_16MB.
+
+### Upgrade
+- Back up SD and important internal Flash data before flashing.
+- Install the matching SD archive at the SD-card root while preserving personal files and saves.
+- Launch JDM Garage Empire and press C to inspect the loaded content.
+
 ## [0.2.0-rc.1] — 2026-11-16 — Experimental pre-release
 
 ### Added
