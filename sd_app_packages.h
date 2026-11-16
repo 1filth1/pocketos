@@ -179,9 +179,11 @@ void sdAppsKey(uint8_t key) {
   }
   if (key == 0xB5 || key == 'w' || key == 'W') {
     if (sdAppPackageCount) sdAppSelected = (sdAppSelected + sdAppPackageCount - 1) % sdAppPackageCount;
+    sdAppFirst = (sdAppSelected / 6) * 6;
     sdAppsDraw();
   } else if (key == 0xB6 || key == 's' || key == 'S') {
     if (sdAppPackageCount) sdAppSelected = (sdAppSelected + 1) % sdAppPackageCount;
+    sdAppFirst = (sdAppSelected / 6) * 6;
     sdAppsDraw();
   } else if ((key == 10 || key == 13) && sdAppPackageCount) {
     sdAppInfoOpen = true;
