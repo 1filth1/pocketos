@@ -17,6 +17,7 @@
 - [x] Document the current firmware architecture and shared-address-space application model.\n- [x] Add initial UI-view lifecycle telemetry to help trace navigation.\n- [ ] Add explicit app start/stop hooks and resource ownership only after the current routes are mapped and tested.
 - [ ] Define clear interfaces between system services and built-in applications.
 - [ ] Improve error reporting, diagnostics and recovery behavior.
+- [x] Add internal-heap and PSRAM snapshots at application-view transitions (RC8; long-session trend analysis remains).
 - [ ] Measure memory use and stability during long sessions and application switching.
 - [ ] Review SD-card data layout and safe handling of interrupted writes.
 - [ ] Add automated checks that can run without target hardware.
@@ -29,7 +30,7 @@ These are ideas for evaluation, not commitments or implemented features:
 - [ ] Add safe resource browsing and package integrity checks.
 - [ ] Add explicit install/remove lifecycle for data-only packages.
 - [ ] Map approved package IDs to firmware-compiled app modules; never execute arbitrary SD binaries.
-- [x] Remove insecure TLS mode from the web reader and validate HTTPS certificates (RC7; awaiting hardware verification).
+- [x] Remove insecure TLS mode from the web reader and validate HTTPS certificates (RC7; user-confirmed working on hardware).
 - More capable network and file-transfer services.
 - System update and recovery workflow.
 - Expanded peripheral support.
