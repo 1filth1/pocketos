@@ -82,7 +82,7 @@ static bool sdAppReadManifest(const String &dirPath, const String &dirName, SdAp
   uint8_t seen = 0;
   int start = 0;
   while (start < (int)raw.length()) {
-    int end = raw.indexOf('\\n', start);
+    int end = raw.indexOf('\n', start);
     if (end < 0) end = raw.length();
     String line = raw.substring(start, end);
     line.trim();
@@ -232,7 +232,7 @@ static uint16_t sdAppCountTextLines(File &file) {
   bool hasData = false;
   while (file.available()) {
     int c = file.read();
-    if (c == '\\n') { ++lines; hasData = false; }
+    if (c == '\n') { ++lines; hasData = false; }
     else hasData = true;
   }
   if (hasData) ++lines;
@@ -274,14 +274,14 @@ static void sdAppTextDraw() {
     } else {
       uint16_t skip = sdAppTextPage * SD_APP_TEXT_LINES_PER_PAGE;
       while (skip-- && file.available()) {
-        while (file.available()) { int c = file.read(); if (c == '\\n') break; }
+        while (file.available()) { int c = file.read(); if (c == '\n') break; }
       }
       for (uint8_t row = 0; row < SD_APP_TEXT_LINES_PER_PAGE && file.available(); ++row) {
         String line;
         uint8_t consumed = 0;
         while (file.available()) {
           int c = file.read();
-          if (c == '\\n') break;
+          if (c == '\n') break;
           if (c != '\\r' && consumed < 112) line += (char)c;
           if (c != '\\r' && consumed < 255) ++consumed;
         }
