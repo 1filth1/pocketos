@@ -17,10 +17,13 @@ CONTENT/
 The content is separate from firmware and save files. Do not delete the
 /Games/JDM_Garage_Empire/saves folder when updating game content.
 
-This is the first content/schema drop. Firmware support for reading these
-JSON catalogues will be introduced in the next game milestone. Until then,
-the current built-in prototype continues to use its firmware-side starter
-tables and artwork fallback.
+PocketOS now reads these JSON catalogues at game startup. The loader checks
+schema versions, file sizes, required fields, record limits, duplicate IDs
+and basic economy sanity before accepting the pack. It loads the car names,
+starting cash/reputation/day, daily rent and mechanic wage; the content screen
+(key C in the game) reports all loaded catalogue counts and sample entries.
+If the SD card or any required file is missing or invalid, the game falls back
+to its built-in starter data. Saves remain separate in /saves/.
 
 Back up your SD card before updating. Merge the Games folder; do not format
 the card.
