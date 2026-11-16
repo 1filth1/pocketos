@@ -80,7 +80,7 @@ static void appRuntimeLogMemory(const char *phase) {
   const uint32_t psramFree = hasPsram ? heap_caps_get_free_size(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) : 0;
   const uint32_t psramMin = hasPsram ? heap_caps_get_minimum_free_size(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) : 0;
   const uint32_t psramLargest = hasPsram ? heap_caps_get_largest_free_block(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) : 0;
-  Serial.printf("[MEM] %s internal_total=%lu internal_free=%lu internal_min=%lu internal_largest=%lu psram_total=%lu psram_free=%lu psram_min=%lu psram_largest=%lu\\n",
+  Serial.printf("[MEM] %s internal_total=%lu internal_free=%lu internal_min=%lu internal_largest=%lu psram_total=%lu psram_free=%lu psram_min=%lu psram_largest=%lu\n",
     phase, (unsigned long)internalTotal, (unsigned long)internalFree,
     (unsigned long)internalMin, (unsigned long)internalLargest,
     (unsigned long)psramTotal, (unsigned long)psramFree,
@@ -95,7 +95,7 @@ static void appRuntimeLeave(const char *reason = "switch") {
     appRuntimeStats[index].lastRunMs = duration;
     appRuntimeStats[index].totalRunMs += duration;
   }
-  Serial.printf("[APP] leave %s reason=%s duration_ms=%lu\\n",
+  Serial.printf("[APP] leave %s reason=%s duration_ms=%lu\n",
     appRuntimeViewName(appRuntimeActiveView), reason, (unsigned long)duration);
   appRuntimeLogMemory("leave");
   appRuntimeState = AppRuntimeState::STOPPED;
@@ -112,7 +112,7 @@ static void appRuntimeEnter(View next, const char *reason = "launch") {
   const unsigned index = unsigned(next);
   uint32_t launches = 0;
   if (index < APP_RUNTIME_STATS_CAPACITY) launches = ++appRuntimeStats[index].launches;
-  Serial.printf("[APP] enter %s reason=%s view=%u launches=%lu transitions=%lu\\n",
+  Serial.printf("[APP] enter %s reason=%s view=%u launches=%lu transitions=%lu\n",
     appRuntimeViewName(next), reason, unsigned(next), (unsigned long)launches,
     (unsigned long)appRuntimeTransitionCount);
   appRuntimeLogMemory("enter");
