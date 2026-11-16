@@ -2,6 +2,7 @@
 // Wiring review: existing GPS UART RX GPIO44 / TX GPIO43 is unchanged.
 // Existing I2C GPIO41/42 connects only to the BSS138 3.3V LV side.
 #include <Arduino.h>
+#include "version.h"
 #include <esp_timer.h>
 #include <esp_sleep.h>
 #include <SPI.h>
@@ -919,7 +920,7 @@ static void drawBootDiagnostics(){
   epd.setCursor(42,55);
   epd.print("POCKETOS  /  SYSTEM CHECK");
   epd.setTextColor(GxEPD_BLACK);
-  text("v0.1.2-rc.1   WAVESHARE N16R8",42,112,true);
+  text("v" POCKETOS_VERSION "   WAVESHARE N16R8",42,112,true);
   epd.drawLine(38,128,762,128,GxEPD_BLACK);
   text("E-INK DISPLAY",42,166,true);
   text("READY  /  800 x 480",42,194);
