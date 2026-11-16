@@ -31,19 +31,27 @@ This grouping is a documentation aid. Exact ownership boundaries and call relati
 - Applications are not isolated processes.
 - Installing arbitrary executable applications from the SD card is not implemented by the registry.
 
-## 4. Hardware and services
+## 4. SD package catalogue (RC6)
+
+- The read-only catalogue scans at most 16 directories under `/apps`.
+- Each package must contain an `app.ini` manifest no larger than 768 bytes.
+- RC6 accepts only `type=content`; package metadata is displayed but no files are installed, extracted, deleted or executed.
+- The manifest parser rejects duplicate/unknown keys, malformed lines, invalid IDs and folder/ID mismatches.
+- Resource browsing and runtime integration are not implemented. See [APP_PACKAGES.md](APP_PACKAGES.md).
+
+## 5. Hardware and services
 
 The source currently references the E-Ink display driver, SPI, I2C, SD_MMC, Wi-Fi, HTTP clients, RTC, keyboard and environmental/power-related devices. The exact supported board revision, peripheral population and electrical configuration must be confirmed against the actual hardware and schematic before treating source constants as a verified pinout.
 
 See [HARDWARE.md](HARDWARE.md) for the current source-derived hardware notes.
 
-## 5. Memory and reliability considerations
+## 6. Memory and reliability considerations
 
 The E-Ink UI uses a retained framebuffer abstraction. Allocation behavior, PSRAM availability, heap fallback, peak memory use and fragmentation should be measured on the target board.
 
 The SD-card code should be tested for interrupted writes, missing media, filesystem errors and recovery. Network and external-data paths should be reviewed for timeouts, input validation and failure handling.
 
-## 6. Build and validation status
+## 7. Build and validation status
 
 A reproducible build environment, exact dependency versions, partition layout and verified flashing procedure have not yet been documented in this repository snapshot.
 
@@ -82,19 +90,27 @@ PocketOS — прошивка для устройства на базе ESP32-S3
 - Изоляции приложений как отдельных процессов нет.
 - Произвольная установка и запуск исполняемых файлов с SD-карты через этот реестр не реализованы.
 
-### 4. Аппаратная часть и службы
+### 5. Каталог пакетов SD (RC6)
+
+- Каталог просматривает не более 16 папок внутри `/apps`.
+- В каждом пакете нужен `app.ini` размером не более 768 байт.
+- RC6 принимает только `type=content`: метаданные отображаются, но файлы не устанавливаются, не распаковываются, не удаляются и не исполняются.
+- Парсер отклоняет повторяющиеся/неизвестные ключи, некорректные строки, недопустимые ID и несовпадение ID с именем папки.
+- Просмотр ресурсов и интеграция с runtime пока не реализованы. См. [APP_PACKAGES.md](APP_PACKAGES.md).
+
+### 6. Аппаратная часть и службы
 
 В исходниках используются драйвер E-Ink, SPI, I2C, SD_MMC, Wi-Fi, HTTP-клиенты, RTC, клавиатура и датчики/узлы питания. Точную ревизию платы, комплектацию периферии и электрическую конфигурацию необходимо сверить с реальной платой и схемой. Константы в исходниках сами по себе не являются подтверждённой распиновкой.
 
 Текущие заметки собраны в [HARDWARE.md](HARDWARE.md).
 
-### 5. Память и надёжность
+### 7. Память и надёжность
 
 UI E-Ink использует буфер кадра. Нужно измерить поведение выделения памяти, доступность PSRAM, резервный сценарий во внутренней памяти, пиковое потребление и фрагментацию.
 
 Работу с SD-картой следует проверить при прерывании записи, отсутствии карты и ошибках файловой системы. Сетевые сценарии и внешние данные требуют проверки тайм-аутов, валидации входных данных и обработки ошибок.
 
-### 6. Сборка и проверка
+### 8. Сборка и проверка
 
 В текущем состоянии репозитория ещё не зафиксированы воспроизводимая среда сборки, точные версии зависимостей, таблица разделов и проверенная инструкция прошивки.
 
