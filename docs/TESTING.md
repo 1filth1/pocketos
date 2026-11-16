@@ -15,6 +15,7 @@ No physical test is marked PASS without an actual result, board revision, date a
 | SW-07 | ZIP archive | Contains byte-identical files from the verified package |
 | SW-08 | Web Flasher | Deployed from the same CI package; checks manifest and binary hashes before write |
 | SW-09 | Flash safety | Uses eraseAll: false; no full-chip erase or eFuse write |
+| SW-10 | SD content archive | Same release version and source commit as firmware; embedded file hashes and external archive SHA-256 verify |
 
 ## RC6 SD package catalogue tests
 
@@ -71,3 +72,13 @@ The partition map changes from the old 4 MiB single-app/SPIFFS reference archive
 - Date:
 - Steps and observed result:
 - Serial log, photo or other evidence:
+
+## Versioned SD-card content tests
+
+| ID | Test | Expected result |
+|---|---|---|
+| SDPKG-01 | Build SD content archive from the release commit | Archive version and source commit match the firmware release; all embedded file hashes verify |
+| SDPKG-02 | Extract SD content archive | Files are laid out relative to the SD-card root and include the PocketOS Guide package |
+| SDPKG-03 | Web Flasher release selection | SD-card download and checksum links match the selected firmware release; older releases without an archive show no link |
+| SDPKG-04 | Merge archive onto a card containing personal files | Default files are added/updated; unrelated user files remain untouched |
+| SDPKG-05 | Inspect bundled PocketOS Guide | App Manager lists the package and previews its README and SD layout resource |
