@@ -6,6 +6,7 @@ static constexpr uint8_t SD_APP_MAX_PACKAGES = 16;
 static constexpr uint8_t SD_APP_MAX_SCAN_DIRS = 32;
 static constexpr size_t SD_APP_MANIFEST_MAX_BYTES = 768;
 static constexpr uint8_t SD_APP_MAX_RESOURCES = 24;
+static constexpr uint8_t SD_APP_MAX_RESOURCE_SCAN = 64;
 static constexpr size_t SD_APP_TEXT_MAX_BYTES = 4096;
 static constexpr uint8_t SD_APP_TEXT_LINES_PER_PAGE = 8;
 
@@ -189,9 +190,11 @@ static void sdAppResourcesLoad() {
     status = "NO RESOURCES DIRECTORY";
     return;
   }
-  while (true) {
+  uint8_t inspectedEntries = 0;
+  while (inspectedEntries < SD_APP_MAX_RESOURCE_SCAN) {
     File entry = dir.openNextFile();
     if (!entry) break;
+    ++inspectedEntries;
     bool isDirectory = entry.isDirectory();
     String name = leaf(String(entry.name()));
     uint32_t size = entry.size();
@@ -200,11 +203,15 @@ static void sdAppResourcesLoad() {
     // from untrusted directory entries. Subdirectories are ignored.
     if (isDirectory || !sdAppSafeResourceName(name)) continue;
     if (sdAppResourceCount >= SD_APP_MAX_RESOURCES) {
-      ++sdAppResourceOverflow;
+      if (sdAppResourceOverflow < 255) ++sdAppResourceOverflow;
       continue;
     }
     String path = expected + "/" + name;
     sdAppResources[sdAppResourceCount++] = {name, path, size};
+  }
+  if (inspectedEntries == SD_APP_MAX_RESOURCE_SCAN) {
+    File probe = dir.openNextFile();
+    if (probe) { if (sdAppResourceOverflow < 255) ++sdAppResourceOverflow; probe.close(); }
   }
   dir.close();
   for (int i = 1; i < sdAppResourceCount; ++i) {
