@@ -14,6 +14,8 @@
 
 ## v0.x — Improve system foundations
 
+- [ ] Validate the dedicated App Manager desktop entry and its return-to-launcher behavior (implemented in RC12; hardware test pending).
+
 - [x] Document the current firmware architecture and shared-address-space application model.
 - [x] Add initial UI-view lifecycle telemetry to help trace navigation.
 - [ ] Add explicit app start/stop hooks and resource ownership only after the current routes are mapped and tested.
@@ -21,10 +23,11 @@
 - [ ] Improve error reporting, diagnostics and recovery behavior.
 - [x] Add internal-heap and PSRAM snapshots at application-view transitions (RC8; user confirmed RC8 boots and works; log-based trend analysis remains).
 - [x] Extend memory snapshots with total capacity and low-water marks for internal heap and PSRAM (RC9).
-- [ ] Analyze repeated-navigation Serial logs from RC9 for memory leaks and fragmentation.
+- [ ] Analyze repeated-navigation Serial logs from RC9/RC12 for memory leaks and fragmentation.
 - [ ] Measure memory use and stability during long sessions and application switching.
 - [ ] Review SD-card data layout and safe handling of interrupted writes.
 - [ ] Add automated checks that can run without target hardware.
+- [ ] Introduce explicit application start/stop hooks and resource ownership only after the current navigation and long-running service paths are mapped.
 
 ## Future exploration
 
