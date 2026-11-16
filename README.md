@@ -21,6 +21,8 @@
 
 Use the **[PocketOS Web Flasher](https://1filth1.github.io/pocketos/)** to install the firmware directly from a supported desktop browser—no separate flashing utility is required. Connect the ESP32-S3 board with a USB data cable, open the flasher in the latest Chrome or Edge, select the device's serial port, and follow the on-screen steps.
 
+Each firmware release also includes a version-matched **SD-card content archive**. Use the SD-card download link for the same selected release in the Web Flasher; the archive is a mergeable set of default files, not a full-card image. Back up the card and preserve personal files when copying it.
+
 The flasher loads the firmware package and flash addresses from the published build manifest and verifies each downloaded file with SHA-256 before writing. Use only a package that matches your exact board configuration. **Important:** flashing writes the bootloader, partition table and application; changing the partition layout can erase data stored in Flash. Back up the SD card and important internal Flash data first. The candidate uses the app3M_fat9M_16MB layout; data from the older SPIFFS layout may become inaccessible. Keep USB and power connected until flashing has fully completed. The browser flasher requires Web Serial and HTTPS; it is not supported by Firefox or Safari.
 
 ## ✦ What is PocketOS?
@@ -151,6 +153,8 @@ For contribution workflow and coding expectations, see [CONTRIBUTING.md](CONTRIB
 ## ⚡ Прошивка PocketOS прямо из браузера
 
 Открой **[PocketOS Web Flasher](https://1filth1.github.io/pocketos/)** — он позволяет установить прошивку прямо из браузера, без отдельной программы для прошивки. Подключи плату ESP32-S3 USB-кабелем с передачей данных, открой страницу в актуальном Chrome или Edge на компьютере, выбери последовательный порт устройства и следуй инструкциям на экране.
+
+Вместе с каждой версией прошивки публикуется соответствующий архив содержимого SD-карты. Ссылка на архив выбранного релиза находится во флешере. Это набор файлов для объединения с содержимым карты, а не полный образ: сделайте резервную копию и сохраните личные файлы.
 
 Флешер получает файлы прошивки и адреса записи из манифеста опубликованной сборки и проверяет SHA-256 каждого файла перед записью. Используй только комплект, соответствующий твоей аппаратной конфигурации. **Важно:** при прошивке записываются загрузчик, таблица разделов и приложение; изменение разметки Flash может привести к потере данных во Flash-памяти. Заранее сделай резервную копию SD-карты и важных данных во внутренней Flash. Кандидат использует разметку app3M_fat9M_16MB; данные старого раздела SPIFFS могут стать недоступны. Не отключай USB и питание до полного завершения прошивки. Для работы нужны Web Serial и HTTPS; Firefox и Safari не поддерживаются.
 
