@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "content_version": "1.0.0",
+  "game_id": "jdm_garage_empire",
+  "title": "JDM Garage Empire",
+  "subtitle": "From a one-bay workshop to a tuning legend",
+  "starting_conditions": {
+    "cash": 12000,
+    "reputation": 10,
+    "day": 1,
+    "workshop_level": 1,
+    "staff_slots": 2
+  },
+  "economy": {
+    "currency": "CR",
+    "daily_rent": 100,
+    "mechanic_daily_wage": 150,
+    "late_delivery_penalty_percent": 8,
+    "quality_bonus_percent": 12,
+    "reputation_bonus_per_perfect_job": 2
+  },
+  "progression": {
+    "reputation_gates": [0, 20, 50, 100, 180],
+    "workshop_names": ["Backstreet Shed", "Street Workshop", "Performance Garage", "Tuning Atelier", "Legendary Works"]
+  },
+  "content_files": ["cars.json", "services.json", "parts.json", "customers.json", "upgrades.json", "events.json", "tutorial.json"]
+}
