@@ -39,7 +39,10 @@ description=Example resource package
 
 ## Safety and current scope
 
-- The catalogue opens metadata only and never interprets files as executable code.
-- No automatic file extraction, writes, deletes or SD formatting occur.
-- Resource browsing and installation are future work.
+- The catalogue and resource browser are read-only; they never interpret files as executable code.
+- The resource browser lists up to 24 regular files in the package's top-level `resources/` directory, inspecting at most 64 directory entries per scan. It does not recurse into subdirectories.
+- Text preview supports `.txt`, `.md` and `.ini` files up to 4096 bytes. Longer files and other formats remain listed but are not opened.
+- Text is displayed in bounded pages of eight lines; each rendered line is capped before display.
+- Hidden names, path separators and unsafe path components are rejected. Missing SD media or a missing `resources/` directory is reported without changing package data.
+- No file writes, deletes, extraction, installation or SD formatting occur.
 - A future built-in app integration must resolve to firmware-compiled code; SD packages remain data-only.

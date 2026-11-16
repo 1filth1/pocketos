@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- Read-only SD package resource browser: lists up to 24 top-level files from a package's `resources/` directory, with a 64-entry scan limit.
+- Paginated preview for `.txt`, `.md` and `.ini` files up to 4 KiB, with bounded line rendering and safe filename filtering.
+
+### Safety and limitations
+- No recursive traversal, writes, deletes, extraction or execution of SD content.
+- Unsupported formats and oversized text files remain listed but cannot be previewed; hardware validation is pending.
+
 ## [0.1.2-rc.9] — 2026-11-16 — Experimental pre-release
 
 ### Added
@@ -379,12 +389,18 @@ All notable changes to PocketOS are documented here. Every release and pre-relea
 ### Добавлено
 - Обязательная структура Release Notes для каждого релиза и пререлиза: новые функции, исправления, улучшения, известные проблемы, сведения о сборке/пакете и инструкция обновления.
 - Двуязычный шаблон Release Notes и проверки CI, не позволяющие опубликовать GitHub Release без версионного описания.
- 
+- Браузер ресурсов SD-пакетов только для чтения: показывает до 24 файлов верхнего уровня в папке `resources/`, с ограничением сканирования 64 элементами.
+- Постраничный просмотр файлов `.txt`, `.md` и `.ini` размером до 4 КБ с ограничением длины отображаемых строк и проверкой имён файлов.
+
 ### Проверено
 - По сообщению пользователя, v0.1.1-rc.2 успешно прошилась на Waveshare ESP32-S3-ePaper-3.97 (N16R8), PocketOS запускается и работает. Это первичная проверка запуска, а не полная проверка всей периферии.
 
 ### Изменено
-- Подготовка релизов переведена на версионные Git-теги: обычные push в ветку собирают и проверяют артефакты, но не переиспользуют существующий релиз и не перезаписывают его.
+- Подготовка релизов переведена на версионные Git-теги; обычные push в ветку собирают и проверяют артефакты, но не переиспользуют существующий релиз и не перезаписывают его.
+
+### Безопасность и ограничения
+- Нет рекурсивного обхода, записи, удаления, распаковки или запуска содержимого SD-карты.
+- Неподдерживаемые форматы и слишком большие текстовые файлы отображаются в списке, но не открываются; аппаратная проверка ещё не выполнена.
 
 ## [0.1.1-rc.2] — 2026-11-15 — Экспериментальный пререлиз
 

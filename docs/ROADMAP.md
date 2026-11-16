@@ -31,7 +31,7 @@
 These are ideas for evaluation, not commitments or implemented features:
 
 - [x] Add a bounded, read-only SD content-package metadata catalogue (RC6; confirmed working on hardware).
-- [ ] Add safe resource browsing and package integrity checks.
+- [x] Add bounded read-only resource browsing for top-level package resources (text preview limited to 4 KiB); package integrity checks remain open.
 - [ ] Add explicit install/remove lifecycle for data-only packages.
 - [ ] Map approved package IDs to firmware-compiled app modules; never execute arbitrary SD binaries.
 - [x] Remove insecure TLS mode from the web reader and validate HTTPS certificates (RC7; user-confirmed working on hardware).
@@ -69,7 +69,7 @@ These are ideas for evaluation, not commitments or implemented features:
 Это направления для исследования, а не обещание реализации:
 
 - [ ] Каталог метаданных пакетов контента на SD (RC6).
-- Безопасный просмотр ресурсов и проверка целостности пакетов.
+- [x] Безопасный просмотр ресурсов пакетов только для чтения (один уровень, текст до 4 КБ); проверка целостности пакетов остаётся отдельной задачей.
 - Явная установка/удаление пакетов данных.
 - Связь разрешённых ID пакетов со встроенными в прошивку модулями; без запуска произвольных бинарников с SD.
 - Развитие сетевых служб и обмена файлами.

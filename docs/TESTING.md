@@ -29,6 +29,14 @@ No physical test is marked PASS without an actual result, board revision, date a
 | SDAPP-07 | More than 32 package folders | Scan inspects no more than 32 package directories and accepts at most 16 valid packages |
 | SDAPP-08 | Unsupported `type` or executable file present | No code is loaded or executed; unsupported package is rejected |
 | SDAPP-09 | Rescan and detail navigation | List refreshes and details return correctly |
+| SDAPP-10 | Missing `/resources` directory | Clear status; no crash or package-data changes |
+| SDAPP-11 | Resource listing | Only top-level regular files are listed; directories and hidden/unsafe names are skipped |
+| SDAPP-12 | More than 24 resources | At most 24 files are retained; overflow is reported |
+| SDAPP-13 | Text preview | `.txt`, `.md` and `.ini` files up to 4096 bytes open read-only in eight-line pages |
+| SDAPP-14 | Unsupported or oversized resource | File remains listed; preview is refused with a clear status |
+| SDAPP-15 | Unsafe filename / path separators | Entry is skipped; no path traversal outside the package resource directory |
+| SDAPP-16 | Remove SD card while browsing | Further open/refresh reports unavailable media without a crash |
+| SDAPP-17 | More than 64 resource-directory entries | Scanner stops after 64 entries and reports that additional content was omitted |
 
 ## Physical hardware tests
 
