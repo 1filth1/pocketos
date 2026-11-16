@@ -25,10 +25,11 @@
 
 These are ideas for evaluation, not commitments or implemented features:
 
-- [ ] Add a bounded, read-only SD content-package metadata catalogue (RC6).
+- [x] Add a bounded, read-only SD content-package metadata catalogue (RC6; confirmed working on hardware).
 - [ ] Add safe resource browsing and package integrity checks.
 - [ ] Add explicit install/remove lifecycle for data-only packages.
 - [ ] Map approved package IDs to firmware-compiled app modules; never execute arbitrary SD binaries.
+- [x] Remove insecure TLS mode from the web reader and validate HTTPS certificates (RC7; awaiting hardware verification).
 - More capable network and file-transfer services.
 - System update and recovery workflow.
 - Expanded peripheral support.
