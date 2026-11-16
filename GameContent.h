@@ -58,7 +58,7 @@ static bool jdmReadJson(const char *filename, JsonDocument &doc) {
     contentStatus = "SD CARD NOT AVAILABLE";
     return false;
   }
-  String path = String(root) + "/content/" + filename;
+  String path = String("/Games/JDM_Garage_Empire/content/") + filename;
   File file = SD_MMC.open(path.c_str(), FILE_READ);
   if (!file || file.isDirectory()) {
     if (file) file.close();
