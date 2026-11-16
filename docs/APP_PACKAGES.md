@@ -59,3 +59,11 @@ When App Manager scans `/apps`, each package with a valid manifest receives a bo
 - Manifest values reject ASCII control characters. Existing required keys, duplicate/unknown-key rejection, folder-ID matching, length limits and `type=content` restriction remain in force.
 
 Warnings are diagnostic, not destructive: RC11 does not modify package files, delete entries, install packages or execute code from the SD card.
+
+## Versioned SD-card content
+
+The repository's `sdcard/root/` directory is the source of truth for default files shipped with PocketOS. CI packages it for the same commit and firmware version as the release into `PocketOS-SD-card-v<version>.zip`, with `POCKETOS_SD_CARD.json` and a separate SHA-256 sidecar. The Web Flasher exposes the archive for the currently selected firmware release when available.
+
+The initial bundle includes a `pocketos-guide` data-only package under `/apps/`. This provides a ready-made catalogue entry and text resources for the App Manager resource browser.
+
+Only distributable defaults belong in this tree. Personal documents, notes, saves, credentials, runtime settings and logs are excluded. Install the archive by merging its contents into the SD-card root after making a backup; it is not a full-card image and must not format or replace the card.
