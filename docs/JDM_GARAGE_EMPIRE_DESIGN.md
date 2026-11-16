@@ -59,10 +59,13 @@ Save slots are runtime user data under `/Games/JDM_Garage_Empire/saves/`; they m
 - Validate JSON syntax, required fields, unique IDs, value ranges and referenced IDs in CI.
 - Keep the existing firmware-side defaults as a safe fallback.
 
-### M2 — content loader
-- Load catalogues from SD at game startup with strict size limits and schema checks.
-- If a file is missing or invalid, fall back to built-in defaults and show a clear status message.
-- Do not load executable code from the SD card.
+### M2 — content loader (first runtime slice)
+- [x] Load all seven catalogues plus `game.json` from SD at game startup with an 8 KB per-file limit and schema-v1 checks.
+- [x] Validate record counts, required values, unique IDs and basic economy constraints; reject the whole pack on any failure.
+- [x] Fall back to built-in car names and starting defaults if the card or any required file is unavailable/invalid.
+- [x] Apply SD car names, starting cash/reputation/day, daily rent and mechanic wages; expose catalogue counts on the in-game Content panel (`C`).
+- [ ] Use service/parts/customer/upgrade/event/tutorial records to drive the full management loop (next milestone).
+- SD data remains data-only; no executable code is loaded.
 
 ### M3 — playable management loop
 - Replace the one-job prototype with a daily job board, multiple work orders and workshop capacity.
@@ -84,4 +87,4 @@ Save slots are runtime user data under `/Games/JDM_Garage_Empire/saves/`; they m
 
 ## Current status
 
-The repository already contains the first firmware-side JDM prototype, car artwork, repair flow, economy primitives and SD save slots. The new SD JSON files are the first versioned external content catalogue. At this milestone the prototype does not yet parse these JSON catalogues; the content-loader milestone is explicitly separate and must be implemented and tested before claiming the game is fully data-driven.
+The repository contains the firmware-side JDM prototype, car artwork, repair flow, economy primitives and SD save slots. The versioned SD pack is now parsed at game startup by a bounded ArduinoJson loader. It validates every catalogue and uses SD car names plus the starting economy/rent/wage settings; a Content panel reports the loaded catalogues. The existing repair and job logic is still partly firmware-defined: the other catalogue records are loaded and validated but do not yet drive jobs, inventory, staff progression or events. The full data-driven management loop remains the next milestone, and hardware testing is still required.
