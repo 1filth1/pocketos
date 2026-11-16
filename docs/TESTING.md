@@ -26,7 +26,7 @@ No physical test is marked PASS without an actual result, board revision, date a
 | SDAPP-04 | Duplicate or unknown key | Package is rejected |
 | SDAPP-05 | Folder name differs from manifest ID | Package is rejected |
 | SDAPP-06 | Manifest larger than 768 bytes | Package is rejected without unbounded allocation |
-| SDAPP-07 | More than 16 package folders | Scan remains bounded to 16 valid packages |
+| SDAPP-07 | More than 32 package folders | Scan inspects no more than 32 package directories and accepts at most 16 valid packages |
 | SDAPP-08 | Unsupported `type` or executable file present | No code is loaded or executed; unsupported package is rejected |
 | SDAPP-09 | Rescan and detail navigation | List refreshes and details return correctly |
 
