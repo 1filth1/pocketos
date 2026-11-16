@@ -31,5 +31,6 @@ The release archive is a **mergeable default-content bundle**, not a full-card i
 
 - `root/README.txt` — short on-card installation and backup guidance.
 - `root/apps/pocketos-guide/` — a data-only guide package used to verify App Manager listing and resource preview.
+- `root/Games/JDM_Garage_Empire/` — versioned game content for cars, customers, repair services, parts, workshop upgrades, daily events and tutorial chapters. Saves remain runtime-generated and are not shipped.
 
 As PocketOS gains firmware features that require additional SD files, add or update them here and document compatibility in this file and the release notes.
