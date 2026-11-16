@@ -4,13 +4,12 @@
 - Lightweight application-view lifecycle telemetry: serial logs record each view entry, exit, elapsed time and transition count.
 - Human-readable names for the built-in UI views in lifecycle diagnostics.
 
+## Fixed
+- No firmware bug fixes are included in this candidate; RC5 is focused on adding diagnostic visibility without changing existing application behavior.
+
 ## Changed
 - The runtime monitor observes the existing single-address-space UI state only. It does not introduce process isolation, unload applications or change app launch behavior.
 - Release workflow fallback tag and package version are synchronized to v0.1.2-rc.5.
-
-## Validation
-- RC4 is the latest user-confirmed working hardware baseline.
-- RC5 requires a clean CI build and an on-device smoke test. Serial output should include `[APP] enter` and `[APP] leave` messages when navigating between screens.
 
 ## Known issues
 - Application state remains globally shared; applications are not isolated processes.
@@ -23,7 +22,7 @@
 ## Upgrade
 - Back up the SD card and important internal Flash data before flashing.
 - After flashing, verify the boot diagnostics show v0.1.2-rc.5 and navigate between several applications.
-- If a USB serial monitor is available, confirm readable `[APP]` entry/exit messages. Existing app behavior should remain unchanged.
+- If a USB serial monitor is available, confirm readable [APP] entry/exit messages. Existing app behavior should remain unchanged.
 
 # Русский
 
@@ -31,13 +30,12 @@
 - Лёгкий монитор жизненного цикла экранов приложений: в Serial выводятся вход, выход, время работы и число переходов.
 - Читаемые названия встроенных экранов в диагностических сообщениях.
 
+## Исправлено
+- Исправлений ошибок прошивки в этом кандидате нет: RC5 добавляет диагностическую информацию, не меняя поведение существующих приложений.
+
 ## Изменено
 - Монитор наблюдает за существующим состоянием интерфейса в общей памяти. Он не добавляет изоляцию процессов, выгрузку приложений или изменения их запуска.
 - Резервная версия релизного workflow и версия пакета синхронизированы с v0.1.2-rc.5.
-
-## Проверка
-- RC4 — последняя версия, работоспособность которой пользователь подтвердил на устройстве.
-- Для RC5 необходимы чистая CI-сборка и короткая проверка на устройстве. При переходах между экранами Serial должен показывать сообщения `[APP] enter` и `[APP] leave`.
 
 ## Известные ограничения
 - Состояние приложений по-прежнему общее; изоляции процессов нет.
@@ -50,4 +48,4 @@
 ## Обновление
 - Перед прошивкой сделай резервную копию SD-карты и важных данных во внутренней Flash.
 - После прошивки проверь, что на диагностическом экране указана версия v0.1.2-rc.5, и попереключай несколько приложений.
-- Если доступен Serial Monitor, проверь сообщения входа и выхода `[APP]`. Остальное поведение приложений должно остаться прежним.
+- Если доступен Serial Monitor, проверь сообщения входа и выхода [APP]. Остальное поведение приложений должно остаться прежним.
