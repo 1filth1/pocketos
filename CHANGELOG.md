@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.1.2-rc.9] — 2026-11-16 — Experimental pre-release
+
+### Added
+- Expanded application-transition memory snapshots with total and minimum-free capacity for both internal heap and PSRAM.
+- Memory diagnostics now report total, current free, low-water mark and largest contiguous free block for each memory pool.
+
+### Fixed
+- Branch-triggered CI builds no longer fail when the fallback prerelease already exists and contains firmware assets; the existing release is left untouched.
+- Tag-triggered builds continue to reject overwriting a release that already contains assets.
+
+### Changed
+- RC9 extends RC8's observational diagnostics only; it does not change app lifecycle, allocation policy, display, storage or network behavior.
+
+### Validation
+- CI must compile and package the firmware before publication.
+- Hardware check: compare `internal_min` and `psram_min` after repeated navigation; compare `*_free` and `*_largest` for fragmentation trends.
+
+### Known limitations
+- Transition snapshots show memory state at screen boundaries, not the exact allocation responsible for a leak.
+- No automatic memory reclamation or app isolation is introduced.
+
+### Build & package
+- Target: Waveshare ESP32-S3-ePaper-3.97 (N16R8), 16 MB Flash, 8 MB OPI PSRAM.
+- Arduino-ESP32 3.3.12; DIO / 80 MHz; app3M_fat9M_16MB.
+
+### Upgrade
+- Back up the SD card and important internal Flash data before flashing.
+- After flashing, navigate through several apps repeatedly and capture Serial lines beginning with `[MEM]`.
+
 ## [0.1.2-rc.8] — 2026-11-16 — Experimental pre-release
 
 ### Added
@@ -388,3 +417,32 @@ All notable changes to PocketOS are documented here. Every release and pre-relea
 
 ### Статус
 - Экспериментальная исходная версия; наличие функции в исходниках не означает её полной проверки на реальном устройстве.
+
+## [0.1.2-rc.9] — 2026-11-16 — Экспериментальный пререлиз
+
+### Добавлено
+- Расширены снимки памяти при переходах между приложениями: общий объём и минимальный остаток внутренней heap-памяти и PSRAM.
+- Для каждого пула памяти показываются общий объём, текущая свободная память, минимальный остаток и крупнейший непрерывный свободный блок.
+
+### Исправлено
+- Сборки из ветки больше не завершаются ошибкой, если резервный пререлиз уже опубликован и содержит файлы прошивки; существующий релиз остаётся нетронутым.
+- Сборка по Git-тегу по-прежнему запрещает перезапись релиза, в котором уже есть файлы.
+
+### Изменено
+- RC9 расширяет только диагностические измерения RC8; поведение приложений, дисплей, хранилище и сеть не меняются.
+
+### Проверка
+- Перед публикацией обязательны успешные CI-сборка и упаковка прошивки.
+- На устройстве сравните `internal_min` и `psram_min` после повторной навигации; по `*_free` и `*_largest` можно оценивать фрагментацию.
+
+### Известные ограничения
+- Снимки при переходах показывают состояние памяти, но не определяют конкретное место утечки.
+- Автоматическое освобождение памяти и изоляция приложений не добавляются.
+
+### Сборка и пакет
+- Целевая плата: Waveshare ESP32-S3-ePaper-3.97 (N16R8), Flash 16 МБ, OPI PSRAM 8 МБ.
+- Arduino-ESP32 3.3.12; DIO / 80 MHz; app3M_fat9M_16MB.
+
+### Обновление
+- Перед прошивкой сделайте резервную копию SD-карты и важных данных во Flash.
+- После прошивки несколько раз переключитесь между приложениями и сохраните строки Serial, начинающиеся с `[MEM]`.
