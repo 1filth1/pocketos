@@ -1,13 +1,13 @@
 # PocketOS — Project Status
 
-**Candidate:** v0.1.1-rc.2  
-**Stage:** software candidate; initial user smoke test passed, full peripheral validation pending  
+**Candidate:** v0.1.2-rc.4  
+**Stage:** user-confirmed working candidate; basic hardware operation verified, full peripheral validation pending  
 **Target:** Waveshare ESP32-S3-ePaper-3.97 (N16R8), E-Ink 800 × 480  
 **Build:** Arduino-ESP32 3.3.12, 16 MB Flash, 8 MB OPI PSRAM, DIO / 80 MHz, app3M_fat9M_16MB
 
 ## Current candidate
 
-- [GitHub prerelease v0.1.1-rc.2](https://github.com/1filth1/pocketos/releases/tag/v0.1.1-rc.2)
+- [GitHub prerelease v0.1.1-rc.2](https://github.com/1filth1/pocketos/releases/tag/v0.1.2-rc.4)
 - [PocketOS Web Flasher](https://1filth1.github.io/pocketos/)
 - [Firmware build workflow](https://github.com/1filth1/pocketos/actions/workflows/firmware-build.yml)
 

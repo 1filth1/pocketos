@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.1.2-rc.5] — 2026-11-16 — Experimental pre-release
+
+### Added
+- Lightweight application-view lifecycle telemetry: serial logs record each view entry, exit, elapsed time and transition count.
+- Human-readable names for the built-in UI views in lifecycle diagnostics.
+
+### Changed
+- The runtime monitor observes the existing single-address-space UI state only. It does not introduce process isolation, unload applications or change app launch behavior.
+- Release workflow fallback tag and package version are synchronized to v0.1.2-rc.5.
+
+### Validation
+- RC4 is the latest user-confirmed working hardware baseline.
+- RC5 requires a clean CI build and an on-device smoke test. Serial output should include `[APP] enter` and `[APP] leave` messages when navigating between screens.
+
+### Known issues
+- Application state remains globally shared; applications are not isolated processes.
+- Lifecycle hooks for app-specific initialization and cleanup, memory accounting and resource ownership are not yet implemented.
+
+### Build & package
+- Target: Waveshare ESP32-S3-ePaper-3.97 (N16R8), 16 MB Flash, 8 MB OPI PSRAM.
+- Arduino-ESP32 3.3.12; DIO / 80 MHz; app3M_fat9M_16MB.
+
+### Upgrade
+- Back up the SD card and important internal Flash data before flashing.
+- After flashing, verify the boot diagnostics show v0.1.2-rc.5 and navigate between several applications.
+- If a USB serial monitor is available, confirm readable `[APP]` entry/exit messages. Existing app behavior should remain unchanged.
+
 ## [0.1.2-rc.4] — 2026-11-16 — Experimental pre-release
 
 ### Added

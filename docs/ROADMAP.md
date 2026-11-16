@@ -14,7 +14,7 @@
 
 ## v0.x — Improve system foundations
 
-- [ ] Document the firmware architecture and application lifecycle.
+- [x] Document the current firmware architecture and shared-address-space application model.\n- [x] Add initial UI-view lifecycle telemetry to help trace navigation.\n- [ ] Add explicit app start/stop hooks and resource ownership only after the current routes are mapped and tested.
 - [ ] Define clear interfaces between system services and built-in applications.
 - [ ] Improve error reporting, diagnostics and recovery behavior.
 - [ ] Measure memory use and stability during long sessions and application switching.

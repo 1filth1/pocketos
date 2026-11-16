@@ -10,7 +10,7 @@
 [![Status](https://img.shields.io/badge/status-experimental-orange?style=for-the-badge)](#project-status)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-**[Web Flasher / Прошивка из браузера](https://1filth1.github.io/pocketos/) · [English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.1-rc.2.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md) · [Release process](docs/RELEASE_PROCESS.md) · [Firmware archive audit](docs/FIRMWARE_ARCHIVE_AUDIT.md) · [Build guide](docs/BUILD.md) · [3D printing / 3D-печать](docs/3D_PRINTING.md) · [License](LICENSE)**
+**[Web Flasher / Прошивка из браузера](https://1filth1.github.io/pocketos/) · [English](#pocketos-v01--english) · [Русский](#pocketos-v01--русский) · [Release notes](RELEASE_NOTES_v0.1.2-rc.5.md) · [Project status](docs/PROJECT_STATUS.md) · [Roadmap](docs/ROADMAP.md) · [Security](SECURITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Hardware](docs/HARDWARE.md) · [Testing](docs/TESTING.md) · [Release process](docs/RELEASE_PROCESS.md) · [Firmware archive audit](docs/FIRMWARE_ARCHIVE_AUDIT.md) · [Build guide](docs/BUILD.md) · [3D printing / 3D-печать](docs/3D_PRINTING.md) · [License](LICENSE)**
 
 ---
 

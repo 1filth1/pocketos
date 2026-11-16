@@ -33,6 +33,7 @@ SdSettings prefs;
 struct Entry { String path,name; uint64_t size; bool dir; };
 Entry files[MAX_FILES]; String nets[MAX_NETS],netNames[MAX_NETS];
 enum View:uint8_t {HOME,FILES,VIEWER,INPUT_VIEW,NOTE_NAME,NOTE_EDIT,SYSTEM,AUDIO_TEST,NET_PASS,TIME_SET,WEB_EDIT,WEB_PAGE,GAMES,SNAKE,TETRIS,SOKOBAN,G2048,TAMAGOTCHI,INFO,CALENDAR,CAL_TASKS,CAL_ADD,CAL_DATE,TIMER_APP,TIMER_EDIT,PAPER_SETTINGS,FILE_EXCHANGE,RECORDER,SEQUENCER,JPEG_VIEW,GPS_APP,VIDEO_VIEW,NOTES_LIST,BOOK_LIBRARY,BOOK_READ,GROOVE_BOX,RAW_VIEW,BMP_VIEW,JDM_GAME};
+#include "app_runtime.h"
 View view=HOME; bool cardOK=false,kbOK=false,rtcOK=false,deleting=false;
 int chosen=0,selected=0,first=0,count=0,textTop=0,netCount=0,netSelected=0,gameSelected=0;
 String folder="/",textFile,status="READY",typed="",pageText="",url="http://example.com",wifiName="",infoName="",notePath="",noteText="";
@@ -1078,6 +1079,7 @@ void loop(){
   }
   // Handle any pending key before testing inactivity, so a key at the
   // two-minute boundary is not mistaken for a wake-only press.
+  appRuntimeTick(view);
   idleSleep();
   delay(20);
 }
