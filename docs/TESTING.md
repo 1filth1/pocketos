@@ -36,6 +36,7 @@ No physical test is marked PASS without an actual result, board revision, date a
 | SDAPP-14 | Unsupported or oversized resource | File remains listed; preview is refused with a clear status |
 | SDAPP-15 | Unsafe filename / path separators | Entry is skipped; no path traversal outside the package resource directory |
 | SDAPP-16 | Remove SD card while browsing | Further open/refresh reports unavailable media without a crash |
+| SDAPP-17 | More than 64 resource-directory entries | Scanner stops after 64 entries and reports that additional content was omitted |
 
 ## Physical hardware tests
 
