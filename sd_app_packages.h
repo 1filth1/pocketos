@@ -15,7 +15,8 @@ struct SdAppPackage {
 
 SdAppPackage sdAppPackages[SD_APP_MAX_PACKAGES];
 uint8_t sdAppPackageCount = 0;
-uint8_t sdAppSelected = 0;\nuint8_t sdAppFirst = 0;
+uint8_t sdAppSelected = 0;
+uint8_t sdAppFirst = 0;
 bool sdAppInfoOpen = false;
 uint8_t sdAppInvalidCount = 0;
 
@@ -43,7 +44,8 @@ static bool sdAppReadManifest(const String &dirPath, const String &dirName, SdAp
   uint8_t seen = 0;
   int start = 0;
   while (start < (int)raw.length()) {
-    int end = raw.indexOf('\n', start);
+    int end = raw.indexOf('
+', start);
     if (end < 0) end = raw.length();
     String line = raw.substring(start, end);
     line.trim();
@@ -117,7 +119,8 @@ void sdAppScan() {
     }
     sdAppPackages[j] = item;
   }
-  sdAppSelected = constrain(sdAppSelected, 0, max(0, (int)sdAppPackageCount - 1));\n  sdAppFirst = (sdAppSelected / 6) * 6;
+  sdAppSelected = constrain(sdAppSelected, 0, max(0, (int)sdAppPackageCount - 1));
+  sdAppFirst = (sdAppSelected / 6) * 6;
   status = String(sdAppPackageCount) + " PACKAGE(S), " + String(sdAppInvalidCount) + " INVALID";
 }
 
@@ -128,8 +131,8 @@ void sdAppsDraw() {
     if (!sdAppInfoOpen) {
       header("SD APP LIBRARY", "/apps  /  METADATA CATALOG", "UP/DOWN: SELECT   ENTER: DETAILS   R: RESCAN   ESC: BACK");
       text("CONTENT PACKAGES ONLY  /  NO EXECUTABLE CODE", 24, 105, true);
-      for (int i = 0; i < 6 && i < sdAppPackageCount; ++i) {
-        int index = i;
+      for (int i = 0; i < 6 && sdAppFirst + i < sdAppPackageCount; ++i) {
+        int index = sdAppFirst + i;
         int y = 153 + i * 47;
         bool selected = index == sdAppSelected;
         if (selected) epd.drawRoundRect(18, y - 27, 760, 39, 8, GxEPD_BLACK);
