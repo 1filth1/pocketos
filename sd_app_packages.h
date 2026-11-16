@@ -55,7 +55,7 @@ static bool sdAppSafeResourceName(const String &name) {
   if (!name.length() || name.length() > 64 || name == "." || name == ".." || name.startsWith(".")) return false;
   for (size_t i = 0; i < name.length(); ++i) {
     uint8_t c = (uint8_t)name[i];
-    if (c < 32 || c == '/' || c == '\\\\' || c == ':' ) return false;
+    if (c < 32 || c == '/' || c == '\\' || c == ':' ) return false;
   }
   return true;
 }
