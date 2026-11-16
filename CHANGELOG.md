@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.1.2-rc.7] — 2026-11-16 — Experimental pre-release
+
+### Security
+- HTTPS page and image downloads now validate server certificates against the Arduino-ESP32 built-in CA bundle.
+- Removed insecure TLS mode. The web reader requests UTC time synchronization before TLS validation and fails closed when a trustworthy system time is unavailable.
+- HTTPS-to-HTTP redirects and redirect URLs containing embedded credentials are rejected.
+
+### Changed
+- Plain HTTP remains available but is not encrypted or authenticated.
+- Wi-Fi credential storage, SD package catalogue and app runtime behavior are unchanged.
+
+### Validation
+- CI compilation and package validation are required before publication.
+- Hardware test: connect to Wi-Fi with internet access, open a valid HTTPS page and JPEG image, then confirm an invalid/untrusted TLS endpoint is blocked.
+- If NTP is unavailable, HTTPS must fail with a clear message rather than bypass certificate checks.
+
+### Known limitations
+- The built-in CA bundle depends on the pinned Arduino-ESP32 core.
+- Initial TLS use requires outbound NTP access when the system clock is unset.
+
+### Build & package
+- Target: Waveshare ESP32-S3-ePaper-3.97 (N16R8), 16 MB Flash, 8 MB OPI PSRAM.
+- Arduino-ESP32 3.3.12; DIO / 80 MHz; app3M_fat9M_16MB.
+
+### Upgrade
+- Back up the SD card and important internal Flash data before flashing.
+- After flashing, test HTTPS article and JPEG loading and confirm an invalid certificate is rejected.
+
+
 ## [0.1.2-rc.5] — 2026-11-16 — Experimental pre-release
 
 ### Added
