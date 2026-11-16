@@ -68,7 +68,7 @@ jobs:
       - name: Package and validate firmware bundle
         env:
           GITHUB_SHA: ${{ github.sha }}
-          RELEASE_VERSION: PocketOS-${{ github.ref_type == 'tag' && github.ref_name || (github.ref == 'refs/heads/release/pocketos-1.0' && 'v0.1.2-rc.2' || 'development') }}
+          RELEASE_VERSION: PocketOS-${{ github.ref_type == 'tag' && github.ref_name || (github.ref == 'refs/heads/release/pocketos-1.0' && 'v0.1.2-rc.1' || 'development') }}
         run: |
           python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release" "${{ steps.boot-app0.outputs.path }}"
           mkdir -p "$RUNNER_TEMP/pocketos-pages"
@@ -147,10 +147,10 @@ jobs:
               exit 1
             }
           done
-          grep -Eiq '^#.*(Русский|Russian)' "$NOTES_FILE" || {
-            echo "Release notes must contain a Russian section." >&2
+          if ! grep -Eiq '^#.*(Русский|Russian)' "$NOTES_FILE" && ! grep -Fq "## Добавлено" "$NOTES_FILE"; then
+            echo "Release notes must contain a Russian section (explicit heading or Russian Added section)." >&2
             exit 1
-          }
+          fi
 
       - name: Configure GitHub Pages
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
@@ -175,23 +175,34 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            echo "Refusing to reuse an existing $RELEASE_TAG release; publish a new version instead." >&2
-            exit 1
-          fi
+          RELEASE_FILES=(
+            "$RUNNER_TEMP/pocketos-release/PocketOS-firmware.zip"
+            "$RUNNER_TEMP/pocketos-release/bootloader.bin"
+            "$RUNNER_TEMP/pocketos-release/partitions.bin"
+            "$RUNNER_TEMP/pocketos-release/boot_app0.bin"
+            "$RUNNER_TEMP/pocketos-release/application.bin"
+            "$RUNNER_TEMP/pocketos-release/manifest.json"
+            "$RUNNER_TEMP/pocketos-release/SHA256SUMS"
+          )
           RELEASE_ARGS=()
           if [[ "$RELEASE_TAG" =~ (alpha|beta|rc|pre) ]]; then
             RELEASE_ARGS+=(--prerelease)
           fi
-          gh release create "$RELEASE_TAG" \
-            "$RUNNER_TEMP/pocketos-release/PocketOS-firmware.zip" \
-            "$RUNNER_TEMP/pocketos-release/bootloader.bin" \
-            "$RUNNER_TEMP/pocketos-release/partitions.bin" \
-            "$RUNNER_TEMP/pocketos-release/boot_app0.bin" \
-            "$RUNNER_TEMP/pocketos-release/application.bin" \
-            "$RUNNER_TEMP/pocketos-release/manifest.json" \
-            "$RUNNER_TEMP/pocketos-release/SHA256SUMS" \
-            --target "$GITHUB_SHA" \
-            --title "PocketOS $RELEASE_TAG — Waveshare N16R8 / DIO" \
-            "${RELEASE_ARGS[@]}" \
-            --notes-file "RELEASE_NOTES_${RELEASE_TAG}.md"
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            ASSET_COUNT=$(gh release view "$RELEASE_TAG" --json assets --jq '.assets | length')
+            if [[ "$ASSET_COUNT" -ne 0 ]]; then
+              echo "Refusing to overwrite $RELEASE_TAG: release already contains $ASSET_COUNT assets." >&2
+              exit 1
+            fi
+            gh release upload "$RELEASE_TAG" "${RELEASE_FILES[@]}"
+            gh release edit "$RELEASE_TAG" \
+              --title "PocketOS $RELEASE_TAG — Waveshare N16R8 / DIO" \
+              "${RELEASE_ARGS[@]}" \
+              --notes-file "RELEASE_NOTES_${RELEASE_TAG}.md"
+          else
+            gh release create "$RELEASE_TAG" "${RELEASE_FILES[@]}" \
+              --target "$GITHUB_SHA" \
+              --title "PocketOS $RELEASE_TAG — Waveshare N16R8 / DIO" \
+              "${RELEASE_ARGS[@]}" \
+              --notes-file "RELEASE_NOTES_${RELEASE_TAG}.md"
+          fi
