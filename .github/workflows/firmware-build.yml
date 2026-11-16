@@ -68,7 +68,7 @@ jobs:
       - name: Package and validate firmware bundle
         env:
           GITHUB_SHA: ${{ github.sha }}
-          RELEASE_VERSION: PocketOS-${{ github.ref_type == 'tag' && github.ref_name || (github.ref == 'refs/heads/release/pocketos-1.0' && 'v0.1.2-rc.11' || 'development') }}
+          RELEASE_VERSION: PocketOS-${{ github.ref_type == 'tag' && github.ref_name || (github.ref == 'refs/heads/release/pocketos-1.0' && 'v0.1.2-rc.12' || 'development') }}
         run: |
           python3 scripts/package_firmware.py "$RUNNER_TEMP/pocketos-build" "$RUNNER_TEMP/pocketos-release" "${{ steps.boot-app0.outputs.path }}"
           python3 scripts/package_sdcard.py sdcard/root "$RUNNER_TEMP/pocketos-release" "$RELEASE_VERSION" "$GITHUB_SHA"
@@ -139,7 +139,7 @@ jobs:
       - name: Validate release notes and changelog entry
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
         env:
-          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.1.2-rc.11' }}
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.1.2-rc.12' }}
         run: |
           NOTES_FILE="RELEASE_NOTES_${RELEASE_TAG}.md"
           CHANGELOG_VERSION="${RELEASE_TAG#v}"
@@ -180,7 +180,7 @@ jobs:
         if: github.event_name == 'push' && (github.ref_type == 'tag' || github.ref == 'refs/heads/release/pocketos-1.0')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.1.2-rc.11' }}
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || 'v0.1.2-rc.12' }}
         run: |
           RELEASE_FILES=(
             "$RUNNER_TEMP/pocketos-release/PocketOS-firmware.zip"
