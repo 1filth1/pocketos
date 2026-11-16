@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.2-rc.11] — 2026-11-16 — Experimental pre-release
+
+### Added
+- Bounded SD package integrity audit when the App Manager catalogue is scanned.
+- Package details now report resource-directory presence, valid file count, aggregate data size and warnings for empty folders, unsafe filenames or incomplete scans.
+- Manifest values containing control characters are rejected.
+
+### Changed
+- Integrity warnings do not hide otherwise valid packages; users can still open the package and inspect available resources.
+- The audit is read-only, scans at most 64 resource entries per package and never executes SD content.
+
+### Validation
+- CI firmware compilation and repository integrity checks are required before publication.
+- On-device validation must cover clean, missing, empty, unsafe-name and over-limit resource directories.
+
 ## [0.1.2-rc.10] — 2026-11-16 — Experimental pre-release
 
 ### Added
