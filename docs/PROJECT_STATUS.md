@@ -1,13 +1,13 @@
 # PocketOS — Project Status
 
 **Candidate:** v0.1.2-rc.6 (RC5 user-reported flash success; RC6 under development)  
-**Stage:** user-confirmed working candidate; basic hardware operation verified, full peripheral validation pending  
+**Stage:** RC5 build and flash reported by user; RC6 catalogue implementation awaiting CI and hardware validation  
 **Target:** Waveshare ESP32-S3-ePaper-3.97 (N16R8), E-Ink 800 × 480  
 **Build:** Arduino-ESP32 3.3.12, 16 MB Flash, 8 MB OPI PSRAM, DIO / 80 MHz, app3M_fat9M_16MB
 
 ## Current candidate
 
-- [GitHub prerelease v0.1.1-rc.2](https://github.com/1filth1/pocketos/releases/tag/v0.1.2-rc.4)
+- [GitHub prerelease v0.1.2-rc.5](https://github.com/1filth1/pocketos/releases/tag/v0.1.2-rc.5)
 - [PocketOS Web Flasher](https://1filth1.github.io/pocketos/)
 - [Firmware build workflow](https://github.com/1filth1/pocketos/actions/workflows/firmware-build.yml)
 
@@ -21,7 +21,8 @@ The release workflow creates the tag and attaches assets only after the firmware
 
 ## User-reported hardware smoke test
 
-- [x] User reports that v0.1.1-rc.2 flashed successfully and PocketOS starts and works on the target Waveshare N16R8 board.
+- [x] User reports that v0.1.2-rc.5 compiled and flashed on the target Waveshare N16R8 board.
+- [x] Earlier user-confirmed baseline: v0.1.2-rc.4 works on the target board.
 - [ ] Record detailed results for each peripheral and subsystem in [TESTING.md](TESTING.md).
 
 This is an initial smoke test only. It does not establish that every peripheral, long-running workload or recovery path is verified.
