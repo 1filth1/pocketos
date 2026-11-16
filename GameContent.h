@@ -13,7 +13,7 @@ static constexpr uint8_t JDM_CONTENT_RECORDS_MAX = 16;
 String contentTitle = "JDM Garage Empire";
 String contentVersion = "BUILT-IN";
 String contentStatus = "CONTENT NOT LOADED";
-String firstService = "--", firstPart = "--", firstCustomer = "--";
+String firstCar = "--", firstService = "--", firstPart = "--", firstCustomer = "--";
 String firstUpgrade = "--", firstEvent = "--", firstTutorial = "--";
 uint8_t contentCars = 0, contentServices = 0, contentParts = 0;
 uint8_t contentCustomers = 0, contentUpgrades = 0, contentEvents = 0, contentTutorial = 0;
@@ -32,7 +32,7 @@ void resetContentDefaults() {
   contentTitle = "JDM Garage Empire";
   contentVersion = "BUILT-IN";
   contentStatus = "BUILT-IN FALLBACK";
-  firstService = firstPart = firstCustomer = "--";
+  firstCar = firstService = firstPart = firstCustomer = "--";
   firstUpgrade = firstEvent = firstTutorial = "--";
   contentCars = contentServices = contentParts = contentCustomers = 0;
   contentUpgrades = contentEvents = contentTutorial = 0;
@@ -195,7 +195,7 @@ bool loadContent() {
   }
 
   bool ok =
-    jdmLoadRecords("cars.json", "cars", JDM_CAR, JDM_CONTENT_CARS_MAX, contentCars, firstService) &&
+    jdmLoadRecords("cars.json", "cars", JDM_CAR, JDM_CONTENT_CARS_MAX, contentCars, firstCar) &&
     contentCars == JDM_CONTENT_CARS_MAX &&
     jdmLoadRecords("services.json", "services", JDM_SERVICE, JDM_CONTENT_RECORDS_MAX, contentServices, firstService) &&
     jdmLoadRecords("parts.json", "parts", JDM_PART, JDM_CONTENT_RECORDS_MAX, contentParts, firstPart) &&
@@ -225,7 +225,7 @@ bool loadContent() {
 void applyStartingConditions() {
   state.cash = contentStartingCash;
   state.reputation = constrain(contentStartingRep, 0, 65535);
-  state.day = constrain(contentStartingDay, 1, 0xFFFFFFFF);
+  state.day = (uint32_t)contentStartingDay;
 }
 
 } // namespace JDM
