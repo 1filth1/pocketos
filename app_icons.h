@@ -58,5 +58,9 @@ static void drawAppIcon(int id,int x,int y){
  case 11: // quick controls, three distinct sliders
   box(4,5,48,46,5);
   for(int j=0;j<3;j++){int c=15+j*13,t=j==0?19:j==1?36:25;line(c,12,c,44);epd.fillRect(x+c-4,y+t-4,10,9,W);box(c-4,t-4,10,9,2);}break;
+ case 12: // App Manager: package list with a verified check mark
+  box(6,5,43,46,4);
+  for(int j=0;j<3;j++){int yy=16+j*12;box(12,yy-4,7,7,1);line(24,yy,42,yy);}
+  line(14,40,21,47);line(21,47,39,30);break;
  }
 }
