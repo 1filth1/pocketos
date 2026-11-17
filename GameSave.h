@@ -57,7 +57,7 @@ bool readRecord(String path,State &out){
    (r.data.version==1||r.data.version==2)&&r.data.stage<=5&&r.data.car<6&&r.data.fault<4&&
    r.data.staff<=1&&r.data.stock<=1&&r.data.customer<6;
   if(ok){
-   out=State{};out.version=4;out.day=r.data.day;out.cash=r.data.cash;out.revenue=r.data.revenue;
+   out=State{};out.version=4;for(uint8_t i=0;i<JDM_PART_COUNT;i++)out.inventory[i]=JDM_STARTING_STOCK[i];out.day=r.data.day;out.cash=r.data.cash;out.revenue=r.data.revenue;
    out.expenses=r.data.expenses;out.lastProfit=r.data.lastProfit;out.reputation=r.data.reputation;
    out.completed=r.data.completed;out.stage=r.data.stage;out.car=r.data.car;out.fault=r.data.fault;
    out.stock=r.data.stock;out.staff=r.data.staff;out.remaining=r.data.remaining;out.customer=r.data.customer;
