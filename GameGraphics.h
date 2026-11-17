@@ -71,7 +71,7 @@ void repairScreen(){
  text(target?"CLIENT FAULT / DIAGNOSED":"COMPONENT VIEW",32,181);
  // SD-native technical part illustration; indices match the 12-part art catalogue.
  const uint8_t repairPartAsset[4]={7,10,11,6}; // brake assembly, fuel pump, radiator, coilover
- drawPartSprite(repairPartAsset[repairNode],170,220);
+ drawPartSprite(repairPartAsset[repairNode],315,220);
  text("01  MOUNT / BRACKET",32,224);
  text("02  FASTENER POINTS",32,251);
  text("03  FLUID / POWER LINE",32,278);
