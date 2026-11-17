@@ -6,7 +6,7 @@ Status: approved direction for the next PocketOS release. This is an implementat
 
 JDM Garage Empire is a visual, step-by-step garage management and repair game for the Waveshare ESP32-S3 N16R8 and its 800x480 monochrome E-Ink display. Cars and mechanical components must be recognizable, detailed original illustrations rather than text labels or schematic placeholders.
 
-The first launch roster is fixed at six original JDM-inspired vehicle illustrations, in this order: Nissan Skyline GT-R R34, Toyota Supra A80, Mazda RX-7 FD3S, Nissan Silvia S15, Mitsubishi Lancer Evolution VI and Honda NSX NA1. Future cars are data-and-manifest additions; the runtime is not designed around a hard-coded six-model art ceiling.
+The first launch roster is fixed at six original JDM-inspired vehicle illustrations, in this order: Nissan Skyline GT-R R34, Toyota Supra A80, Mazda RX-7 FD3S, Nissan Silvia S15, Mitsubishi Lancer Evolution VI and Honda NSX NA1. The first release is limited to these six cars. Adding later models will extend the SD catalogue and asset manifest, with a small matching runtime-capacity update if needed.
 
 The game should feel like a compact illustrated workshop simulator:
 - inspect a customer car;
