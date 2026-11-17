@@ -10,11 +10,21 @@ struct LegacyState {
  uint16_t reputation,completed; uint8_t stage,car,fault,stock,staff,remaining,customer;
 };
 struct LegacyRecord {uint32_t magic,size,hash;LegacyState data;};
+struct LegacyV3State {
+ uint32_t version,day; int32_t cash,revenue,expenses,lastProfit;
+ uint16_t reputation,completed; uint8_t stage,car,fault,stock,staff,remaining,customer;
+ uint32_t activeAcceptedDay; uint8_t queueCount; QueuedOrder queue[JDM_ORDER_QUEUE_CAPACITY];
+};
+struct LegacyV3Record {uint32_t magic,size,hash;LegacyV3State data;};
 bool validState(const State&s){
- return (s.version==1||s.version==2||s.version==3)&&s.stage<=5&&s.car<6&&s.fault<4&&
-  s.staff<=1&&s.stock<=1&&s.customer<6&&s.queueCount<=JDM_ORDER_QUEUE_CAPACITY&&
-  (s.stage<1||s.stage>2||(s.activeAcceptedDay>0&&s.activeAcceptedDay<=s.day))&&
-  (s.stage!=3||((s.remaining>=1&&s.remaining<=2)||(s.remaining>=10&&s.remaining<=14)));
+ if(s.version!=4||s.stage>5||s.car>=6||s.fault>=4||s.staff>1||s.stock>1||
+    s.customer>=6||s.queueCount>JDM_ORDER_QUEUE_CAPACITY||
+    (s.stage>=1&&s.stage<=2&&(!s.activeAcceptedDay||s.activeAcceptedDay>s.day))||
+    (s.stage==3&&!((s.remaining>=1&&s.remaining<=2)||(s.remaining>=10&&s.remaining<=14)))) return false;
+ for(uint8_t i=0;i<JDM_PART_COUNT;i++)
+  if(s.inventory[i]>50||s.inbound[i]>50||
+     (s.inbound[i]&&(s.inboundDay[i]<s.day||s.inboundDay[i]>s.day+7))) return false;
+ return true;
 }
 bool readRecord(String path,State &out){
  File f=SD_MMC.open(path);if(!f)return false;
@@ -23,6 +33,23 @@ bool readRecord(String path,State &out){
   Record r={};ok=f.read((uint8_t*)&r,sizeof(r))==sizeof(r);
   ok=ok&&r.magic==0x4A444D31&&r.size==sizeof(State)&&r.hash==checksum(r.data)&&validState(r.data);
   if(ok){out=r.data;for(uint8_t i=0;i<out.queueCount;i++)if(out.queue[i].car>=6||out.queue[i].fault>=4||out.queue[i].customer>=6||out.queue[i].acceptedDay>out.day)ok=false;}
+ }else if(f.size()==sizeof(LegacyV3Record)){
+  LegacyV3Record r={};ok=f.read((uint8_t*)&r,sizeof(r))==sizeof(r);
+  ok=ok&&r.magic==0x4A444D31&&r.size==sizeof(LegacyV3State)&&r.hash==checksumData(r.data)&&
+   r.data.version==3&&r.data.stage<=5&&r.data.car<6&&r.data.fault<4&&r.data.staff<=1&&
+   r.data.customer<6&&r.data.queueCount<=JDM_ORDER_QUEUE_CAPACITY;
+  if(ok){
+   out=State{};out.version=4;out.day=r.data.day;out.cash=r.data.cash;out.revenue=r.data.revenue;
+   out.expenses=r.data.expenses;out.lastProfit=r.data.lastProfit;out.reputation=r.data.reputation;
+   out.completed=r.data.completed;out.stage=r.data.stage;out.car=r.data.car;out.fault=r.data.fault;
+   out.staff=r.data.staff;out.remaining=r.data.remaining;out.customer=r.data.customer;
+   out.activeAcceptedDay=r.data.activeAcceptedDay;out.queueCount=r.data.queueCount;
+   for(uint8_t i=0;i<out.queueCount;i++)out.queue[i]=r.data.queue[i];
+   if(r.data.stock&&out.stage==2)out.inventory[inventoryPartIndexForFault(out.fault)]=1;
+   else out.stock=r.data.stock;
+   for(uint8_t i=0;i<out.queueCount;i++)
+    if(out.queue[i].car>=6||out.queue[i].fault>=4||out.queue[i].customer>=6||out.queue[i].acceptedDay>out.day)ok=false;
+  }
  }else if(f.size()==sizeof(LegacyRecord)){
   LegacyRecord r={};ok=f.read((uint8_t*)&r,sizeof(r))==sizeof(r);
   uint32_t h=checksumData(r.data);
@@ -30,7 +57,7 @@ bool readRecord(String path,State &out){
    (r.data.version==1||r.data.version==2)&&r.data.stage<=5&&r.data.car<6&&r.data.fault<4&&
    r.data.staff<=1&&r.data.stock<=1&&r.data.customer<6;
   if(ok){
-   out=State{};out.version=3;out.day=r.data.day;out.cash=r.data.cash;out.revenue=r.data.revenue;
+   out=State{};out.version=4;out.day=r.data.day;out.cash=r.data.cash;out.revenue=r.data.revenue;
    out.expenses=r.data.expenses;out.lastProfit=r.data.lastProfit;out.reputation=r.data.reputation;
    out.completed=r.data.completed;out.stage=r.data.stage;out.car=r.data.car;out.fault=r.data.fault;
    out.stock=r.data.stock;out.staff=r.data.staff;out.remaining=r.data.remaining;out.customer=r.data.customer;
@@ -42,7 +69,7 @@ bool readRecord(String path,State &out){
 bool save(){
  if(!cardOK){message="NOT SAVED / TF NOT MOUNTED";return false;}
  SD_MMC.mkdir("/Games");SD_MMC.mkdir(root);SD_MMC.mkdir((String(root)+"/saves").c_str());
- String p=savePath();state.version=3;Record r={0x4A444D31,sizeof(State),checksum(state),state};
+ String p=savePath();state.version=4;Record r={0x4A444D31,sizeof(State),checksum(state),state};
  File f=SD_MMC.open(p+".tmp","w");bool ok=f&&f.write((uint8_t*)&r,sizeof(r))==sizeof(r);f.flush();f.close();
  State check;ok=ok&&readRecord(p+".tmp",check);
  if(ok&&SD_MMC.exists(p+".sav")){State old;if(readRecord(p+".sav",old)){if(SD_MMC.exists(p+".bak"))ok=SD_MMC.remove(p+".bak");if(ok)ok=SD_MMC.rename(p+".sav",p+".bak");}else ok=SD_MMC.remove(p+".sav");}
