@@ -39,7 +39,7 @@ bool readRecord(String path,State &out){
    r.data.version==3&&r.data.stage<=5&&r.data.car<6&&r.data.fault<4&&r.data.staff<=1&&
    r.data.customer<6&&r.data.queueCount<=JDM_ORDER_QUEUE_CAPACITY;
   if(ok){
-   out=State{};out.version=4;out.day=r.data.day;out.cash=r.data.cash;out.revenue=r.data.revenue;
+   out=State{};out.version=4;for(uint8_t i=0;i<JDM_PART_COUNT;i++)out.inventory[i]=JDM_STARTING_STOCK[i];out.day=r.data.day;out.cash=r.data.cash;out.revenue=r.data.revenue;
    out.expenses=r.data.expenses;out.lastProfit=r.data.lastProfit;out.reputation=r.data.reputation;
    out.completed=r.data.completed;out.stage=r.data.stage;out.car=r.data.car;out.fault=r.data.fault;
    out.staff=r.data.staff;out.remaining=r.data.remaining;out.customer=r.data.customer;
@@ -61,6 +61,7 @@ bool readRecord(String path,State &out){
    out.expenses=r.data.expenses;out.lastProfit=r.data.lastProfit;out.reputation=r.data.reputation;
    out.completed=r.data.completed;out.stage=r.data.stage;out.car=r.data.car;out.fault=r.data.fault;
    out.stock=r.data.stock;out.staff=r.data.staff;out.remaining=r.data.remaining;out.customer=r.data.customer;
+   if(out.stage==2&&out.stock){out.inventory[inventoryPartIndexForFault(out.fault)]++;out.stock=0;}
    if(out.stage==1||out.stage==2){uint8_t elapsed=(uint8_t)((uint8_t)out.day-out.remaining);out.activeAcceptedDay=out.day-elapsed;}
   }
  }
