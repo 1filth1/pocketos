@@ -115,7 +115,7 @@ blob=bytearray(); records=[]
 for aid,kind,w,h,data in sprites:
     offset=len(blob); blob.extend(data)
     records.append({"id":aid,"kind":kind,"width":w,"height":h,"offset":offset,"length":len(data),"sha256":hashlib.sha256(data).hexdigest()})
-(OUT/"assets.bin").write_bytes(blob)
+(out/"assets.bin").write_bytes(blob)
 manifest={"schema_version":1,"format":"MONO_MSB_1BIT","file":"assets.bin","total_bytes":len(blob),"assets":records}
-(OUT/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n",encoding="utf-8")
+(out/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n",encoding="utf-8")
 print(f"Generated {len(sprites)} sprites / {len(blob)} bytes")
