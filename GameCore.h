@@ -1,8 +1,11 @@
 #pragma once
 namespace JDM {
+static constexpr uint8_t JDM_ORDER_QUEUE_CAPACITY=2;
+struct QueuedOrder { uint32_t acceptedDay=0; uint8_t car=0,fault=0,customer=0; };
 struct State {
- uint32_t version=2,day=1; int32_t cash=12000,revenue=0,expenses=0,lastProfit=0;
+ uint32_t version=3,day=1; int32_t cash=12000,revenue=0,expenses=0,lastProfit=0;
  uint16_t reputation=10,completed=0; uint8_t stage=0,car=0,fault=0,stock=0,staff=0,remaining=0,customer=0;
+ uint8_t queueCount=0; QueuedOrder queue[JDM_ORDER_QUEUE_CAPACITY];
 };
 State state;
 String cars[]={"SKYLINE GT-R R34","SUPRA A80","RX-7 FD3S","SILVIA S15","LANCER EVO VI","NSX NA1"};
