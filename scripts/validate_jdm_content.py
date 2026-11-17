@@ -96,6 +96,8 @@ for service in services:
 for part in parts:
     if part.get("cost", 0) <= 0 or not 1 <= part.get("quality", 0) <= 5:
         raise SystemExit(f"Invalid part cost/quality: {part.get('id')}")
+    if not isinstance(part.get("stock"), int) or not 0 <= part["stock"] <= 50:
+        raise SystemExit(f"Invalid starting stock: {part.get('id')}")
     nodes = part.get("nodes")
     if part.get("system") not in {"BRAKES", "FUEL", "COOLING", "SUSPENSION", "ENGINE"}:
         raise SystemExit(f"Invalid mechanical system: {part.get('id')}")
