@@ -4,19 +4,28 @@ bool hire(){if(state.staff){message="ONE POST / ONE MECHANIC";return false;}if(s
 void nextDay(){
  int cost=contentDailyRent+(state.staff?contentMechanicWage:0);
  state.cash-=cost;state.expenses+=cost;state.lastProfit=state.revenue-state.expenses;state.day++;
- // Customer patience applies while a car is waiting for diagnosis or parts.
- // Once repair work is underway, the job is no longer in the waiting queue.
+ // Every waiting order has its own deadline. Work already underway is protected.
+ String expired="";
  if(state.stage==1||state.stage==2){
-  uint8_t elapsed=(uint8_t)((uint8_t)state.day-state.remaining);
+  uint32_t elapsed=state.day-(uint32_t)state.remaining;
   int patience=campaignCustomerValue(state.customer,"patience_days",3);
-  if(elapsed>=constrain(patience,1,255)){
+  if(elapsed>=(uint32_t)constrain(patience,1,255)){
    int refund=state.stock?partCost()/2:0;
    state.cash+=refund;state.stock=0;state.stage=0;state.remaining=0;
    if(state.reputation)state.reputation--;
-   message="CLIENT LEFT / DEADLINE MISSED / REFUND "+String(refund)+" CR";
-   return;
+   expired="ACTIVE CLIENT LEFT / REFUND "+String(refund)+" CR";
   }
  }
- message="DAY "+String(state.day)+" / "+campaignEventTitle(state.day)+" / COST "+String(cost);
+ for(uint8_t i=0;i<state.queueCount;){
+  QueuedOrder &q=state.queue[i];
+  int patience=campaignCustomerValue(q.customer,"patience_days",3);
+  if(state.day-q.acceptedDay>=(uint32_t)constrain(patience,1,255)){
+   if(state.reputation)state.reputation--;
+   expired="QUEUED CLIENT LEFT / "+campaignCustomerName(q.customer);
+   for(uint8_t j=i+1;j<state.queueCount;j++)state.queue[j-1]=state.queue[j];
+   state.queueCount--;
+  }else i++;
+ }
+ message=expired.length()?expired:("DAY "+String(state.day)+" / "+campaignEventTitle(state.day)+" / COST "+String(cost));
 }
 }
