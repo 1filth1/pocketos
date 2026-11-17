@@ -1,15 +1,247 @@
 {
   "schema_version": 1,
   "parts": [
-    {"id":"brake_pads","name":"Street brake pads","category":"BRAKES","cost":180,"quality":1,"stock":4},
-    {"id":"brake_rotors","name":"Vented brake rotors","category":"BRAKES","cost":320,"quality":2,"stock":2},
-    {"id":"fuel_pump","name":"High-flow fuel pump","category":"FUEL","cost":260,"quality":1,"stock":3},
-    {"id":"fuel_filter","name":"Performance fuel filter","category":"FUEL","cost":75,"quality":1,"stock":5},
-    {"id":"radiator","name":"Aluminium radiator","category":"COOLING","cost":390,"quality":2,"stock":2},
-    {"id":"water_pump","name":"Water pump kit","category":"COOLING","cost":210,"quality":1,"stock":3},
-    {"id":"coilover_kit","name":"Street coilover kit","category":"SUSPENSION","cost":780,"quality":2,"stock":1},
-    {"id":"bushing_set","name":"Poly bushing set","category":"SUSPENSION","cost":240,"quality":1,"stock":3},
-    {"id":"turbo_kit","name":"Bolt-on turbo kit","category":"ENGINE","cost":2450,"quality":3,"stock":1},
-    {"id":"forged_internals","name":"Forged engine internals","category":"ENGINE","cost":3100,"quality":4,"stock":0}
+    {
+      "id": "brake_pads",
+      "name": "Street brake pads",
+      "category": "BRAKES",
+      "cost": 180,
+      "quality": 1,
+      "stock": 4,
+      "system": "BRAKES",
+      "nodes": [
+        {
+          "id": "caliper_mount_a",
+          "mate": "knuckle.caliper_a"
+        },
+        {
+          "id": "caliper_mount_b",
+          "mate": "knuckle.caliper_b"
+        },
+        {
+          "id": "pad_slot",
+          "mate": "caliper.pad_guide"
+        },
+        {
+          "id": "wear_sensor",
+          "mate": "harness.brake_wear"
+        }
+      ]
+    },
+    {
+      "id": "brake_rotors",
+      "name": "Vented brake rotors",
+      "category": "BRAKES",
+      "cost": 320,
+      "quality": 2,
+      "stock": 2,
+      "system": "BRAKES",
+      "nodes": [
+        {
+          "id": "hub_face",
+          "mate": "hub.rotor_face"
+        },
+        {
+          "id": "stud_1",
+          "mate": "wheel.stud_1"
+        },
+        {
+          "id": "stud_2",
+          "mate": "wheel.stud_2"
+        },
+        {
+          "id": "stud_3",
+          "mate": "wheel.stud_3"
+        }
+      ]
+    },
+    {
+      "id": "fuel_pump",
+      "name": "High-flow fuel pump",
+      "category": "FUEL",
+      "cost": 260,
+      "quality": 1,
+      "stock": 3,
+      "system": "FUEL",
+      "nodes": [
+        {
+          "id": "pump_inlet",
+          "mate": "tank.feed"
+        },
+        {
+          "id": "pump_outlet",
+          "mate": "fuel_line.pressure"
+        },
+        {
+          "id": "power",
+          "mate": "harness.fuel_pump"
+        }
+      ]
+    },
+    {
+      "id": "fuel_filter",
+      "name": "Performance fuel filter",
+      "category": "FUEL",
+      "cost": 75,
+      "quality": 1,
+      "stock": 5,
+      "system": "FUEL",
+      "nodes": [
+        {
+          "id": "filter_in",
+          "mate": "fuel_line.before_filter"
+        },
+        {
+          "id": "filter_out",
+          "mate": "fuel_line.after_filter"
+        }
+      ]
+    },
+    {
+      "id": "radiator",
+      "name": "Aluminium radiator",
+      "category": "COOLING",
+      "cost": 390,
+      "quality": 2,
+      "stock": 2,
+      "system": "COOLING",
+      "nodes": [
+        {
+          "id": "upper_hose",
+          "mate": "engine.coolant_out"
+        },
+        {
+          "id": "lower_hose",
+          "mate": "pump.coolant_in"
+        },
+        {
+          "id": "fan_power",
+          "mate": "harness.cooling_fan"
+        },
+        {
+          "id": "mount_left",
+          "mate": "chassis.radiator_left"
+        },
+        {
+          "id": "mount_right",
+          "mate": "chassis.radiator_right"
+        }
+      ]
+    },
+    {
+      "id": "water_pump",
+      "name": "Water pump kit",
+      "category": "COOLING",
+      "cost": 210,
+      "quality": 1,
+      "stock": 3,
+      "system": "COOLING",
+      "nodes": [
+        {
+          "id": "pump_in",
+          "mate": "radiator.lower_hose"
+        },
+        {
+          "id": "pump_out",
+          "mate": "engine.coolant_in"
+        },
+        {
+          "id": "drive",
+          "mate": "engine.accessory_belt"
+        }
+      ]
+    },
+    {
+      "id": "coilover_kit",
+      "name": "Street coilover kit",
+      "category": "SUSPENSION",
+      "cost": 780,
+      "quality": 2,
+      "stock": 1,
+      "system": "SUSPENSION",
+      "nodes": [
+        {
+          "id": "top_mount",
+          "mate": "body.strut_tower"
+        },
+        {
+          "id": "knuckle",
+          "mate": "hub.strut_clamp"
+        },
+        {
+          "id": "damper_adjuster",
+          "mate": "tool.damper_key"
+        }
+      ]
+    },
+    {
+      "id": "bushing_set",
+      "name": "Poly bushing set",
+      "category": "SUSPENSION",
+      "cost": 240,
+      "quality": 1,
+      "stock": 3,
+      "system": "SUSPENSION",
+      "nodes": [
+        {
+          "id": "arm_inner_a",
+          "mate": "subframe.bushing_a"
+        },
+        {
+          "id": "arm_inner_b",
+          "mate": "subframe.bushing_b"
+        },
+        {
+          "id": "arm_outer",
+          "mate": "knuckle.control_arm"
+        }
+      ]
+    },
+    {
+      "id": "turbo_kit",
+      "name": "Bolt-on turbo kit",
+      "category": "ENGINE",
+      "cost": 2450,
+      "quality": 3,
+      "stock": 1,
+      "system": "ENGINE",
+      "nodes": [
+        {
+          "id": "oil_gallery",
+          "mate": "block.oil_feed"
+        },
+        {
+          "id": "crank_main",
+          "mate": "block.main_bearing"
+        },
+        {
+          "id": "head_deck",
+          "mate": "head.gasket_face"
+        }
+      ]
+    },
+    {
+      "id": "forged_internals",
+      "name": "Forged engine internals",
+      "category": "ENGINE",
+      "cost": 3100,
+      "quality": 4,
+      "stock": 0,
+      "system": "ENGINE",
+      "nodes": [
+        {
+          "id": "ecu_power",
+          "mate": "harness.ecu_power"
+        },
+        {
+          "id": "sensor_bus",
+          "mate": "harness.engine_sensors"
+        },
+        {
+          "id": "injector_drive",
+          "mate": "injectors.signal"
+        }
+      ]
+    }
   ]
 }
