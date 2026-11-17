@@ -104,7 +104,7 @@ int partCost() {
   uint8_t f = constrain((int)state.fault, 0, 3);
   int cost = campaignPartValue(f, "cost", campaignFallbackParts[f]);
   int discount = campaignEventEffect(state.day, "parts_cost_percent", 0);
-  return max(1, cost * (100 - constrain(discount, 0, 90)) / 100);
+  return max(1, cost * (100 - constrain(discount, -50, 90)) / 100);
 }
 int payment() {
   uint8_t f = constrain((int)state.fault, 0, 3);
