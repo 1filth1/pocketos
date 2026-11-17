@@ -26,6 +26,9 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      - name: Install artwork generator dependency
+        run: sudo apt-get update && sudo apt-get install -y python3-pil
+
       - name: Set up Arduino CLI
         uses: arduino/setup-arduino-cli@v2
 
@@ -66,6 +69,9 @@ jobs:
           fi
           echo "path=${BOOT_APP0_FILES[0]}" >> "$GITHUB_OUTPUT"
           echo "Using ${BOOT_APP0_FILES[0]}"
+
+      - name: Generate JDM Garage Empire SD artwork
+        run: python3 scripts/generate_jdm_assets.py sdcard/root
 
       - name: Validate JDM Garage Empire SD content
         run: python3 scripts/validate_jdm_content.py sdcard/root
