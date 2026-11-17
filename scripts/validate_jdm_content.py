@@ -30,6 +30,44 @@ def records(filename, key):
         raise SystemExit(f"{filename}: duplicate IDs in {key}")
     return values
 
+# The visual game is not releasable without its complete SD-native art pack.
+asset_dir = pathlib.Path(sys.argv[1]) / "Games" / "JDM_Garage_Empire" / "assets"
+asset_manifest_path = asset_dir / "manifest.json"
+asset_blob_path = asset_dir / "assets.bin"
+if not asset_manifest_path.is_file() or not asset_blob_path.is_file():
+    raise SystemExit("Missing JDM SD art pack: assets/manifest.json and assets/assets.bin are both required")
+try:
+    asset_manifest = json.loads(asset_manifest_path.read_text(encoding="utf-8"))
+except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+    raise SystemExit(f"Invalid JDM art manifest: {exc}")
+if asset_manifest.get("schema_version") != 1 or asset_manifest.get("format") != "MONO_MSB_1BIT":
+    raise SystemExit("Unsupported JDM art manifest schema or bitmap format")
+asset_blob = asset_blob_path.read_bytes()
+if len(asset_blob) != asset_manifest.get("total_bytes") or len(asset_blob) != 43296:
+    raise SystemExit(f"JDM art pack size mismatch: expected 43296, got {len(asset_blob)}")
+assets = asset_manifest.get("assets")
+if not isinstance(assets, list) or len(assets) != 18:
+    raise SystemExit("JDM art manifest must contain exactly 6 cars and 12 parts")
+seen_ids = set()
+for item in assets:
+    asset_id = item.get("id")
+    if not isinstance(asset_id, str) or asset_id in seen_ids:
+        raise SystemExit(f"Invalid or duplicate JDM asset id: {asset_id!r}")
+    seen_ids.add(asset_id)
+    kind = item.get("kind")
+    width, height = (240, 104) if kind == "car" else (128, 128) if kind == "part" else (0, 0)
+    if item.get("width") != width or item.get("height") != height:
+        raise SystemExit(f"Invalid dimensions for JDM asset {asset_id}")
+    expected_size = ((width + 7) // 8) * height
+    offset, length = item.get("offset"), item.get("length")
+    if not isinstance(offset, int) or not isinstance(length, int) or length != expected_size or offset < 0 or offset + length > len(asset_blob):
+        raise SystemExit(f"Invalid byte range for JDM asset {asset_id}")
+    import hashlib
+    if hashlib.sha256(asset_blob[offset:offset + length]).hexdigest() != item.get("sha256"):
+        raise SystemExit(f"JDM art checksum mismatch: {asset_id}")
+if sum(1 for item in assets if item.get("kind") == "car") != 6 or sum(1 for item in assets if item.get("kind") == "part") != 12:
+    raise SystemExit("JDM art manifest must contain 6 cars and 12 parts")
+
 game = data["game.json"]
 if game.get("game_id") != "jdm_garage_empire":
     raise SystemExit("Unexpected game_id")
