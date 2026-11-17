@@ -17,7 +17,7 @@ bool manualRepair(){
  else message=String("DONE / NEXT: ")+repairSteps[state.remaining-10];
  return true;
 }
-bool order(){if(state.stage!=2){message="DIAGNOSE FIRST";return false;}if(state.stock){message="PART ALREADY IN STOCK";return false;}int cost=partCost();if(state.cash<cost){message="NOT ENOUGH CASH";return false;}state.cash-=cost;state.expenses+=cost;state.stock=1;message="COMPATIBLE PART DELIVERED";return true;}
+bool order(){if(state.stage!=2){message="DIAGNOSE FIRST";return false;}if(state.stock){message="PART ALREADY IN STOCK";return false;}int cost=partCost();if(state.cash<cost){message="NOT ENOUGH CASH";return false;}state.cash-=cost;state.expenses+=cost;state.stock=1;message=String("COMPATIBLE PART DELIVERED: ")+faultPartIds[state.fault]+" / NODE MAP MATCHED";return true;}
 bool assign(){if(state.stage!=2||!state.stock){message="NEED DIAGNOSIS AND PART";return false;}if(!state.staff){message="HIRE MECHANIC IN STAFF";return false;}state.stock=0;state.stage=3;state.remaining=1+state.fault%2;message="MECHANIC ASSIGNED / BASIC TOOLS";return true;}
 bool quality(){if(state.stage!=4){message="REPAIR MUST FINISH FIRST";return false;}if(tool!=3){message="SELECT TESTER WITH LEFT/RIGHT / ENTER";return false;}state.stage=5;message="QC PASSED / READY FOR PAYMENT";return true;}
 bool collect(){if(state.stage!=5){message="QUALITY CHECK REQUIRED";return false;}int paid=payment();state.cash+=paid;state.revenue+=paid;state.completed++;state.reputation++;state.lastProfit=state.revenue-state.expenses;state.stage=0;message="PAYMENT RECEIVED: "+String(paid);return true;}
