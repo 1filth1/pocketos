@@ -31,7 +31,7 @@ void repairScreen(){
  const uint8_t repairPartAsset[4]={7,10,11,6};drawPartSprite(repairPartAsset[repairNode],315,220);
  text("01  MOUNT / BRACKET",32,224);text("02  FASTENER POINTS",32,251);text("03  FLUID / POWER LINE",32,278);text("04  CONNECTOR / SEAL",32,305);text("NODE MAP: SELECTED SYSTEM",32,369);
  if(state.stage==3&&state.remaining>=10){int step=state.remaining-10;int shift=step<2?step*12:(4-step)*12;box(430-shift,286,32,35);line(433-shift,290,457-shift,316);for(int i=0;i<3;i++){int x=123+i*113;epd.drawCircle(x,392,16,GxEPD_BLACK);if(i==bolt)epd.drawCircle(x,392,20,GxEPD_BLACK);line(x-8,392,x+8,392);line(x,384,x,400);if(i==step%3)epd.fillCircle(x,392,4,GxEPD_BLACK);}text(String(step+1)+"/5  "+repairSteps[step],32,432);}
- else{text(state.stage==1?"LEFT/RIGHT: NODE / ENTER: TEST":!target?"SELECT CLIENT FAULT NODE":state.stage==2?(state.stock?"ENTER: START HAND REPAIR":"ENTER: BUY REPLACEMENT"):state.stage==3?"MECHANIC / NEXT DAY":state.stage==4?String("QC TOOL: ")+tools[tool]+" / NEED TESTER":"NODE VIEW",32,412);}
+ else{text(state.stage==1?"LEFT/RIGHT: NODE / ENTER: TEST":!target?"SELECT CLIENT FAULT NODE":state.stage==2?(state.stock?"ENTER: HAND REPAIR / M: ASSIGN STAFF":"ENTER: BUY REPLACEMENT"):state.stage==3?"MECHANIC / NEXT DAY":state.stage==4?String("QC TOOL: ")+tools[tool]+" / NEED TESTER":"NODE VIEW",32,412);}
 }
 String nextHint(){if(!active)return "START A GARAGE OR LOAD A SLOT";switch(state.stage){case 0:return "ACCEPT A CAR / BUILD REPUTATION";case 1:return "MATCH SYMPTOM TO NODE / TEST IT";case 2:return state.stock?"REPAIR YOURSELF OR M: DELEGATE":"BUY PART: "+String(partCost());case 3:return state.remaining>=10?"LEFT/RIGHT: TOOL / ENTER: USE":"NEXT DAY / WAIT FOR MECHANIC";case 4:return "RUN QUALITY TEST BEFORE PAYMENT";default:return "COLLECT "+String(payment())+" / NEXT CLIENT";}}
 String primaryLabel(){if(!active)return "START GARAGE";switch(state.stage){case 0:return "ACCEPT CLIENT";case 1:return "TEST SELECTED NODE";case 2:return state.stock?"START HAND REPAIR":"BUY PART "+String(partCost());case 3:return state.remaining>=10?"USE SELECTED TOOL":"NEXT WORKING DAY";case 4:return "QUALITY TEST";default:return "COLLECT "+String(payment());}}
@@ -55,17 +55,44 @@ void orderBoard(){
  }
  text("N: ACCEPT ANOTHER CLIENT WHILE REPAIRING",30,448,true);
 }
+void inventoryScreen(){
+ text("PARTS WAREHOUSE / LIVE STOCK",30,139,true);
+ text("PART                     ON HAND   INBOUND   UNIT COST",30,170);
+ line(30,180,480,180);
+ for(uint8_t i=0;i<JDM_PART_COUNT;i++){
+  String name;int cost=100,quality=1,stock=0;inventoryReadPart(i,name,cost,quality,stock);
+  int y=207+i*25;
+  if(i==inventorySelection){solid(26,y-18,456,23);inv(String(i+1)+". "+clip(name,25),34,y);inv(String(state.inventory[i]),300,y);inv(String(state.inbound[i])+(state.inbound[i]?" / D"+String(state.inboundDay[i]):""),365,y);inv(String(inventoryCost(i)),448,y);}
+  else{text(String(i+1)+". "+clip(name,25),34,y);text(String(state.inventory[i]),300,y);text(String(state.inbound[i])+(state.inbound[i]?" / D"+String(state.inboundDay[i]):""),365,y);text(String(inventoryCost(i)),448,y);}
+ }
+ line(30,455,480,455);
+ text("UP/DOWN: SELECT   ENTER: ORDER 1   DELIVERY: 1-3 DAYS",30,477,true);
+}
+void staffScreen(){
+ text("WORKSHOP STAFF / MECHANIC ROSTER",30,139,true);
+ text("EMPLOYEES "+String(state.staff)+"/2   DAILY PAY "+String(mechanicWageTotal())+" CR",30,174,true);
+ line(30,188,480,188);
+ if(!state.staff)text("NO MECHANICS HIRED / PRESS H",42,232,true);
+ for(uint8_t i=0;i<state.staff;i++){
+  int y=226+i*82;
+  if(i==staffSelection){solid(28,y-25,450,65);inv(String("#")+String(i+1)+"  GARAGE MECHANIC",42,y);inv("SKILL "+String(state.mechanicSkill[i])+" / "+(state.mechanicSkill[i]==1?"TRAINEE":state.mechanicSkill[i]==2?"TECHNICIAN":"EXPERT"),42,y+25);inv("WAGE "+String(contentMechanicWage+(state.mechanicSkill[i]-1)*75)+" CR/DAY",300,y+25);}
+  else{text(String("#")+String(i+1)+"  GARAGE MECHANIC",42,y);text("SKILL "+String(state.mechanicSkill[i])+" / "+(state.mechanicSkill[i]==1?"TRAINEE":state.mechanicSkill[i]==2?"TECHNICIAN":"EXPERT"),42,y+25);text("WAGE "+String(contentMechanicWage+(state.mechanicSkill[i]-1)*75)+" CR/DAY",300,y+25);}
+ }
+ line(30,405,480,405);
+ text("H: HIRE   T: TRAIN SELECTED   UP/DOWN: SELECT",30,438,true);
+ text("TRAINING COST: 600 CR PER CURRENT SKILL LEVEL",30,468);
+}
 void contentScreen(){
  text(contentTitle,30,128,true);text("CONTENT VERSION: "+contentVersion+"  /  SOURCE: "+String(contentLoaded?"SD CARD":"BUILT-IN"),30,164);
  text("CARS "+String(contentCars)+"   SERVICES "+String(contentServices)+"   PARTS "+String(contentParts),30,212,true);text("CUSTOMERS "+String(contentCustomers)+"   UPGRADES "+String(contentUpgrades),30,250);text("EVENTS "+String(contentEvents)+"   TUTORIAL CHAPTERS "+String(contentTutorial),30,288);text("FIRST CAR: "+clip(firstCar,42)+"  /  SERVICE: "+clip(firstService,28),30,332);text("FIRST PART: "+clip(firstPart,42),30,364);text("START CASH "+String(contentStartingCash)+" CR  /  DAILY RENT "+String(contentDailyRent),30,408);text(clip(contentStatus,72),30,440,true);
 }
 void draw(bool full=false){
  view=JDM_GAME;if(full)epd.forceClean();beginDraw();do{
- header("","JDM / WORKSHOP","ARROWS: SELECT   ENTER: USE   J: ORDERS   N: NEW CLIENT");
- text("DAY "+String(state.day)+"   CASH "+String(state.cash),30,108,true);
- if(page==7)contentScreen();else if(page==1)orderBoard();else if(page==3&&state.stage)repairScreen();else garage();
+ header("","JDM / WORKSHOP","I: INVENTORY   S: STAFF   J: ORDERS   N: NEW CLIENT   ENTER: USE");
+ text("DAY "+String(state.day)+"   CASH "+String(state.cash)+"   MECHANICS "+String(state.staff),30,108,true);
+ if(page==7)contentScreen();else if(page==5)staffScreen();else if(page==4)inventoryScreen();else if(page==1)orderBoard();else if(page==3&&state.stage)repairScreen();else garage();
  line(500,120,500,444);
- String labels[]={primaryLabel(),"NEXT DAY (-"+String(contentDailyRent+(state.staff?contentMechanicWage:0))+")","SAVE SLOT","LOAD SLOT","NEW GARAGE"};
+ String labels[]={primaryLabel(),"NEXT DAY (-"+String(contentDailyRent+mechanicWageTotal())+")","SAVE SLOT","LOAD SLOT","NEW GARAGE"};
  for(int i=0;i<5;i++){int y=147+i*39;if(i==row){solid(512,y-23,283,34);inv(labels[i],520,y);}else text(labels[i],520,y);}
  text("TOOLS",515,350,true);
  for(int i=0;i<4;i++){int x=538+i*66;box(x-22,363,45,43);if(i==tool)box(x-25,360,51,49);if(i==0){line(x-10,397,x+9,375);epd.drawCircle(x+9,375,7,GxEPD_BLACK);}if(i==1){line(x-10,395,x+10,373);line(x+10,395,x-10,373);}if(i==2){solid(x-3,385,6,15);line(x,385,x,370);line(x-4,370,x+4,370);}if(i==3){box(x-12,371,24,25);box(x-8,375,16,8);line(x-6,396,x-10,402);}}

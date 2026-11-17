@@ -35,7 +35,7 @@ bool diagnose(){
  state.stage=2;message=String("TEST FAILED: ")+faults[state.fault]+" / BUY REPLACEMENT";return true;
 }
 bool manualRepair(){
- if(state.stage==2){if(!state.stock){message="BUY A REPLACEMENT FIRST";return false;}repairNode=state.fault;state.stock=0;state.stage=3;state.remaining=10;bolt=0;message="SELECT TOOL / ENTER TO USE";return true;}
+ if(state.stage==2){if(!state.stock){message="SELECT A REPLACEMENT IN INVENTORY";page=4;inventorySelection=inventoryPartIndexForFault(state.fault);return false;}repairNode=state.fault;state.stock=0;state.assignedMechanic=255;state.stage=3;state.remaining=10;bolt=0;message="SELECT TOOL / ENTER TO USE";return true;}
  if(state.stage!=3||state.remaining<10){message="MECHANIC WORKING / NEXT DAY";return false;}
  int step=state.remaining-10;
  if(bolt!=step%3){message="SELECT MARKED FASTENER / UP OR DOWN";return false;}
@@ -47,16 +47,19 @@ bool manualRepair(){
 }
 bool order(){
  if(state.stage!=2){message="DIAGNOSE FIRST";return false;}
- if(state.stock){message="PART ALREADY IN STOCK";return false;}
- int cost=partCost();if(state.cash<cost){message="NOT ENOUGH CASH";return false;}
- state.cash-=cost;state.expenses+=cost;state.stock=1;
- message=String("PART DELIVERED: ")+faultPartIds[state.fault]+" / "+String(cost)+" CR";return true;
+ if(state.stock){message="PART ALREADY RESERVED";return false;}
+ uint8_t index=inventoryPartIndexForFault(state.fault);
+ if(!state.inventory[index]){message="OUT OF STOCK / I: ORDER PART";page=4;inventorySelection=index;return false;}
+ state.inventory[index]--;state.stock=1;
+ message=String("RESERVED FROM STOCK: ")+faultPartIds[state.fault]+" / REMAINING "+String(state.inventory[index]);return true;
 }
 bool assign(){
  if(state.stage!=2||!state.stock){message="NEED DIAGNOSIS AND PART";return false;}
- if(!state.staff){message="HIRE MECHANIC IN STAFF";return false;}
- state.stock=0;state.stage=3;state.remaining=1+state.fault%2;
- message="MECHANIC ASSIGNED / BASIC TOOLS";return true;
+ if(!state.staff){message="HIRE MECHANIC IN STAFF";page=5;return false;}
+ uint8_t index=constrain(staffSelection,0,(int)state.staff-1);
+ uint8_t skill=constrain(state.mechanicSkill[index],1,3);
+ state.stock=0;state.assignedMechanic=index;state.stage=3;state.remaining=skill>=2?1:2;page=3;
+ message=String("ASSIGNED MECHANIC #")+String(index+1)+" / SKILL "+String(skill)+" / ETA "+String(state.remaining)+" DAY";return true;
 }
 bool quality(){
  if(state.stage!=4){message="REPAIR MUST FINISH FIRST";return false;}
@@ -71,7 +74,7 @@ bool collect(){
  state.cash+=paid;state.revenue+=paid;state.completed++;
  state.reputation+=campaignJobRep();
  state.reputation+=max(0,campaignEventEffect(state.day,"reputation_bonus",0));
- state.lastProfit=state.revenue-state.expenses;state.stage=0;state.stock=0;state.remaining=0;state.activeAcceptedDay=0;
+ state.lastProfit=state.revenue-state.expenses;state.stage=0;state.stock=0;state.remaining=0;state.assignedMechanic=255;state.activeAcceptedDay=0;
  message="JOB CLOSED / "+campaignCustomerName(state.customer)+" / "+String(paid)+" CR";
  promoteNextOrder();
  return true;
