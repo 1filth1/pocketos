@@ -24,12 +24,13 @@ struct LegacyV3State {
 };
 struct LegacyV3Record {uint32_t magic,size,hash;LegacyV3State data;};
 bool validState(const State&s){
- if(s.version!=5||s.stage>5||s.car>=6||s.fault>=4||s.staff>2||s.stock>1||
+ if(s.version!=5||!s.day||s.stage>5||s.car>=6||s.fault>=4||s.staff>2||s.stock>1||
     s.customer>=6||s.queueCount>JDM_ORDER_QUEUE_CAPACITY||
     (s.stage>=1&&s.stage<=2&&(!s.activeAcceptedDay||s.activeAcceptedDay>s.day))||
     (s.stage==3&&!((s.remaining>=1&&s.remaining<=2)||(s.remaining>=10&&s.remaining<=14)))) return false;
  for(uint8_t i=0;i<s.staff;i++) if(s.mechanicSkill[i]<1||s.mechanicSkill[i]>3) return false;
  if(s.stage==3&&s.remaining<10&&s.assignedMechanic>=s.staff) return false;
+ if((s.stage!=3||s.remaining>=10)&&s.assignedMechanic!=255) return false;
  for(uint8_t i=0;i<JDM_PART_COUNT;i++)
   if(s.inventory[i]>50||s.inbound[i]>50||
      (s.inbound[i]&&(s.inboundDay[i]<s.day||s.inboundDay[i]>s.day+7))) return false;
