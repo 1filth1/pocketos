@@ -13,9 +13,9 @@ bool keyEvent(uint8_t k){
  if(k==9){page=page==0?3:0;draw();return true;}
  if(k=='j'||k=='J'){page=page==1?0:1;draw();return true;}
  if((k=='n'||k=='N')&&active&&state.stage>=3&&state.stage<=5){popup=2;clientChoice=0;page=1;draw();return true;}
- if(k=='i'||k=='I'){page=page==4?0:4;draw();return true;}
+ if(k=='i'||k=='I'){page=page==4?(state.stage?3:0):4;draw();return true;}
  if(page==4&&(k==0xB5||k==0xB6)){inventorySelection=(inventorySelection+(k==0xB5?JDM_PART_COUNT-1:1))%JDM_PART_COUNT;draw();return true;}
- if(page==4&&(k==10||k==13)){bool bought=inventoryPurchase(inventorySelection);if(bought){String result=message;if(save())message=result;else message=result+" / NOT SAVED";}draw();return true;}
+ if(page==4&&(k==10||k==13)){if(!active){message="START OR LOAD FIRST";draw();return true;}bool bought=inventoryPurchase(inventorySelection);if(bought){String result=message;if(save())message=result;else message=result+" / NOT SAVED";}draw();return true;}
  if(k=='c'||k=='C'){page=page==7?0:7;draw();return true;}
  if((k==0xB4||k==0xB7)&&page!=4){if((state.stage==3&&state.remaining>=10)||state.stage==4)tool=(tool+(k==0xB4?3:1))%4;else repairNode=(repairNode+(k==0xB4?3:1))%4;page=3;draw();return true;}
  if(k==0xB5||k==0xB6){row=(row+(k==0xB5?4:1))%5;confirmNew=false;draw();return true;}
