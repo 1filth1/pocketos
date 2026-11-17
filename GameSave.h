@@ -45,7 +45,7 @@ bool readRecord(String path,State &out){
    out.staff=r.data.staff;out.remaining=r.data.remaining;out.customer=r.data.customer;
    out.activeAcceptedDay=r.data.activeAcceptedDay;out.queueCount=r.data.queueCount;
    for(uint8_t i=0;i<out.queueCount;i++)out.queue[i]=r.data.queue[i];
-   if(r.data.stock&&out.stage==2)out.inventory[inventoryPartIndexForFault(out.fault)]=1;
+   if(r.data.stock&&out.stage==2)out.inventory[inventoryPartIndexForFault(out.fault)]++;
    else out.stock=r.data.stock;
    for(uint8_t i=0;i<out.queueCount;i++)
     if(out.queue[i].car>=6||out.queue[i].fault>=4||out.queue[i].customer>=6||out.queue[i].acceptedDay>out.day)ok=false;
