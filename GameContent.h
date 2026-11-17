@@ -7,7 +7,7 @@ namespace JDM {
 // validated before their values are exposed to the game.
 static constexpr size_t JDM_CONTENT_MAX_FILE = 8192;
 static constexpr uint8_t JDM_CONTENT_SCHEMA = 1;
-static constexpr uint8_t JDM_CONTENT_CARS_MAX = 10;
+static constexpr uint8_t JDM_CONTENT_CARS_MAX = 6;
 static constexpr uint8_t JDM_CONTENT_RECORDS_MAX = 16;
 
 String contentTitle = "JDM Garage Empire";
@@ -22,9 +22,8 @@ int contentDailyRent = 100, contentMechanicWage = 150;
 bool contentLoaded = false;
 
 static const char *jdmFallbackCars[JDM_CONTENT_CARS_MAX] = {
-  "HACHI 86 / 1985", "KAGE R32 / 1990", "HAYATE S13 / 1991",
-  "RYU A80 / 1994", "ROTARY FD / 1993", "MIDORI NS / 1992",
-  "RAID EVO / 2001", "HOSHI STI / 2004", "CITY EK / 1998", "ROAD NA / 1990"
+  "NISSAN SKYLINE GT-R R34", "TOYOTA SUPRA A80", "MAZDA RX-7 FD3S",
+  "NISSAN SILVIA S15", "MITSUBISHI LANCER EVO VI", "HONDA NSX NA1"
 };
 
 void resetContentDefaults() {
