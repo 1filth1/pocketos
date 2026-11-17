@@ -1,6 +1,7 @@
 #pragma once
 #include "GameCore.h"
 #include "GameContent.h"
+#include "GameCampaign.h"
 #include "GameRepair.h"
 #include "GameEconomy.h"
 #include "GameSave.h"
