@@ -91,9 +91,11 @@ bool readRecord(String path,State &out){
    out.expenses=r.data.expenses;out.lastProfit=r.data.lastProfit;out.reputation=r.data.reputation;
    out.completed=r.data.completed;out.stage=r.data.stage;out.car=r.data.car;out.fault=r.data.fault;
    out.stock=r.data.stock;out.staff=r.data.staff;out.remaining=r.data.remaining;out.customer=r.data.customer;
-   if(out.staff)out.mechanicSkill[0]=1;out.assignedMechanic=255;
+   if(out.staff)out.mechanicSkill[0]=1;
+   out.assignedMechanic=(out.stage==3&&out.remaining<10&&out.staff)?0:255;
    if(out.stage==2&&out.stock){out.inventory[inventoryPartIndexForFault(out.fault)]++;out.stock=0;}
    if(out.stage==1||out.stage==2){uint8_t elapsed=(uint8_t)((uint8_t)out.day-out.remaining);out.activeAcceptedDay=out.day-elapsed;}
+   if(!validState(out))ok=false;
   }
  }
  f.close();return ok;
