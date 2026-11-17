@@ -1,3 +1,12 @@
+## [Unreleased]
+
+### Added
+- JDM Garage Empire M4 warehouse: individual part stock, inbound purchase orders, delivery dates, and reservation/consumption of replacement parts during repairs.
+- Version-3 game saves migrate to save format v4 while preserving active jobs and queued customers.
+
+### Changed
+- Replacement parts are purchased through the warehouse and arrive after a 1–3 day lead time instead of appearing instantly.
+
 ## [0.2.0-rc.2] — 2026-11-16 — JDM Garage Empire content loader (experimental)
 
 ### Added

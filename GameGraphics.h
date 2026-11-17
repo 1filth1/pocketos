@@ -55,15 +55,28 @@ void orderBoard(){
  }
  text("N: ACCEPT ANOTHER CLIENT WHILE REPAIRING",30,448,true);
 }
+void inventoryScreen(){
+ text("PARTS WAREHOUSE / LIVE STOCK",30,139,true);
+ text("PART                     ON HAND   INBOUND   UNIT COST",30,170);
+ line(30,180,480,180);
+ for(uint8_t i=0;i<JDM_PART_COUNT;i++){
+  String name;int cost=100,quality=1,stock=0;inventoryReadPart(i,name,cost,quality,stock);
+  int y=207+i*25;
+  if(i==inventorySelection){solid(26,y-18,456,23);inv(String(i+1)+". "+clip(name,25),34,y);inv(String(state.inventory[i]),300,y);inv(String(state.inbound[i])+(state.inbound[i]?" / D"+String(state.inboundDay[i]):""),365,y);inv(String(inventoryCost(i)),448,y);}
+  else{text(String(i+1)+". "+clip(name,25),34,y);text(String(state.inventory[i]),300,y);text(String(state.inbound[i])+(state.inbound[i]?" / D"+String(state.inboundDay[i]):""),365,y);text(String(inventoryCost(i)),448,y);}
+ }
+ line(30,455,480,455);
+ text("UP/DOWN: SELECT   ENTER: ORDER 1   DELIVERY: 1-3 DAYS",30,477,true);
+}
 void contentScreen(){
  text(contentTitle,30,128,true);text("CONTENT VERSION: "+contentVersion+"  /  SOURCE: "+String(contentLoaded?"SD CARD":"BUILT-IN"),30,164);
  text("CARS "+String(contentCars)+"   SERVICES "+String(contentServices)+"   PARTS "+String(contentParts),30,212,true);text("CUSTOMERS "+String(contentCustomers)+"   UPGRADES "+String(contentUpgrades),30,250);text("EVENTS "+String(contentEvents)+"   TUTORIAL CHAPTERS "+String(contentTutorial),30,288);text("FIRST CAR: "+clip(firstCar,42)+"  /  SERVICE: "+clip(firstService,28),30,332);text("FIRST PART: "+clip(firstPart,42),30,364);text("START CASH "+String(contentStartingCash)+" CR  /  DAILY RENT "+String(contentDailyRent),30,408);text(clip(contentStatus,72),30,440,true);
 }
 void draw(bool full=false){
  view=JDM_GAME;if(full)epd.forceClean();beginDraw();do{
- header("","JDM / WORKSHOP","ARROWS: SELECT   ENTER: USE   J: ORDERS   N: NEW CLIENT");
- text("DAY "+String(state.day)+"   CASH "+String(state.cash),30,108,true);
- if(page==7)contentScreen();else if(page==1)orderBoard();else if(page==3&&state.stage)repairScreen();else garage();
+ header("","JDM / WORKSHOP","I: INVENTORY   J: ORDERS   N: NEW CLIENT   ENTER: USE");
+ text("DAY "+String(state.day)+"   CASH "+String(state.cash)+"   STOCK "+String(state.inventory[0]+state.inventory[2]+state.inventory[4]+state.inventory[6]),30,108,true);
+ if(page==7)contentScreen();else if(page==4)inventoryScreen();else if(page==1)orderBoard();else if(page==3&&state.stage)repairScreen();else garage();
  line(500,120,500,444);
  String labels[]={primaryLabel(),"NEXT DAY (-"+String(contentDailyRent+(state.staff?contentMechanicWage:0))+")","SAVE SLOT","LOAD SLOT","NEW GARAGE"};
  for(int i=0;i<5;i++){int y=147+i*39;if(i==row){solid(512,y-23,283,34);inv(labels[i],520,y);}else text(labels[i],520,y);}

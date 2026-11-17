@@ -35,7 +35,7 @@ bool diagnose(){
  state.stage=2;message=String("TEST FAILED: ")+faults[state.fault]+" / BUY REPLACEMENT";return true;
 }
 bool manualRepair(){
- if(state.stage==2){if(!state.stock){message="BUY A REPLACEMENT FIRST";return false;}repairNode=state.fault;state.stock=0;state.stage=3;state.remaining=10;bolt=0;message="SELECT TOOL / ENTER TO USE";return true;}
+ if(state.stage==2){if(!state.stock){message="SELECT A REPLACEMENT IN INVENTORY";page=4;inventorySelection=inventoryPartIndexForFault(state.fault);return false;}repairNode=state.fault;state.stock=0;state.stage=3;state.remaining=10;bolt=0;message="SELECT TOOL / ENTER TO USE";return true;}
  if(state.stage!=3||state.remaining<10){message="MECHANIC WORKING / NEXT DAY";return false;}
  int step=state.remaining-10;
  if(bolt!=step%3){message="SELECT MARKED FASTENER / UP OR DOWN";return false;}
@@ -47,10 +47,11 @@ bool manualRepair(){
 }
 bool order(){
  if(state.stage!=2){message="DIAGNOSE FIRST";return false;}
- if(state.stock){message="PART ALREADY IN STOCK";return false;}
- int cost=partCost();if(state.cash<cost){message="NOT ENOUGH CASH";return false;}
- state.cash-=cost;state.expenses+=cost;state.stock=1;
- message=String("PART DELIVERED: ")+faultPartIds[state.fault]+" / "+String(cost)+" CR";return true;
+ if(state.stock){message="PART ALREADY RESERVED";return false;}
+ uint8_t index=inventoryPartIndexForFault(state.fault);
+ if(!state.inventory[index]){message="OUT OF STOCK / I: ORDER PART";page=4;inventorySelection=index;return false;}
+ state.inventory[index]--;state.stock=1;
+ message=String("RESERVED FROM STOCK: ")+faultPartIds[state.fault]+" / REMAINING "+String(state.inventory[index]);return true;
 }
 bool assign(){
  if(state.stage!=2||!state.stock){message="NEED DIAGNOSIS AND PART";return false;}

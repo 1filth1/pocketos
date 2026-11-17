@@ -10,10 +10,10 @@ void nextDay(){
   uint32_t elapsed=state.day-state.activeAcceptedDay;
   int patience=campaignCustomerValue(state.customer,"patience_days",3);
   if(elapsed>=(uint32_t)constrain(patience,1,255)){
-   int refund=state.stock?partCost()/2:0;
-   state.cash+=refund;state.stock=0;state.stage=0;state.remaining=0;state.activeAcceptedDay=0;
+   inventoryReturnReservedPart();
+   state.stage=0;state.remaining=0;state.activeAcceptedDay=0;
    if(state.reputation)state.reputation--;
-   expired="ACTIVE CLIENT LEFT / REFUND "+String(refund)+" CR";
+   expired="ACTIVE CLIENT LEFT / PART RETURNED TO STOCK";
   }
  }
  for(uint8_t i=0;i<state.queueCount;){
@@ -26,7 +26,8 @@ void nextDay(){
    state.queueCount--;
   }else i++;
  }
+ String deliveries=inventoryDeliverDue();
  if(!state.stage&&state.queueCount)promoteNextOrder();
- message=expired.length()?expired:("DAY "+String(state.day)+" / "+campaignEventTitle(state.day)+" / COST "+String(cost));
+ message=expired.length()?expired:(deliveries.length()?deliveries:("DAY "+String(state.day)+" / "+campaignEventTitle(state.day)+" / COST "+String(cost)));
 }
 }
