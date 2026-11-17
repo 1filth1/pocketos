@@ -13,7 +13,7 @@ void nextDay(){
    inventoryReturnReservedPart();
    state.stage=0;state.remaining=0;state.activeAcceptedDay=0;
    if(state.reputation)state.reputation--;
-   expired="ACTIVE CLIENT LEFT / REFUND "+String(refund)+" CR";
+   expired="ACTIVE CLIENT LEFT / PART RETURNED TO STOCK";
   }
  }
  for(uint8_t i=0;i<state.queueCount;){
