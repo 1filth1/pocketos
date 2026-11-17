@@ -64,18 +64,21 @@ Save slots are runtime user data under `/Games/JDM_Garage_Empire/saves/`; they m
 - [x] Validate record counts, required values, unique IDs and basic economy constraints; reject the whole pack on any failure.
 - [x] Fall back to built-in car names and starting defaults if the card or any required file is unavailable/invalid.
 - [x] Apply SD car names, starting cash/reputation/day, daily rent and mechanic wages; expose catalogue counts on the in-game Content panel (`C`).
-- [ ] Use service/parts/customer/upgrade/event/tutorial records to drive the full management loop (next milestone).
-- SD data remains data-only; no executable code is loaded.
+- [x] Use customer profiles for job budgets, patience and tips; use service/part records for quotes and costs; use weighted daily events for supplier discounts and reputation bonuses.
 
 ### M3 — playable management loop
-- Replace the one-job prototype with a daily job board, multiple work orders and workshop capacity.
-- Add estimates, delivery deadlines, customer patience, parts lead times, wages and recurring rent.
-- Add staff skill, delegation and quality outcomes.
+- [x] One active customer job with budget validation, diagnosis, part purchase, manual repair procedure, mechanic delegation, quality check and payment.
+- [x] Customer patience deadline while a job is waiting for diagnosis or parts; missed deadlines cancel the job, return half the purchased-part cost and reduce reputation.
+- [ ] Replace the single active job with a persistent multi-order board and bay scheduling.
+- [ ] Add a real warehouse with quantities and multiple part types.
+- [ ] Add staff skill, fatigue, specialities and quality outcomes.
+- [ ] Add upgrade purchase flow and workshop tier progression.
 
 ### M4 — visual polish and depth
-- Add illustrated job cards, garage upgrades, customer portraits/icons and car condition panels.
-- Add event notices, milestones, a readable financial ledger and a campaign recap.
-- Tune e-paper refresh behavior: static panels, partial updates only where safe, no rapid flashing.
+- [x] Original car artwork and component/repair views are included in the firmware/content asset pipeline.
+- [ ] Add illustrated job cards, garage upgrades, customer portraits/icons and car condition panels.
+- [ ] Add event notices, milestones, a readable financial ledger and a campaign recap.
+- [ ] Tune e-paper refresh behavior: static panels, partial updates only where safe, no rapid flashing.
 
 ## Hardware and UX constraints
 
@@ -87,4 +90,4 @@ Save slots are runtime user data under `/Games/JDM_Garage_Empire/saves/`; they m
 
 ## Current status
 
-The repository contains the JDM firmware prototype, original car artwork, repair flow, economy primitives and SD save slots. The bounded ArduinoJson loader validates the versioned SD catalogues. The first data-driven gameplay slice now reads customer names, budgets, patience and tip chances; service prices and reputation rewards; part prices; and weighted daily events. Customer choice is retained in the save state, and version-1 saves are migrated when loaded. Supplier-sale events reduce part prices, event reputation bonuses affect completed jobs, and the customer selection panel shows the quote and budget. This is an incremental foundation, not the finished management game: there is still only one active work order, no multi-job scheduling, no persistent warehouse quantities, no upgrade purchase flow, and no staff skill/fatigue simulation. Those remain the next implementation milestones. Firmware CI and on-device testing are still required.
+The current branch has a data-driven single-job campaign slice. SD customer profiles now affect budgets, tips and patience; service and part records determine prices and weighted daily events can alter supplier costs and reputation. A customer deadline is tracked from job acceptance while the car is waiting for diagnosis or parts. Missing the deadline cancels that waiting job, returns half the part cost if a part had already been purchased, and reduces reputation. This is still not the full management game: there is no multi-order scheduling, persistent stock warehouse, upgrade economy, staff progression or hardware playtest. A successful firmware compile proves buildability only, not that the complete game loop is balanced or usable on the device.
