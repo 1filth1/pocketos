@@ -61,7 +61,7 @@ void garage(){
  box(43,170,42,160);for(int i=0;i<5;i++)box(48,185+i*26,31,17);
  box(410,150,61,66);for(int i=0;i<4;i++)line(418,159+i*13,461,159+i*13);
  line(99,371,428,371);solid(104,363,8,16);solid(420,363,8,16);
- if(state.stage)carArt(state.car);else text("ENTER: ACCEPT A CLIENT",112,290,true);
+ if(state.stage)drawCarSprite(state.car % JDM_CAR_ASSET_COUNT,132,230);else text("ENTER: ACCEPT A CLIENT",112,290,true);
  text(state.stage?cars[state.car]:"YOUR WORKSHOP",32,414);
  text("COMPLETED "+String(state.completed)+" / REP "+String(state.reputation),32,440);
 }
