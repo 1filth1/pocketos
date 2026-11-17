@@ -1,18 +1,33 @@
 #pragma once
 namespace JDM {
 bool accept(){
- if(state.stage){message="FINISH CURRENT JOB FIRST";return false;}
- state.car=(state.day*3+state.completed*7+clientChoice)%6;
- state.fault=(state.day+state.completed+clientChoice)%4;
- state.customer=clientChoice%6;
- int quote=payment();
- int budget=campaignCustomerValue(state.customer,"budget",1800);
+ uint8_t car=(state.day*3+state.completed*7+clientChoice)%6;
+ uint8_t fault=(state.day+state.completed+clientChoice)%4;
+ uint8_t customer=clientChoice%6;
+ int quote=campaignServiceValue(fault,"base_price",campaignFallbackPrices[fault]);
+ int budget=campaignCustomerValue(customer,"budget",1800);
  if(quote>budget){message="CUSTOMER BUDGET TOO LOW / CHOOSE ANOTHER";return false;}
- // While a car is waiting for diagnosis/parts, remaining stores the
- // acceptance day modulo 256. It is reused for repair progress later.
+ if(state.stage>=3&&state.stage<=5){
+  if(state.queueCount>=JDM_ORDER_QUEUE_CAPACITY){message="ORDER BOARD FULL / FINISH A JOB";return false;}
+  QueuedOrder &q=state.queue[state.queueCount++];
+  q.acceptedDay=state.day;q.car=car;q.fault=fault;q.customer=customer;
+  message="ADDED TO ORDER BOARD / "+campaignCustomerName(customer);
+  return true;
+ }
+ if(state.stage){message="FINISH DIAGNOSIS OR ORDER FIRST";return false;}
+ state.car=car;state.fault=fault;state.customer=customer;
  state.stage=1;state.remaining=(uint8_t)state.day;state.stock=0;
  message=campaignCustomerName(state.customer)+" / "+String(symptoms[state.fault]);
  return true;
+}
+void promoteNextOrder(){
+ if(state.stage||!state.queueCount)return;
+ QueuedOrder q=state.queue[0];
+ for(uint8_t i=1;i<state.queueCount;i++)state.queue[i-1]=state.queue[i];
+ state.queueCount--;
+ state.car=q.car;state.fault=q.fault;state.customer=q.customer;
+ state.stage=1;state.stock=0;state.remaining=(uint8_t)q.acceptedDay;
+ message="NEXT CLIENT ON LIFT / "+campaignCustomerName(state.customer);
 }
 bool diagnose(){
  if(state.stage!=1){message="ACCEPT A JOB FIRST";return false;}
@@ -58,6 +73,7 @@ bool collect(){
  state.reputation+=max(0,campaignEventEffect(state.day,"reputation_bonus",0));
  state.lastProfit=state.revenue-state.expenses;state.stage=0;state.stock=0;state.remaining=0;
  message="JOB CLOSED / "+campaignCustomerName(state.customer)+" / "+String(paid)+" CR";
+ promoteNextOrder();
  return true;
 }
 }
