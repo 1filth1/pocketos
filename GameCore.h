@@ -8,7 +8,8 @@ State state;
 String cars[]={"SKYLINE GT-R R34","SUPRA A80","RX-7 FD3S","SILVIA S15","LANCER EVO VI","NSX NA1"};
 const char* faults[]={"BRAKES","FUEL PUMP","COOLING","SUSPENSION"};
 const char* symptoms[]={"LONG STOPPING DISTANCE","ENGINE HESITATES","TEMPERATURE RISES","KNOCK OVER BUMPS"};
-int partCost(){return 250+state.fault*150;}
+const char* faultPartIds[]={"brake_pads","fuel_pump","radiator","coilover_kit"};
+int partCost(){const int catalogueCosts[]={180,260,390,780};return catalogueCosts[constrain((int)state.fault,0,3)];}
 int payment(){return 1600+state.fault*400;}
 String message="NEW GAME OR LOAD A SLOT";
 int repairNode=0,tool=0;
