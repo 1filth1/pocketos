@@ -13,6 +13,7 @@ struct LegacyRecord {uint32_t magic,size,hash;LegacyState data;};
 bool validState(const State&s){
  return (s.version==1||s.version==2||s.version==3)&&s.stage<=5&&s.car<6&&s.fault<4&&
   s.staff<=1&&s.stock<=1&&s.customer<6&&s.queueCount<=JDM_ORDER_QUEUE_CAPACITY&&
+  (s.stage<1||s.stage>2||(s.activeAcceptedDay>0&&s.activeAcceptedDay<=s.day))&&
   (s.stage!=3||((s.remaining>=1&&s.remaining<=2)||(s.remaining>=10&&s.remaining<=14)));
 }
 bool readRecord(String path,State &out){
@@ -21,7 +22,7 @@ bool readRecord(String path,State &out){
  if(f.size()==sizeof(Record)){
   Record r={};ok=f.read((uint8_t*)&r,sizeof(r))==sizeof(r);
   ok=ok&&r.magic==0x4A444D31&&r.size==sizeof(State)&&r.hash==checksum(r.data)&&validState(r.data);
-  if(ok)out=r.data;
+  if(ok){out=r.data;for(uint8_t i=0;i<out.queueCount;i++)if(out.queue[i].car>=6||out.queue[i].fault>=4||out.queue[i].customer>=6||out.queue[i].acceptedDay>out.day)ok=false;}
  }else if(f.size()==sizeof(LegacyRecord)){
   LegacyRecord r={};ok=f.read((uint8_t*)&r,sizeof(r))==sizeof(r);
   uint32_t h=checksumData(r.data);
@@ -33,6 +34,7 @@ bool readRecord(String path,State &out){
    out.expenses=r.data.expenses;out.lastProfit=r.data.lastProfit;out.reputation=r.data.reputation;
    out.completed=r.data.completed;out.stage=r.data.stage;out.car=r.data.car;out.fault=r.data.fault;
    out.stock=r.data.stock;out.staff=r.data.staff;out.remaining=r.data.remaining;out.customer=r.data.customer;
+   if(out.stage==1||out.stage==2){uint8_t elapsed=(uint8_t)((uint8_t)out.day-out.remaining);out.activeAcceptedDay=out.day-elapsed;}
   }
  }
  f.close();return ok;
