@@ -7,11 +7,11 @@ void nextDay(){
  // Every waiting order has its own deadline. Work already underway is protected.
  String expired="";
  if(state.stage==1||state.stage==2){
-  uint32_t elapsed=state.day-(uint32_t)state.remaining;
+  uint32_t elapsed=state.day-state.activeAcceptedDay;
   int patience=campaignCustomerValue(state.customer,"patience_days",3);
   if(elapsed>=(uint32_t)constrain(patience,1,255)){
    int refund=state.stock?partCost()/2:0;
-   state.cash+=refund;state.stock=0;state.stage=0;state.remaining=0;
+   state.cash+=refund;state.stock=0;state.stage=0;state.remaining=0;state.activeAcceptedDay=0;
    if(state.reputation)state.reputation--;
    expired="ACTIVE CLIENT LEFT / REFUND "+String(refund)+" CR";
   }
@@ -26,6 +26,7 @@ void nextDay(){
    state.queueCount--;
   }else i++;
  }
+ if(!state.stage&&state.queueCount)promoteNextOrder();
  message=expired.length()?expired:("DAY "+String(state.day)+" / "+campaignEventTitle(state.day)+" / COST "+String(cost));
 }
 }
