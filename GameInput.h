@@ -3,7 +3,7 @@ namespace JDM {
 int primaryAction(){if(!active)return 9;switch(state.stage){case 0:return 0;case 1:return 1;case 2:return state.stock?3:2;case 3:return state.remaining>=10?3:6;case 4:return 4;default:return 5;}}
 bool keyEvent(uint8_t k){
  if(popup){
- if(popup==2&&(k==0xB4||k==0xB7)){clientChoice=(clientChoice+(k==0xB4?9:1))%10;draw();return true;}
+ if(popup==2&&(k==0xB4||k==0xB7)){clientChoice=(clientChoice+(k==0xB4?5:1))%6;draw();return true;}
  if(k==27||k==8){popup=0;draw();return true;}
  if(k==10||k==13){int old=popup;popup=0;if(old==2){if(accept()){page=0;row=0;String result=message;save();message=result;popup=1;}}draw();return true;}return true;
  }
