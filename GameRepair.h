@@ -58,7 +58,7 @@ bool assign(){
  if(!state.staff){message="HIRE MECHANIC IN STAFF";page=5;return false;}
  uint8_t index=constrain(staffSelection,0,(int)state.staff-1);
  uint8_t skill=constrain(state.mechanicSkill[index],1,3);
- state.stock=0;state.assignedMechanic=index;state.stage=3;state.remaining=skill>=2?1:2;
+ state.stock=0;state.assignedMechanic=index;state.stage=3;state.remaining=skill>=2?1:2;page=3;
  message=String("ASSIGNED MECHANIC #")+String(index+1)+" / SKILL "+String(skill)+" / ETA "+String(state.remaining)+" DAY";return true;
 }
 bool quality(){
