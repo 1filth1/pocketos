@@ -6,6 +6,8 @@ Status: approved direction for the next PocketOS release. This is an implementat
 
 JDM Garage Empire is a visual, step-by-step garage management and repair game for the Waveshare ESP32-S3 N16R8 and its 800x480 monochrome E-Ink display. Cars and mechanical components must be recognizable, detailed original illustrations rather than text labels or schematic placeholders.
 
+The first launch roster is fixed at six original JDM-inspired vehicle illustrations, in this order: Nissan Skyline GT-R R34, Toyota Supra A80, Mazda RX-7 FD3S, Nissan Silvia S15, Mitsubishi Lancer Evolution VI and Honda NSX NA1. Future cars are data-and-manifest additions; the runtime is not designed around a hard-coded six-model art ceiling.
+
 The game should feel like a compact illustrated workshop simulator:
 - inspect a customer car;
 - diagnose a fault by examining the relevant system;
@@ -79,7 +81,9 @@ The SD archive is merge-installed at the card root. Updating the game must never
 ## Art and display specification
 
 - Native monochrome, 1-bit assets; black/white only, with deliberate dithering for metal, rubber, glass and shadows.
-- Car side-profile canvas: 240x104 pixels initially; preserve the aspect ratio and avoid smoothing at runtime.
+- Car side-profile canvas: 240x104 pixels; preserve the aspect ratio and avoid smoothing at runtime.
+- Component canvas: 128x128 pixels with numbered connector nodes and mating-interface metadata in the parts catalogue.
+- `scripts/generate_jdm_assets.py` creates the 1-bit art pack and SHA-256 manifest during CI before SD-content validation.
 - Component canvas: 128x128 pixels initially.
 - Workshop/background pieces should be tiled or composed from separate layers so the screen does not need a full-screen bitmap for every state.
 - Artwork must have clean silhouettes, readable contours and mechanical detail at native resolution.
