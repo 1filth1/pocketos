@@ -16,7 +16,7 @@ bool accept(){
  }
  if(state.stage){message="FINISH DIAGNOSIS OR ORDER FIRST";return false;}
  state.car=car;state.fault=fault;state.customer=customer;
- state.stage=1;state.remaining=(uint8_t)state.day;state.stock=0;
+ state.stage=1;state.remaining=(uint8_t)state.day;state.activeAcceptedDay=state.day;state.stock=0;
  message=campaignCustomerName(state.customer)+" / "+String(symptoms[state.fault]);
  return true;
 }
@@ -26,7 +26,7 @@ void promoteNextOrder(){
  for(uint8_t i=1;i<state.queueCount;i++)state.queue[i-1]=state.queue[i];
  state.queueCount--;
  state.car=q.car;state.fault=q.fault;state.customer=q.customer;
- state.stage=1;state.stock=0;state.remaining=(uint8_t)q.acceptedDay;
+ state.stage=1;state.stock=0;state.remaining=(uint8_t)q.acceptedDay;state.activeAcceptedDay=q.acceptedDay;
  message="NEXT CLIENT ON LIFT / "+campaignCustomerName(state.customer);
 }
 bool diagnose(){
@@ -71,7 +71,7 @@ bool collect(){
  state.cash+=paid;state.revenue+=paid;state.completed++;
  state.reputation+=campaignJobRep();
  state.reputation+=max(0,campaignEventEffect(state.day,"reputation_bonus",0));
- state.lastProfit=state.revenue-state.expenses;state.stage=0;state.stock=0;state.remaining=0;
+ state.lastProfit=state.revenue-state.expenses;state.stage=0;state.stock=0;state.remaining=0;state.activeAcceptedDay=0;
  message="JOB CLOSED / "+campaignCustomerName(state.customer)+" / "+String(paid)+" CR";
  promoteNextOrder();
  return true;
