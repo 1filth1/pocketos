@@ -69,27 +69,14 @@ void repairScreen(){
  text(String("< ")+faults[repairNode]+" >",32,151,true);
  bool target=state.stage>=2&&state.fault==repairNode;
  text(target?"CLIENT FAULT / DIAGNOSED":"COMPONENT VIEW",32,181);
- if(repairNode==0){
- epd.drawCircle(178,277,65,GxEPD_BLACK);epd.drawCircle(178,277,56,GxEPD_BLACK);epd.drawCircle(178,277,22,GxEPD_BLACK);epd.drawCircle(178,277,12,GxEPD_BLACK);for(int j=0;j<16;j++){float a=j*0.392699f;epd.fillCircle(178+int(43*cosf(a)),277+int(43*sinf(a)),3,GxEPD_BLACK);}
- for(int i=0;i<5;i++){box(122+i*22,225,9,9);box(122+i*22,314,9,9);}
- box(232,237,52,80);box(244,248,28,58);line(284,252,356,230);box(356,214,72,37);
- text("DISC",100,369);text("CALIPER",255,369);text("PAD SET",341,280);
- }else if(repairNode==1){
- box(55,240,128,91);box(67,252,104,67);box(192,258,59,49);box(206,246,30,12);
- line(183,270,192,270);line(251,272,285,272);box(285,258,48,30);line(333,272,439,272);
- for(int i=0;i<4;i++){box(350+i*23,278,13,28);line(356+i*23,306,356+i*23,324);}
- text("TANK",77,357);text("PUMP",188,357);text("FILTER",281,239);text("INJECTORS",326,357);
- }else if(repairNode==2){
- box(60,228,135,109);for(int i=0;i<13;i++)line(67+i*9,235,67+i*9,331);
- box(97,216,52,12);line(195,245,275,245);line(275,245,275,269);box(265,269,52,40);
- box(345,233,83,86);line(317,284,345,284);line(345,306,226,306);line(226,306,226,325);line(226,325,195,325);
- text("RADIATOR",55,365);text("PUMP",261,365);text("ENGINE",346,365);
- }else{
- box(99,224,55,20);box(117,244,19,72);for(int i=0;i<7;i++){line(100,253+i*8,153,257+i*8);line(153,257+i*8,100,261+i*8);}
- box(108,316,36,14);line(126,330,210,344);line(126,330,54,344);line(54,344,210,344);
- wheel(289,296);line(144,322,274,296);box(344,240,62,29);line(319,296,375,269);
- text("STRUT / SPRING",52,377);text("ARM",214,377);text("BUSH",341,223);
- }
+ // SD-native technical part illustration; indices match the 12-part art catalogue.
+ const uint8_t repairPartAsset[4]={7,10,11,6}; // brake assembly, fuel pump, radiator, coilover
+ drawPartSprite(repairPartAsset[repairNode],170,220);
+ text("01  MOUNT / BRACKET",32,224);
+ text("02  FASTENER POINTS",32,251);
+ text("03  FLUID / POWER LINE",32,278);
+ text("04  CONNECTOR / SEAL",32,305);
+ text("NODE MAP: SELECTED SYSTEM",32,369);
  if(state.stage==3&&state.remaining>=10){
  int step=state.remaining-10;
  // Successive frames: part moves out, then returns during assembly.
@@ -136,7 +123,7 @@ void draw(bool full=false){view=JDM_GAME;if(full)epd.forceClean();beginDraw();do
  if(popup){
  solid(94,154,616,228);epd.fillRect(88,148,616,228,GxEPD_WHITE);box(88,148,616,228);box(94,154,604,216);
  text(popup==2?"CLIENT / CHOOSE CAR":"WORKSHOP",112,187,true);
- if(popup==2){int m=(state.day*3+state.completed*7+clientChoice)%10;
+ if(popup==2){int m=(state.day*3+state.completed*7+clientChoice)%6;
  text(String("<  ")+cars[m]+"  >",116,224,true);
  text("FEE "+String(1600+((state.day+state.completed+clientChoice)%4)*400),116,258);
  text("LEFT / RIGHT   ENTER: ACCEPT",116,342);
