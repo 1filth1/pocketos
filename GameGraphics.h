@@ -68,17 +68,31 @@ void inventoryScreen(){
  line(30,455,480,455);
  text("UP/DOWN: SELECT   ENTER: ORDER 1   DELIVERY: 1-3 DAYS",30,477,true);
 }
+void staffScreen(){
+ text("WORKSHOP STAFF / MECHANIC ROSTER",30,139,true);
+ text("EMPLOYEES "+String(state.staff)+"/2   DAILY PAY "+String(mechanicWageTotal())+" CR",30,174,true);
+ line(30,188,480,188);
+ if(!state.staff)text("NO MECHANICS HIRED / PRESS H",42,232,true);
+ for(uint8_t i=0;i<state.staff;i++){
+  int y=226+i*82;
+  if(i==staffSelection){solid(28,y-25,450,65);inv(String("#")+String(i+1)+"  GARAGE MECHANIC",42,y);inv("SKILL "+String(state.mechanicSkill[i])+" / "+(state.mechanicSkill[i]==1?"TRAINEE":state.mechanicSkill[i]==2?"TECHNICIAN":"EXPERT"),42,y+25);inv("WAGE "+String(contentMechanicWage+(state.mechanicSkill[i]-1)*75)+" CR/DAY",300,y+25);}
+  else{text(String("#")+String(i+1)+"  GARAGE MECHANIC",42,y);text("SKILL "+String(state.mechanicSkill[i])+" / "+(state.mechanicSkill[i]==1?"TRAINEE":state.mechanicSkill[i]==2?"TECHNICIAN":"EXPERT"),42,y+25);text("WAGE "+String(contentMechanicWage+(state.mechanicSkill[i]-1)*75)+" CR/DAY",300,y+25);}
+ }
+ line(30,405,480,405);
+ text("H: HIRE   T: TRAIN SELECTED   UP/DOWN: SELECT",30,438,true);
+ text("TRAINING COST: 600 CR PER CURRENT SKILL LEVEL",30,468);
+}
 void contentScreen(){
  text(contentTitle,30,128,true);text("CONTENT VERSION: "+contentVersion+"  /  SOURCE: "+String(contentLoaded?"SD CARD":"BUILT-IN"),30,164);
  text("CARS "+String(contentCars)+"   SERVICES "+String(contentServices)+"   PARTS "+String(contentParts),30,212,true);text("CUSTOMERS "+String(contentCustomers)+"   UPGRADES "+String(contentUpgrades),30,250);text("EVENTS "+String(contentEvents)+"   TUTORIAL CHAPTERS "+String(contentTutorial),30,288);text("FIRST CAR: "+clip(firstCar,42)+"  /  SERVICE: "+clip(firstService,28),30,332);text("FIRST PART: "+clip(firstPart,42),30,364);text("START CASH "+String(contentStartingCash)+" CR  /  DAILY RENT "+String(contentDailyRent),30,408);text(clip(contentStatus,72),30,440,true);
 }
 void draw(bool full=false){
  view=JDM_GAME;if(full)epd.forceClean();beginDraw();do{
- header("","JDM / WORKSHOP","I: INVENTORY   J: ORDERS   N: NEW CLIENT   ENTER: USE");
- text("DAY "+String(state.day)+"   CASH "+String(state.cash)+"   STOCK "+String(state.inventory[0]+state.inventory[2]+state.inventory[4]+state.inventory[6]),30,108,true);
- if(page==7)contentScreen();else if(page==4)inventoryScreen();else if(page==1)orderBoard();else if(page==3&&state.stage)repairScreen();else garage();
+ header("","JDM / WORKSHOP","I: INVENTORY   S: STAFF   J: ORDERS   N: NEW CLIENT   ENTER: USE");
+ text("DAY "+String(state.day)+"   CASH "+String(state.cash)+"   MECHANICS "+String(state.staff),30,108,true);
+ if(page==7)contentScreen();else if(page==5)staffScreen();else if(page==4)inventoryScreen();else if(page==1)orderBoard();else if(page==3&&state.stage)repairScreen();else garage();
  line(500,120,500,444);
- String labels[]={primaryLabel(),"NEXT DAY (-"+String(contentDailyRent+(state.staff?contentMechanicWage:0))+")","SAVE SLOT","LOAD SLOT","NEW GARAGE"};
+ String labels[]={primaryLabel(),"NEXT DAY (-"+String(contentDailyRent+mechanicWageTotal())+")","SAVE SLOT","LOAD SLOT","NEW GARAGE"};
  for(int i=0;i<5;i++){int y=147+i*39;if(i==row){solid(512,y-23,283,34);inv(labels[i],520,y);}else text(labels[i],520,y);}
  text("TOOLS",515,350,true);
  for(int i=0;i<4;i++){int x=538+i*66;box(x-22,363,45,43);if(i==tool)box(x-25,360,51,49);if(i==0){line(x-10,397,x+9,375);epd.drawCircle(x+9,375,7,GxEPD_BLACK);}if(i==1){line(x-10,395,x+10,373);line(x+10,395,x-10,373);}if(i==2){solid(x-3,385,6,15);line(x,385,x,370);line(x-4,370,x+4,370);}if(i==3){box(x-12,371,24,25);box(x-8,375,16,8);line(x-6,396,x-10,402);}}
