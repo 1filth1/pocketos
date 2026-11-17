@@ -61,6 +61,25 @@
 
 # Changelog
 
+## [0.2.0-rc.3] - 2026-11-17
+
+### Added
+- Added the six-car JDM launch roster: Skyline GT-R R34, Supra A80, RX-7 FD3S, Silvia S15, Lancer Evolution VI and NSX NA1.
+- Added a CI-generated 1-bit monochrome car and component art pack on the SD card.
+- Added mechanical system and connector/mating-node metadata to the parts catalogue.
+- Repair view now renders the matching SD component illustration with numbered connection callouts.
+
+### Changed
+- Repair replacement prices now follow the launch parts catalogue.
+- Save validation now rejects vehicle indices outside the six-car launch roster.
+- CI generates and validates the SD artwork pack before packaging.
+
+### Known limitations
+- The game remains an experimental release candidate; deeper inventory, tuning, staff and progression systems are still being expanded.
+- Hardware validation on the Waveshare N16R8 is still required.
+
+
+
 ## [0.1.2-rc.12] — 2026-11-16 — Experimental pre-release
 
 ### Added
