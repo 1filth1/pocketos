@@ -16,8 +16,8 @@ bool keyEvent(uint8_t k){
  if(k=='i'||k=='I'){page=page==4?(state.stage?3:0):4;draw();return true;}
  if(k=='s'||k=='S'){page=page==5?0:5;draw();return true;}
  if(page==5&&(k==0xB5||k==0xB6)){if(state.staff)staffSelection=(staffSelection+(k==0xB5?state.staff-1:1))%state.staff;draw();return true;}
- if(page==5&&(k=='h'||k=='H')){bool changed=hire();if(changed){String result=message;if(save())message=result;else message=result+" / NOT SAVED";}draw();return true;}
- if(page==5&&(k=='t'||k=='T')){bool changed=trainMechanic();if(changed){String result=message;if(save())message=result;else message=result+" / NOT SAVED";}draw();return true;}
+ if(page==5&&(k=='h'||k=='H')){if(!active){message="START OR LOAD FIRST";draw();return true;}bool changed=hire();if(changed){String result=message;if(save())message=result;else message=result+" / NOT SAVED";}draw();return true;}
+ if(page==5&&(k=='t'||k=='T')){if(!active){message="START OR LOAD FIRST";draw();return true;}bool changed=trainMechanic();if(changed){String result=message;if(save())message=result;else message=result+" / NOT SAVED";}draw();return true;}
  if(page==4&&(k==0xB5||k==0xB6)){inventorySelection=(inventorySelection+(k==0xB5?JDM_PART_COUNT-1:1))%JDM_PART_COUNT;draw();return true;}
  if(page==4&&(k==10||k==13)){if(!active){message="START OR LOAD FIRST";draw();return true;}bool bought=inventoryPurchase(inventorySelection);if(bought){String result=message;if(save())message=result;else message=result+" / NOT SAVED";}draw();return true;}
  if(k=='c'||k=='C'){page=page==7?0:7;draw();return true;}
