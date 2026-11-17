@@ -52,13 +52,11 @@ bool readRecord(String path,State &out){
    out.expenses=r.data.expenses;out.lastProfit=r.data.lastProfit;out.reputation=r.data.reputation;
    out.completed=r.data.completed;out.stage=r.data.stage;out.car=r.data.car;out.fault=r.data.fault;
    out.stock=r.data.stock;out.staff=r.data.staff;out.remaining=r.data.remaining;out.customer=r.data.customer;
-   if(out.staff)out.mechanicSkill[0]=1;out.assignedMechanic=255;
-   if(out.staff)out.mechanicSkill[0]=1;out.assignedMechanic=(out.stage==3&&out.remaining<10&&out.staff)?0:255;
+   if(out.staff)out.mechanicSkill[0]=1;
+   out.assignedMechanic=(out.stage==3&&out.remaining<10&&out.staff)?0:255;
    out.activeAcceptedDay=r.data.activeAcceptedDay;out.queueCount=r.data.queueCount;
    for(uint8_t i=0;i<out.queueCount;i++)out.queue[i]=r.data.queue[i];
    for(uint8_t i=0;i<JDM_PART_COUNT;i++){out.inventory[i]=r.data.inventory[i];out.inbound[i]=r.data.inbound[i];out.inboundDay[i]=r.data.inboundDay[i];}
-   if(out.staff)out.mechanicSkill[0]=1;
-   out.assignedMechanic=(out.stage==3&&out.remaining<10&&out.staff)?0:255;
    for(uint8_t i=0;i<out.queueCount;i++)
     if(out.queue[i].car>=6||out.queue[i].fault>=4||out.queue[i].customer>=6||out.queue[i].acceptedDay>out.day)ok=false;
    if(!validState(out))ok=false;
@@ -73,6 +71,7 @@ bool readRecord(String path,State &out){
    out.expenses=r.data.expenses;out.lastProfit=r.data.lastProfit;out.reputation=r.data.reputation;
    out.completed=r.data.completed;out.stage=r.data.stage;out.car=r.data.car;out.fault=r.data.fault;
    out.staff=r.data.staff;out.remaining=r.data.remaining;out.customer=r.data.customer;
+   if(out.staff)out.mechanicSkill[0]=1;out.assignedMechanic=(out.stage==3&&out.remaining<10&&out.staff)?0:255;
    out.activeAcceptedDay=r.data.activeAcceptedDay;out.queueCount=r.data.queueCount;
    for(uint8_t i=0;i<out.queueCount;i++)out.queue[i]=r.data.queue[i];
    if(r.data.stock&&out.stage==2)out.inventory[inventoryPartIndexForFault(out.fault)]++;
@@ -91,6 +90,7 @@ bool readRecord(String path,State &out){
    out.expenses=r.data.expenses;out.lastProfit=r.data.lastProfit;out.reputation=r.data.reputation;
    out.completed=r.data.completed;out.stage=r.data.stage;out.car=r.data.car;out.fault=r.data.fault;
    out.stock=r.data.stock;out.staff=r.data.staff;out.remaining=r.data.remaining;out.customer=r.data.customer;
+   if(out.staff)out.mechanicSkill[0]=1;out.assignedMechanic=255;
    if(out.stage==2&&out.stock){out.inventory[inventoryPartIndexForFault(out.fault)]++;out.stock=0;}
    if(out.stage==1||out.stage==2){uint8_t elapsed=(uint8_t)((uint8_t)out.day-out.remaining);out.activeAcceptedDay=out.day-elapsed;}
   }
