@@ -1,6 +1,6 @@
 #pragma once
 namespace JDM {
-bool accept(){if(state.stage){message="FINISH CURRENT JOB FIRST";return false;}state.car=(state.day*3+state.completed*7+clientChoice)%10;state.fault=(state.day+state.completed+clientChoice)%4;state.stage=1;state.remaining=0;state.stock=0;message=symptoms[state.fault];return true;}
+bool accept(){if(state.stage){message="FINISH CURRENT JOB FIRST";return false;}state.car=(state.day*3+state.completed*7+clientChoice)%6;state.fault=(state.day+state.completed+clientChoice)%4;state.stage=1;state.remaining=0;state.stock=0;message=symptoms[state.fault];return true;}
 bool diagnose(){
  if(state.stage!=1){message="ACCEPT A JOB FIRST";return false;}
  if(repairNode!=state.fault){message=String(faults[repairNode])+" TEST OK / TRY ANOTHER NODE";return false;}
