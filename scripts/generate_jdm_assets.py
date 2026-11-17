@@ -69,7 +69,7 @@ def part(i):
     elif i==2:
         ell(d,(28,33,87,92),1.6); ell(d,(40,45,75,80)); ell(d,(49,54,66,71),.8)
         poly(d,[(73,40),(103,29),(112,38),(103,59),(83,64)],1.2); rect(d,(91,58,111,80))
-        for a in range(0,360,45): line(d,[(58,62),(58+13*math.cos(math.radians(a)),62+13*math.sin(math.radians(a))],.8)
+        for a in range(0,360,45): line(d,[(58,62),(58+13*math.cos(math.radians(a)),62+13*math.sin(math.radians(a)))],.8)
     elif i==3:
         rect(d,(15,34,111,91),1.4)
         for y in range(40,88,5): line(d,[(22,y),(104,y)],.8)
