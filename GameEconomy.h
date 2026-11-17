@@ -6,7 +6,8 @@ bool trainMechanic(){if(!state.staff){message="HIRE A MECHANIC FIRST";return fal
 void nextDay(){
  int cost=contentDailyRent+mechanicWageTotal();
  state.cash-=cost;state.expenses+=cost;state.lastProfit=state.revenue-state.expenses;state.day++;
- if(state.stage==3&&state.remaining>0&&state.remaining<10){state.remaining--;if(!state.remaining){state.stage=4;state.assignedMechanic=255;message="MECHANIC FINISHED / RUN QUALITY CHECK";}}
+ String mechanicDone="";
+ if(state.stage==3&&state.remaining>0&&state.remaining<10){state.remaining--;if(!state.remaining){state.stage=4;state.assignedMechanic=255;mechanicDone="MECHANIC FINISHED / RUN QUALITY CHECK";}}
  // Every waiting order has its own deadline. Work already underway is protected.
  String expired="";
  if(state.stage==1||state.stage==2){
@@ -31,6 +32,6 @@ void nextDay(){
  }
  String deliveries=inventoryDeliverDue();
  if(!state.stage&&state.queueCount)promoteNextOrder();
- message=expired.length()?expired:(deliveries.length()?deliveries:("DAY "+String(state.day)+" / "+campaignEventTitle(state.day)+" / COST "+String(cost)));
+ message=expired.length()?expired:(mechanicDone.length()?mechanicDone:(deliveries.length()?deliveries:("DAY "+String(state.day)+" / "+campaignEventTitle(state.day)+" / COST "+String(cost))));
 }
 }
