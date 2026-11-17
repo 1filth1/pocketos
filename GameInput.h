@@ -11,6 +11,8 @@ bool keyEvent(uint8_t k){
 
  if(k==27||k==8){if(confirmNew){confirmNew=false;message="NEW GAME CANCELLED";draw();return true;}if(active&&!save()){draw();return true;}games();return true;}
  if(k==9){page=page==0?3:0;draw();return true;}
+ if(k=='j'||k=='J'){page=page==1?0:1;draw();return true;}
+ if((k=='n'||k=='N')&&active&&state.stage>=3&&state.stage<=5){popup=2;clientChoice=0;page=1;draw();return true;}
  if(k=='c'||k=='C'){page=page==7?0:7;draw();return true;}
  if(k==0xB4||k==0xB7){if((state.stage==3&&state.remaining>=10)||state.stage==4)tool=(tool+(k==0xB4?3:1))%4;else repairNode=(repairNode+(k==0xB4?3:1))%4;page=3;draw();return true;}
  if(k==0xB5||k==0xB6){row=(row+(k==0xB5?4:1))%5;confirmNew=false;draw();return true;}
