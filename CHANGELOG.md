@@ -1,6 +1,16 @@
 ## [Unreleased]
 
 ### Added
+- JDM Garage Empire M5 staff management: up to two mechanics, skill progression, paid training, skill-based repair duration, and daily payroll.
+- Dedicated staff roster screen with mechanic selection, hiring, training, and per-worker wage visibility.
+- Save format v5 migration preserving M4 warehouse stock, inbound deliveries, active jobs, and customer queue while converting existing staff to a level-1 mechanic.
+
+### Changed
+- Mechanic assignments now progress automatically when the in-game day advances and finish into the quality-control stage.
+- Mechanic payroll scales with roster size and skill level.
+
+
+### Added
 - JDM Garage Empire M4 warehouse: individual part stock, inbound purchase orders, delivery dates, and reservation/consumption of replacement parts during repairs.
 - Version-3 game saves migrate to save format v4 while preserving active jobs and queued customers.
 
