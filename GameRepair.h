@@ -8,7 +8,9 @@ bool accept(){
  int quote=payment();
  int budget=campaignCustomerValue(state.customer,"budget",1800);
  if(quote>budget){message="CUSTOMER BUDGET TOO LOW / CHOOSE ANOTHER";return false;}
- state.stage=1;state.remaining=0;state.stock=0;
+ // While a car is waiting for diagnosis/parts, remaining stores the
+ // acceptance day modulo 256. It is reused for repair progress later.
+ state.stage=1;state.remaining=(uint8_t)state.day;state.stock=0;
  message=campaignCustomerName(state.customer)+" / "+String(symptoms[state.fault]);
  return true;
 }
