@@ -96,6 +96,16 @@ for service in services:
 for part in parts:
     if part.get("cost", 0) <= 0 or not 1 <= part.get("quality", 0) <= 5:
         raise SystemExit(f"Invalid part cost/quality: {part.get('id')}")
+    nodes = part.get("nodes")
+    if part.get("system") not in {"BRAKES", "FUEL", "COOLING", "SUSPENSION", "ENGINE"}:
+        raise SystemExit(f"Invalid mechanical system: {part.get('id')}")
+    if not isinstance(nodes, list) or not 2 <= len(nodes) <= 8:
+        raise SystemExit(f"Invalid connection nodes: {part.get('id')}")
+    node_ids = [node.get("id") for node in nodes]
+    if any(not isinstance(node_id, str) or not node_id for node_id in node_ids) or len(node_ids) != len(set(node_ids)):
+        raise SystemExit(f"Invalid/duplicate connection node IDs: {part.get('id')}")
+    if any(not isinstance(node.get("mate"), str) or not node["mate"] for node in nodes):
+        raise SystemExit(f"Missing mating interface: {part.get('id')}")
 for upgrade in upgrades:
     if upgrade.get("cost", 0) <= 0 or upgrade.get("rep_required", -1) < 0:
         raise SystemExit(f"Invalid upgrade cost/reputation: {upgrade.get('id')}")
