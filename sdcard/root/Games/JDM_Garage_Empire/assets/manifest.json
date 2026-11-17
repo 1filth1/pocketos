@@ -10,7 +10,8 @@
       "width": 240,
       "height": 104,
       "offset": 0,
-      "length": 3120
+      "length": 3120,
+      "sha256": "35663bbaf32452fc7001240e581957fbae3bcd0b5f863f1714514f757d9e15eb"
     },
     {
       "id": "car_00",
@@ -18,7 +19,8 @@
       "width": 240,
       "height": 104,
       "offset": 3120,
-      "length": 3120
+      "length": 3120,
+      "sha256": "44c53c79b40325d8f4b44ff883d4568582303f3037410ddca0a877037ba6dd57"
     },
     {
       "id": "car_05",
@@ -26,7 +28,8 @@
       "width": 240,
       "height": 104,
       "offset": 6240,
-      "length": 3120
+      "length": 3120,
+      "sha256": "3bae7de97876e3a539448f8f748efe151a58378e00c9a547caa6a0b201a62bb0"
     },
     {
       "id": "car_04",
@@ -34,7 +37,8 @@
       "width": 240,
       "height": 104,
       "offset": 9360,
-      "length": 3120
+      "length": 3120,
+      "sha256": "2f8b451b5bca682ab97f793d79f581526ea62be2d3cc6c460ddcb0582f1ff5ef"
     },
     {
       "id": "car_03",
@@ -42,7 +46,8 @@
       "width": 240,
       "height": 104,
       "offset": 12480,
-      "length": 3120
+      "length": 3120,
+      "sha256": "0fb8ad2410e358e9c83173b935cde3c5e13f73da6cf2eac48a1aea1b2627fe67"
     },
     {
       "id": "car_02",
@@ -50,7 +55,8 @@
       "width": 240,
       "height": 104,
       "offset": 15600,
-      "length": 3120
+      "length": 3120,
+      "sha256": "348acada1a917fbbbe17e0007e301aab0622bf97b060d6189df5bd8e58af31ae"
     },
     {
       "id": "part_00",
@@ -58,7 +64,8 @@
       "width": 128,
       "height": 128,
       "offset": 18720,
-      "length": 2048
+      "length": 2048,
+      "sha256": "3d29930873890e2a1ecc50a457e0fd3fd9dda1f98d28031cca70203bced9ac7b"
     },
     {
       "id": "part_01",
@@ -66,7 +73,8 @@
       "width": 128,
       "height": 128,
       "offset": 20768,
-      "length": 2048
+      "length": 2048,
+      "sha256": "506a15b46afa1ee3c2524dd76621ec577667d03dd1ee789e11c6826f5debe8be"
     },
     {
       "id": "part_02",
@@ -74,7 +82,8 @@
       "width": 128,
       "height": 128,
       "offset": 22816,
-      "length": 2048
+      "length": 2048,
+      "sha256": "a90406c426169094cd742dd168c3af42a7179fbffb84066f40fc437eb5418875"
     },
     {
       "id": "part_03",
@@ -82,7 +91,8 @@
       "width": 128,
       "height": 128,
       "offset": 24864,
-      "length": 2048
+      "length": 2048,
+      "sha256": "9599d0a19723311c075b5890f05a9299320b35febc9adca08e4934559b02e6fd"
     },
     {
       "id": "part_04",
@@ -90,7 +100,8 @@
       "width": 128,
       "height": 128,
       "offset": 26912,
-      "length": 2048
+      "length": 2048,
+      "sha256": "f14c098cce66a022cc27bb03c86fc4acf1fd82763212ea74cc5299bc9e0a7d77"
     },
     {
       "id": "part_05",
@@ -98,7 +109,8 @@
       "width": 128,
       "height": 128,
       "offset": 28960,
-      "length": 2048
+      "length": 2048,
+      "sha256": "d9bce39edb4c649b4f97b6ab3581e5b396015230b95269e44d74392495dbe30d"
     },
     {
       "id": "part_06",
@@ -106,7 +118,8 @@
       "width": 128,
       "height": 128,
       "offset": 31008,
-      "length": 2048
+      "length": 2048,
+      "sha256": "e632d1c985ba04b41ec9d051fb7e01d06258578e63cbb6011c1285e9b3b8c555"
     },
     {
       "id": "part_07",
@@ -114,7 +127,8 @@
       "width": 128,
       "height": 128,
       "offset": 33056,
-      "length": 2048
+      "length": 2048,
+      "sha256": "6d6c1e0be9d86056e99fa4bb043b4191cb34f342dbc394af2b899c44c2889d7d"
     },
     {
       "id": "part_08",
@@ -122,7 +136,8 @@
       "width": 128,
       "height": 128,
       "offset": 35104,
-      "length": 2048
+      "length": 2048,
+      "sha256": "6c1b9da2b91195e090180b5be76a2c082a9e172822784d2904c486d6aa8b145d"
     },
     {
       "id": "part_09",
@@ -130,7 +145,8 @@
       "width": 128,
       "height": 128,
       "offset": 37152,
-      "length": 2048
+      "length": 2048,
+      "sha256": "0180fbdb554506827c341c8e03a48f403d66a293f3455c0ff23ee7ba9d9c510b"
     },
     {
       "id": "part_10",
@@ -138,7 +154,8 @@
       "width": 128,
       "height": 128,
       "offset": 39200,
-      "length": 2048
+      "length": 2048,
+      "sha256": "9a4027da19e41d36f63e6741e6353ba1f46970c5771b63dd5578d1060f1ff499"
     },
     {
       "id": "part_11",
@@ -146,7 +163,8 @@
       "width": 128,
       "height": 128,
       "offset": 41248,
-      "length": 2048
+      "length": 2048,
+      "sha256": "7d43be57a0e4aead41e5d4533299dcdae6f1a98662c6dcfbe0e1d0bbe4620730"
     }
   ]
 }
