@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "format": "MONO_MSB_1BIT",
+  "file": "assets.bin",
+  "total_bytes": 43296,
+  "assets": [
+    {
+      "id": "car_01",
+      "kind": "car",
+      "width": 240,
+      "height": 104,
+      "offset": 0,
+      "length": 3120
+    },
+    {
+      "id": "car_00",
+      "kind": "car",
+      "width": 240,
+      "height": 104,
+      "offset": 3120,
+      "length": 3120
+    },
+    {
+      "id": "car_05",
+      "kind": "car",
+      "width": 240,
+      "height": 104,
+      "offset": 6240,
+      "length": 3120
+    },
+    {
+      "id": "car_04",
+      "kind": "car",
+      "width": 240,
+      "height": 104,
+      "offset": 9360,
+      "length": 3120
+    },
+    {
+      "id": "car_03",
+      "kind": "car",
+      "width": 240,
+      "height": 104,
+      "offset": 12480,
+      "length": 3120
+    },
+    {
+      "id": "car_02",
+      "kind": "car",
+      "width": 240,
+      "height": 104,
+      "offset": 15600,
+      "length": 3120
+    },
+    {
+      "id": "part_00",
+      "kind": "part",
+      "width": 128,
+      "height": 128,
+      "offset": 18720,
+      "length": 2048
+    },
+    {
+      "id": "part_01",
+      "kind": "part",
+      "width": 128,
+      "height": 128,
+      "offset": 20768,
+      "length": 2048
+    },
+    {
+      "id": "part_02",
+      "kind": "part",
+      "width": 128,
+      "height": 128,
+      "offset": 22816,
+      "length": 2048
+    },
+    {
+      "id": "part_03",
+      "kind": "part",
+      "width": 128,
+      "height": 128,
+      "offset": 24864,
+      "length": 2048
+    },
+    {
+      "id": "part_04",
+      "kind": "part",
+      "width": 128,
+      "height": 128,
+      "offset": 26912,
+      "length": 2048
+    },
+    {
+      "id": "part_05",
+      "kind": "part",
+      "width": 128,
+      "height": 128,
+      "offset": 28960,
+      "length": 2048
+    },
+    {
+      "id": "part_06",
+      "kind": "part",
+      "width": 128,
+      "height": 128,
+      "offset": 31008,
+      "length": 2048
+    },
+    {
+      "id": "part_07",
+      "kind": "part",
+      "width": 128,
+      "height": 128,
+      "offset": 33056,
+      "length": 2048
+    },
+    {
+      "id": "part_08",
+      "kind": "part",
+      "width": 128,
+      "height": 128,
+      "offset": 35104,
+      "length": 2048
+    },
+    {
+      "id": "part_09",
+      "kind": "part",
+      "width": 128,
+      "height": 128,
+      "offset": 37152,
+      "length": 2048
+    },
+    {
+      "id": "part_10",
+      "kind": "part",
+      "width": 128,
+      "height": 128,
+      "offset": 39200,
+      "length": 2048
+    },
+    {
+      "id": "part_11",
+      "kind": "part",
+      "width": 128,
+      "height": 128,
+      "offset": 41248,
+      "length": 2048
+    }
+  ]
+}
