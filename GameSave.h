@@ -78,6 +78,7 @@ bool readRecord(String path,State &out){
    else out.stock=r.data.stock;
    for(uint8_t i=0;i<out.queueCount;i++)
     if(out.queue[i].car>=6||out.queue[i].fault>=4||out.queue[i].customer>=6||out.queue[i].acceptedDay>out.day)ok=false;
+   if(!validState(out))ok=false;
   }
  }else if(f.size()==sizeof(LegacyRecord)){
   LegacyRecord r={};ok=f.read((uint8_t*)&r,sizeof(r))==sizeof(r);
