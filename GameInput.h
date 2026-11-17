@@ -31,7 +31,7 @@ bool keyEvent(uint8_t k){
  else switch(action){case 0:popup=2;clientChoice=0;page=0;break;case 1:changed=diagnose();page=3;break;case 2:changed=order();break;case 3:changed=manualRepair();page=3;break;case 4:changed=quality();break;case 5:changed=collect();page=0;break;case 6:if(state.stage==3&&state.remaining>=10){message="FINISH HAND REPAIR BEFORE NEXT DAY";}else{nextDay();changed=true;}break;case 7:save();break;}
  }else return true;
  if(changed){String result=message;if(save())message=result;else message=result+" / NOT SAVED";row=0;}
- if(!popup&&(changed||k==10||k==13||k=='h'||k=='H'||k=='m'||k=='M'))popup=1;
+ if(!popup&&(changed||k=='h'||k=='H'||k=='m'||k=='M'))popup=1;
  draw();return true;
 }
 }
