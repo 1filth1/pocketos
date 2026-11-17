@@ -105,10 +105,19 @@ static bool jdmRecordValid(JsonObjectConst item, JdmRecordKind kind) {
         item["base_price"].as<int>() >= item["base_cost"].as<int>() &&
         item["base_cost"].as<int>() >= 0 && item["duration_days"].as<int>() > 0 &&
         item["skill"].as<int>() >= 0 && item["rep"].as<int>() >= 0;
-    case JDM_PART:
-      return item["cost"].is<int>() && item["cost"].as<int>() > 0 &&
-        item["quality"].is<int>() && item["quality"].as<int>() >= 1 &&
-        item["quality"].as<int>() <= 5;
+    case JDM_PART: {
+      if (!item["cost"].is<int>() || item["cost"].as<int>() <= 0 ||
+          !item["quality"].is<int>() || item["quality"].as<int>() < 1 ||
+          item["quality"].as<int>() > 5 || !item["system"].is<const char*>()) return false;
+      JsonArrayConst nodes = item["nodes"].as<JsonArrayConst>();
+      if (nodes.isNull() || nodes.size() < 2 || nodes.size() > 8) return false;
+      for (JsonObjectConst node : nodes) {
+        const char *nodeId = node["id"] | "";
+        const char *mateId = node["mate"] | "";
+        if (!nodeId[0] || !mateId[0]) return false;
+      }
+      return true;
+    }
     case JDM_CUSTOMER:
       return item["patience_days"].is<int>() && item["patience_days"].as<int>() > 0 &&
         item["budget"].is<int>() && item["budget"].as<int>() > 0;
