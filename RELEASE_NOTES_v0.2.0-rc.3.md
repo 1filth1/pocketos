@@ -8,12 +8,15 @@
 - Added system, connector-node and mating-interface metadata to every launch parts-catalogue record.
 - The repair screen now displays a component illustration for the selected fault system, alongside numbered service/connection callouts.
 
+### Fixed
+- Corrected client-car cycling and save validation so both stay within the six-car launch catalogue.
+
 ### Changed
 - Replacement-part prices now match the selected launch catalogue components: brake pads, fuel pump, radiator and coilover kit.
 - Client-car selection and save validation are constrained to the six-car launch roster.
 - CI generates the SD art pack, writes its SHA-256 manifest and validates the complete pack before packaging.
 
-### Known limitations
+### Known issues
 - This is an experimental release candidate. The current workshop loop covers accepting a client car, diagnosing one of four fault systems, ordering a replacement, completing a repair sequence, running quality control and collecting payment.
 - Full inventory management, multi-part repair trees, detailed tuning dependencies, staff progression and additional cars remain future work.
 - The generated monochrome artwork is the first in-device asset pass; higher-detail final art can replace it without changing the SD asset format.
