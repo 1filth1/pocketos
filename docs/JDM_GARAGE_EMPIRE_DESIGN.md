@@ -69,7 +69,8 @@ Save slots are runtime user data under `/Games/JDM_Garage_Empire/saves/`; they m
 ### M3 — playable management loop
 - [x] One active customer job with budget validation, diagnosis, part purchase, manual repair procedure, mechanic delegation, quality check and payment.
 - [x] Customer patience deadline while a job is waiting for diagnosis or parts; missed deadlines cancel the job, return half the purchased-part cost and reduce reputation.
-- [ ] Replace the single active job with a persistent multi-order board and bay scheduling.
+- [x] Add a persistent two-slot waiting order board alongside the active repair bay; accept new clients during repair, track each waiting client's own patience deadline, expire overdue orders, and promote the next order after delivery or cancellation.
+- [ ] Expand the two-slot waiting board into a fully selectable multi-bay schedule with independent diagnosis, parts and repair progress per order.
 - [ ] Add a real warehouse with quantities and multiple part types.
 - [ ] Add staff skill, fatigue, specialities and quality outcomes.
 - [ ] Add upgrade purchase flow and workshop tier progression.
