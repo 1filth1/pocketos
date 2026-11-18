@@ -49,11 +49,11 @@ void orderBoard(){
   int y=362+i*39;
   if(i<state.queueCount){
    QueuedOrder &q=state.queue[i];
-   text(String(i+1)+". "+campaignCustomerName(q.customer)+" / "+cars[q.car],42,y);
+   text(String(i+1)+". "+campaignCustomerName(q.customer)+" / "+cars[q.car],42,y,i==queueSelection);
    text(String(faults[q.fault])+" / DAY "+String(q.acceptedDay),58,y+22);
   }else text(String(i+1)+". EMPTY SLOT",42,y);
  }
- text("N: ACCEPT ANOTHER CLIENT WHILE REPAIRING",30,448,true);
+ text("UP/DOWN: SELECT ORDER   X: CANCEL   N: NEW CLIENT",30,448,true);
 }
 void contentScreen(){
  text(contentTitle,30,128,true);text("CONTENT VERSION: "+contentVersion+"  /  SOURCE: "+String(contentLoaded?"SD CARD":"BUILT-IN"),30,164);
