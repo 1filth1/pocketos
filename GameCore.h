@@ -14,7 +14,7 @@ const char* symptoms[]={"LONG STOPPING DISTANCE","ENGINE HESITATES","TEMPERATURE
 const char* faultPartIds[]={"brake_pads","fuel_pump","radiator","coilover_kit"};
 String message="NEW GAME OR LOAD A SLOT";
 int repairNode=0,tool=0;
-int popup=0,clientChoice=0,bolt=0;
+int popup=0,clientChoice=0,bolt=0,queueSelection=0;
 const char* tools[]={"WRENCH","PLIERS","DRIVER","TESTER"};
 const uint8_t toolOrder[4][5]={{0,2,1,2,0},{2,1,0,1,2},{0,1,2,1,0},{0,0,1,0,0}};
 const char* repairSteps[]={"REMOVE FASTENERS","DISCONNECT / REMOVE","FIT NEW COMPONENT","RECONNECT / ASSEMBLE","TIGHTEN / FINISH"};
