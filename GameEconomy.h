@@ -26,6 +26,7 @@ void nextDay(){
    state.queueCount--;
   }else i++;
  }
+ if(queueSelection>=state.queueCount&&queueSelection>0)queueSelection=state.queueCount?state.queueCount-1:0;
  if(!state.stage&&state.queueCount)promoteNextOrder();
  message=expired.length()?expired:("DAY "+String(state.day)+" / "+campaignEventTitle(state.day)+" / COST "+String(cost));
 }
