@@ -20,6 +20,15 @@ bool accept(){
  message=campaignCustomerName(state.customer)+" / "+String(symptoms[state.fault]);
  return true;
 }
+bool cancelQueuedOrder(){
+ if(queueSelection>=state.queueCount){message="SELECT A WAITING ORDER FIRST";return false;}
+ String customer=campaignCustomerName(state.queue[queueSelection].customer);
+ for(uint8_t i=queueSelection+1;i<state.queueCount;i++)state.queue[i-1]=state.queue[i];
+ state.queueCount--;
+ if(queueSelection>=state.queueCount&&queueSelection>0)queueSelection--;
+ message="ORDER CANCELLED / "+customer+(state.queueCount?" / SLOT FREED":" / BOARD EMPTY");
+ return true;
+}
 void promoteNextOrder(){
  if(state.stage||!state.queueCount)return;
  QueuedOrder q=state.queue[0];
