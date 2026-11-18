@@ -34,6 +34,7 @@ void promoteNextOrder(){
  QueuedOrder q=state.queue[0];
  for(uint8_t i=1;i<state.queueCount;i++)state.queue[i-1]=state.queue[i];
  state.queueCount--;
+ if(queueSelection>=state.queueCount&&queueSelection>0)queueSelection--;
  state.car=q.car;state.fault=q.fault;state.customer=q.customer;
  state.stage=1;state.stock=0;state.remaining=(uint8_t)q.acceptedDay;state.activeAcceptedDay=q.acceptedDay;
  message="NEXT CLIENT ON LIFT / "+campaignCustomerName(state.customer);
