@@ -1,3 +1,36 @@
+## [0.2.0-rc.4] — 2026-11-19 — JDM Garage Empire persistent warehouse
+
+### Added
+- Added a persistent ten-item parts warehouse initialized from the SD parts catalogue.
+- Added in-game warehouse browsing and purchasing.
+- Repair jobs reserve warehouse stock for the four currently modeled fault systems.
+- Added save-state v4 and a v3-to-v4 migration path for existing garage progress.
+- Added the warehouse inventory screen.
+
+### Fixed
+- Mechanic availability is checked before stock reservation.
+- Save writes now include inventory and are verified by reading back the saved state.
+
+### Known limitations
+- Only four of ten catalogue parts are currently consumed by modeled repair faults.
+- Warehouse capacity upgrades and supplier ordering are not integrated.
+- Save migration and gameplay still require physical-device testing.
+
+### Validation
+- CI firmware compilation, SD artwork generation and content/package validation passed for commit 13bf92b.
+- Hardware gameplay and legacy-save migration tests are pending.
+
+### Build & package
+- Waveshare ESP32-S3-ePaper-3.97 (N16R8), 16 MB Flash, 8 MB OPI PSRAM.
+- Arduino-ESP32 3.3.12; DIO / 80 MHz; app3M_fat9M_16MB.
+
+### Upgrade
+- Back up SD and internal Flash saves before flashing.
+- Preserve the existing game save; verify v3-to-v4 migration on first launch.
+- Merge the matching SD archive at the card root without deleting unrelated files.
+- Test purchase → repair → payment → reboot → save restoration.
+
+
 ## [0.2.0-rc.2] — 2026-11-16 — JDM Garage Empire content loader (experimental)
 
 ### Added
