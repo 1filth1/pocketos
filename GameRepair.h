@@ -65,8 +65,8 @@ bool order(){
 }
 bool assign(){
  if(state.stage!=2){message="DIAGNOSE FIRST";return false;}
- if(!state.stock&&!warehouseReserveForFault(state.fault)){message="PART NOT IN STOCK / BUY IN INVENTORY";return false;}
  if(!state.staff){message="HIRE MECHANIC IN STAFF";return false;}
+ if(!state.stock&&!warehouseReserveForFault(state.fault)){message="PART NOT IN STOCK / BUY IN INVENTORY";return false;}
  state.stock=0;state.stage=3;state.remaining=1+state.fault%2;
  message="MECHANIC ASSIGNED / BASIC TOOLS";return true;
 }

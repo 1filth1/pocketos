@@ -11,6 +11,7 @@ bool keyEvent(uint8_t k){
   partSelection=(partSelection+(k==0xB5?9:1))%10;draw();return true;
  }
  if(page==4&&(k=='b'||k=='B'||k==10||k==13)){
+  if(!active){message="START OR LOAD A GARAGE FIRST";draw();return true;}
   bool bought=warehouseBuy(partSelection);
   if(bought){String result=message;if(save())message=result;else message=result+" / NOT SAVED";}
   draw();return true;
@@ -40,7 +41,7 @@ bool keyEvent(uint8_t k){
  else if(k=='m'||k=='M'){if(active)changed=assign();}
  else if(k==10||k==13){
  int action=row==0?primaryAction():row==1?6:row==2?7:row==3?8:9;
- if(action==9){if(!confirmNew){confirmNew=true;message="ENTER AGAIN TO RESET THIS GARAGE";}else{state=State{};applyStartingConditions();active=true;confirmNew=false;repairNode=tool=0;row=0;message="GARAGE OPEN / ENTER TO ACCEPT A CAR";}}
+ if(action==9){if(!confirmNew){confirmNew=true;message="ENTER AGAIN TO RESET THIS GARAGE";}else{state=State{};applyStartingConditions();initializeWarehouseStock();active=true;confirmNew=false;repairNode=tool=0;row=0;message="GARAGE OPEN / ENTER TO ACCEPT A CAR";}}
  else if(action==8){if(load()){row=0;repairNode=state.fault;}}
  else if(!active)message="START OR LOAD FIRST";
  else switch(action){case 0:popup=2;clientChoice=0;page=0;break;case 1:changed=diagnose();page=3;break;case 2:changed=order();break;case 3:changed=manualRepair();page=3;break;case 4:changed=quality();break;case 5:changed=collect();page=0;break;case 6:if(state.stage==3&&state.remaining>=10){message="FINISH HAND REPAIR BEFORE NEXT DAY";}else{nextDay();changed=true;}break;case 7:save();break;}
