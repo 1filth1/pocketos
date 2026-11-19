@@ -2,6 +2,7 @@
 #include "GameCore.h"
 #include "GameContent.h"
 #include "GameCampaign.h"
+#include "GameWarehouse.h"
 #include "GameRepair.h"
 #include "GameEconomy.h"
 #include "GameSave.h"

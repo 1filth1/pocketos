@@ -45,7 +45,7 @@ bool diagnose(){
  state.stage=2;message=String("TEST FAILED: ")+faults[state.fault]+" / BUY REPLACEMENT";return true;
 }
 bool manualRepair(){
- if(state.stage==2){if(!state.stock){message="BUY A REPLACEMENT FIRST";return false;}repairNode=state.fault;state.stock=0;state.stage=3;state.remaining=10;bolt=0;message="SELECT TOOL / ENTER TO USE";return true;}
+ if(state.stage==2){if(!state.stock&&!warehouseReserveForFault(state.fault)){message="PART NOT IN STOCK / BUY IN INVENTORY";return false;}repairNode=state.fault;state.stock=0;state.stage=3;state.remaining=10;bolt=0;message="SELECT TOOL / ENTER TO USE";return true;}
  if(state.stage!=3||state.remaining<10){message="MECHANIC WORKING / NEXT DAY";return false;}
  int step=state.remaining-10;
  if(bolt!=step%3){message="SELECT MARKED FASTENER / UP OR DOWN";return false;}
@@ -57,13 +57,15 @@ bool manualRepair(){
 }
 bool order(){
  if(state.stage!=2){message="DIAGNOSE FIRST";return false;}
- if(state.stock){message="PART ALREADY IN STOCK";return false;}
+ if(state.stock){message="PART ALREADY RESERVED";return false;}
+ if(warehouseReserveForFault(state.fault)){state.stock=1;message=String("PART PICKED FROM WAREHOUSE / ")+faultPartIds[state.fault];return true;}
  int cost=partCost();if(state.cash<cost){message="NOT ENOUGH CASH";return false;}
  state.cash-=cost;state.expenses+=cost;state.stock=1;
- message=String("PART DELIVERED: ")+faultPartIds[state.fault]+" / "+String(cost)+" CR";return true;
+ message=String("PART PURCHASED FOR JOB: ")+faultPartIds[state.fault]+" / "+String(cost)+" CR";return true;
 }
 bool assign(){
- if(state.stage!=2||!state.stock){message="NEED DIAGNOSIS AND PART";return false;}
+ if(state.stage!=2){message="DIAGNOSE FIRST";return false;}
+ if(!state.stock&&!warehouseReserveForFault(state.fault)){message="PART NOT IN STOCK / BUY IN INVENTORY";return false;}
  if(!state.staff){message="HIRE MECHANIC IN STAFF";return false;}
  state.stock=0;state.stage=3;state.remaining=1+state.fault%2;
  message="MECHANIC ASSIGNED / BASIC TOOLS";return true;

@@ -7,6 +7,14 @@ bool keyEvent(uint8_t k){
  if(k==27||k==8){popup=0;draw();return true;}
  if(k==10||k==13){int old=popup;popup=0;if(old==2){if(accept()){page=0;row=0;String result=message;save();message=result;popup=1;}}draw();return true;}return true;
  }
+ if(page==4&&(k==0xB5||k==0xB6)){
+  partSelection=(partSelection+(k==0xB5?9:1))%10;draw();return true;
+ }
+ if(page==4&&(k=='b'||k=='B'||k==10||k==13)){
+  bool bought=warehouseBuy(partSelection);
+  if(bought){String result=message;if(save())message=result;else message=result+" / NOT SAVED";}
+  draw();return true;
+ }
  if(page==1&&active&&(k==0xB5||k==0xB6)){
   if(state.queueCount)queueSelection=(queueSelection+(k==0xB5?state.queueCount-1:1))%state.queueCount;
   draw();return true;
@@ -23,6 +31,7 @@ bool keyEvent(uint8_t k){
  if(k=='j'||k=='J'){page=page==1?0:1;draw();return true;}
  if((k=='n'||k=='N')&&active&&state.stage>=3&&state.stage<=5){popup=2;clientChoice=0;page=1;draw();return true;}
  if(k=='c'||k=='C'){page=page==7?0:7;draw();return true;}
+ if(k=='i'||k=='I'){page=page==4?0:4;draw();return true;}
  if(k==0xB4||k==0xB7){if((state.stage==3&&state.remaining>=10)||state.stage==4)tool=(tool+(k==0xB4?3:1))%4;else repairNode=(repairNode+(k==0xB4?3:1))%4;page=3;draw();return true;}
  if(k==0xB5||k==0xB6){row=(row+(k==0xB5?4:1))%5;confirmNew=false;draw();return true;}
  if(k>='1'&&k<='3'){slot=k-'0';message="SLOT "+String(slot);draw();return true;}

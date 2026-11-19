@@ -55,6 +55,16 @@ void orderBoard(){
  }
  text("UP/DOWN: SELECT ORDER   X: CANCEL   N: NEW CLIENT",30,448,true);
 }
+void inventoryScreen(){
+ text("WAREHOUSE / AVAILABLE PARTS",30,145,true);
+ text("SELECTED PART: "+String(warehouseNames[partSelection]),30,181);
+ for(uint8_t i=0;i<10;i++){
+  int y=218+i*24;
+  if(i==partSelection){solid(28,y-17,450,22);inv(String(i+1)+". "+warehouseNames[i]+"   x"+String(state.inventory[i]),36,y);}
+  else text(String(i+1)+". "+warehouseNames[i]+"   x"+String(state.inventory[i]),36,y);
+ }
+ text("UP/DOWN: SELECT   ENTER OR B: BUY ONE",30,455,true);
+}
 void contentScreen(){
  text(contentTitle,30,128,true);text("CONTENT VERSION: "+contentVersion+"  /  SOURCE: "+String(contentLoaded?"SD CARD":"BUILT-IN"),30,164);
  text("CARS "+String(contentCars)+"   SERVICES "+String(contentServices)+"   PARTS "+String(contentParts),30,212,true);text("CUSTOMERS "+String(contentCustomers)+"   UPGRADES "+String(contentUpgrades),30,250);text("EVENTS "+String(contentEvents)+"   TUTORIAL CHAPTERS "+String(contentTutorial),30,288);text("FIRST CAR: "+clip(firstCar,42)+"  /  SERVICE: "+clip(firstService,28),30,332);text("FIRST PART: "+clip(firstPart,42),30,364);text("START CASH "+String(contentStartingCash)+" CR  /  DAILY RENT "+String(contentDailyRent),30,408);text(clip(contentStatus,72),30,440,true);
@@ -63,7 +73,7 @@ void draw(bool full=false){
  view=JDM_GAME;if(full)epd.forceClean();beginDraw();do{
  header("","JDM / WORKSHOP","ARROWS: SELECT   ENTER: USE   J: ORDERS   N: NEW CLIENT");
  text("DAY "+String(state.day)+"   CASH "+String(state.cash),30,108,true);
- if(page==7)contentScreen();else if(page==1)orderBoard();else if(page==3&&state.stage)repairScreen();else garage();
+ if(page==7)contentScreen();else if(page==4)inventoryScreen();else if(page==1)orderBoard();else if(page==3&&state.stage)repairScreen();else garage();
  line(500,120,500,444);
  String labels[]={primaryLabel(),"NEXT DAY (-"+String(contentDailyRent+(state.staff?contentMechanicWage:0))+")","SAVE SLOT","LOAD SLOT","NEW GARAGE"};
  for(int i=0;i<5;i++){int y=147+i*39;if(i==row){solid(512,y-23,283,34);inv(labels[i],520,y);}else text(labels[i],520,y);}
